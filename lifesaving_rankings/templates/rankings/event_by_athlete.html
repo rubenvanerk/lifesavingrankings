@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+{% load to_url_filter %}
+
+{% block content %}
+    <div class="table-responsive">
+        <a href="{% url 'rankings:athlete-overview' object_list.0.athlete__first_name|add:object_list.0.athlete__last_name|to_url %}">
+            < back
+        </a>
+        <h1>
+            {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}
+        </h1>
+
+        <h2>{{ object_list.0.event__name }}</h2>
+        <table class="table table-striped">
+            <tr>
+                <th>Wedstrijd</th>
+                <th>Datum</th>
+                <th>Tijd</th>
+            </tr>
+            {% for times in object_list %}
+                <tr>
+                    <td>{{ times.competition__name }}</td>
+                    <td>{{ times.competition__date }}</td>
+                    <td>{{ times.time|format_time }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

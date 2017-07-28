@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+{% load to_url_filter %}
+{% load id_to_athlete_name %}
+{% load analysis_filters %}
+{% block title %}Lifesaving Rankings - analysis{% endblock %}
+{% block content %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+
+            <tr>
+                <th>Name</th>
+                {% for event in events %}
+                    <th class="vertical">
+                        <div class="vertical">{{ event.name }}</div>
+                    </th>
+                {% endfor %}
+
+            </tr>
+
+            <tr>
+                <td>WC 2016 best 16</td>
+                {% for event in events %}
+                    <td>
+                        {{ special_results|find_special_time_by_event:event }}
+                    </td>
+                {% endfor %}
+            </tr>
+
+            {% for athlete_id, qs in results.items %}
+                <tr>
+                    <td>{{ athlete_id|id_to_athlete_name }}</td>
+                    {% for results in qs %}
+                        {% if results %}
+                            {% for result in results %}
+                                <td>
+                                    {{ result.pb|format_time }}<br>
+                                    <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
+                                </td>
+                            {% endfor %}
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascript_after %}
+    <script>
+        colorPercentages();
+    </script>
+{% endblock %}

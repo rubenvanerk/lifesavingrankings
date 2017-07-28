@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+{% load to_url_filter %}
+{% load gender_to_text_filter %}
+
+{% block title %}Lifesaving Rankings - {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}{% endblock %}
+
+{% block content %}
+<h1>{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}</h1>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <tr>
+            <th>Onderdeel</th>
+            <th>PR</th>
+        </tr>
+        {% for personal_best in object_list %}
+        <tr>
+            <td>
+                <a href="{% url 'rankings:best-by-event' event_name=personal_best.event__name|to_url gender=object_list.0.athlete__gender|gender_to_text %}">
+                    {{ personal_best.event__name }}</a>
+            </td>
+            <td>
+                <a href="{% url 'rankings:athlete-event' athlete_name=personal_best.athlete__first_name|add:personal_best.athlete__last_name|to_url event_name=personal_best.event__name|to_url %}">
+                    {{ personal_best.time|format_time }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock  %}

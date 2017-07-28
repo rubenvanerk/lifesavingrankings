@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+{% load year_of_birth_filter %}
+{% load to_url_filter %}
+{% block title %}Lifesaving Rankings - {{ object_list.0.event__name }}{% endblock %}
+{% block content %}
+    <h1>{{ object_list.0.event__name }} top results  {{ kwargs.gender }}</h1>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tr>
+                <th>#</th>
+                <th>Athlete</th>
+                <th>YoB</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th>Competition</th>
+            </tr>
+            {% for top_result in object_list %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        <a href="{% url 'rankings:athlete-overview' top_result.athlete__first_name|add:top_result.athlete__last_name|to_url %}">
+                            {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
+                        </a>
+                    </td>
+                    <td>{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
+                    <td>{{ top_result.time|format_time }}</td>
+                    <td>{{ top_result.competition__date }}</td>
+                    <td>{{ top_result.competition__name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
