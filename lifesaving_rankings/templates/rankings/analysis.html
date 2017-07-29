@@ -7,17 +7,20 @@
 {% block content %}
     <div class="table-responsive">
         <table class="table table-striped">
-
+            <thead>
             <tr>
                 <th>Name</th>
                 {% for event in events %}
-                    <th class="vertical">
-                        <div class="vertical">{{ event.name }}</div>
+                    <th>
+                        {{ event.name }}
                     </th>
                 {% endfor %}
 
             </tr>
 
+            </thead>
+
+            <tbody>
             <tr>
                 <td>WC 2016 best 16</td>
                 {% for event in events %}
@@ -26,6 +29,8 @@
                     </td>
                 {% endfor %}
             </tr>
+
+
 
             {% for athlete_id, qs in results.items %}
                 <tr>
@@ -44,6 +49,7 @@
                     {% endfor %}
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}
