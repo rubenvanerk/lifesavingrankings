@@ -36,13 +36,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'rankings',
-    'lifesaving_rankings',
+
     'debug_toolbar',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
+
+    'rankings',
+    'lifesaving_rankings',
+    'analysis',
 ]
 
 SITE_ID = 1

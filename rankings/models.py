@@ -80,22 +80,3 @@ class IndividualResult(models.Model):
     @staticmethod
     def find_by_athlete_and_event(athlete, event):
         return IndividualResult.objects.filter(athlete=athlete, event=event)
-
-
-class SpecialResult(models.Model):
-    UNKNOWN = 0
-    MALE = 1
-    FEMALE = 2
-    GENDER_CHOICES = (
-        (UNKNOWN, 'Unknown'),
-        (MALE, 'Male'),
-        (FEMALE, 'Female')
-    )
-
-    gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-
-    event = ForeignKey(Event)
-    time = models.DurationField()
-
-    def __str__(self):
-        return self.time

@@ -2,7 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e21f0a8-ca78-490e-94c3-fc9b32561199" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/static/css/project.css" afterPath="$PROJECT_DIR$/lifesaving_rankings/static/css/project.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/analysis/urls.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/base.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/lifesaving_rankings/base.html" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/analysis.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/analysis/analysis.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/settings.py" afterPath="$PROJECT_DIR$/lifesaving_rankings/settings.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/urls.py" afterPath="$PROJECT_DIR$/lifesaving_rankings/urls.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rankings/models.py" afterPath="$PROJECT_DIR$/rankings/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rankings/urls.py" afterPath="$PROJECT_DIR$/rankings/urls.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rankings/views.py" afterPath="$PROJECT_DIR$/rankings/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -50,11 +67,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="project.css" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/static/css/project.css">
+      <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="1" lean-forward="false" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
+            <state relative-caret-position="51">
+              <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="account_inactive.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="email.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="email_confirm.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="login.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -74,7 +131,6 @@
       <find>templat</find>
       <find>Min</find>
       <find>print</find>
-      <find>templ</find>
       <find>static</find>
       <find>django.core.</find>
       <find>SITE_NA</find>
@@ -91,6 +147,11 @@
       <find>database</find>
       <find>email_</find>
       <find>&lt;button</find>
+      <find>bootstrap</find>
+      <find>staticfiles_d</find>
+      <find>anal</find>
+      <find>analy</find>
+      <find>templ</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\ruben\home\projects\lifesavingrankings.nl</dir>
@@ -106,26 +167,15 @@
         <option value="$PROJECT_DIR$/passes.txt" />
         <option value="$PROJECT_DIR$/rankings/templatetags/year_of_birth_filter.py" />
         <option value="$PROJECT_DIR$/rankings/templatetags/to_url_filter" />
-        <option value="$PROJECT_DIR$/rankings/models.py" />
         <option value="$PROJECT_DIR$/rankings/templatetags/to_url_filter.py" />
-        <option value="$PROJECT_DIR$/rankings/views.py" />
         <option value="$PROJECT_DIR$/rankings/templatetags/find_special_result_by_event.py" />
         <option value="$PROJECT_DIR$/rankings/templatetags/gender_to_text_filter.py" />
         <option value="$PROJECT_DIR$/rankings/templatetags/id_to_athlete_name.py" />
         <option value="$PROJECT_DIR$/rankings/templatetags/analysis_filters.py" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/static/javascript/main.js" />
-        <option value="$PROJECT_DIR$/rankings/urls.py" />
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap/templates/site_base.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" />
         <option value="$PROJECT_DIR$/req" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/urls.py" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/base.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/settings.py" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html" />
@@ -135,6 +185,26 @@
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/analysis.html" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/static/css/project.css" />
+        <option value="$PROJECT_DIR$/rankings/models.py" />
+        <option value="$PROJECT_DIR$/analysis/models.py" />
+        <option value="$PROJECT_DIR$/analysis/urls.py" />
+        <option value="$PROJECT_DIR$/rankings/urls.py" />
+        <option value="$PROJECT_DIR$/rankings/views.py" />
+        <option value="$PROJECT_DIR$/analysis/views.py" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/settings.py" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/urls.py" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/base.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/site_base.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/analysis/analysis.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" />
       </list>
     </option>
   </component>
@@ -152,10 +222,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="212" />
-    <option name="y" value="-9" />
-    <option name="width" value="1482" />
-    <option name="height" value="988" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -188,6 +258,19 @@
             </path>
             <path>
               <item name="lifesavingrankings.nl" type="b2602c69:ProjectViewProjectNode" />
+              <item name="lifesavingrankings.nl" type="462c0819:PsiDirectoryNode" />
+              <item name="lifesaving_rankings" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lifesavingrankings.nl" type="b2602c69:ProjectViewProjectNode" />
+              <item name="lifesavingrankings.nl" type="462c0819:PsiDirectoryNode" />
+              <item name="lifesaving_rankings" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="account" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lifesavingrankings.nl" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
@@ -212,6 +295,8 @@
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\rankings" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\lifesaving_rankings" />
+      <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\analysis" />
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\rankings" />
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl" />
     </key>
@@ -393,16 +478,17 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3043478" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3043478" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22867803" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3001066" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2553305" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -427,69 +513,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap/context_processors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rankings/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="25" column="22" lean-forward="false" selection-start-line="25" selection-start-column="22" selection-end-line="25" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap/templates/theme_bootstrap/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-332">
-          <caret line="23" column="110" lean-forward="false" selection-start-line="23" selection-start-column="110" selection-end-line="23" selection-end-column="110" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/f61abf67/8bbe197b-3c60-4c08-b3d3-5ebe386dce49/lifesaving_rankings.public.auth_user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap/templates/account/login.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="40" lean-forward="true" selection-start-line="22" selection-start-column="40" selection-end-line="22" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap/templates/site_base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap-8.0.1.dist-info/DESCRIPTION.rst">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-612">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap-8.0.1.dist-info/INSTALLER">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap-8.0.1.dist-info/METADATA">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-663">
@@ -538,63 +561,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rankings/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="507">
-          <caret line="113" column="41" lean-forward="false" selection-start-line="113" selection-start-column="40" selection-end-line="113" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rankings/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="91" column="26" lean-forward="false" selection-start-line="91" selection-start-column="26" selection-end-line="91" selection-end-column="26" />
-          <folding>
-            <marker date="1501076286714" expanded="true" signature="864:1060" ph="SELECT * FRO... rankings_athlete" />
-            <marker date="1501076286714" expanded="true" signature="864:1070" ph="SELECT * FRO... rankings_athlete" />
-            <marker date="1501076286714" expanded="true" signature="896:907" ph="SELECT * FRO... rankings_athlete" />
-            <marker date="1501076286714" expanded="true" signature="896:1060" ph="SELECT * FRO... rankings_athlete" />
-            <marker date="1501076286714" expanded="true" signature="1360:1388" ph="SELECT * FRO... rankings_event" />
-            <marker date="1501076286714" expanded="true" signature="1360:1410" ph="SELECT * FRO... rankings_eventWHERE" />
-            <marker date="1501076286714" expanded="true" signature="1360:1445" ph="SELECT * FRO... rankings_event" />
-            <marker date="1501076286714" expanded="true" signature="1360:1468" ph="SELECT * FRO... rankings_event" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="16" lean-forward="false" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="16" lean-forward="false" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="9" lean-forward="true" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/req">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
@@ -635,14 +601,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="13" lean-forward="true" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/django/db/backends/postgresql/schema.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-765">
@@ -675,62 +633,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="64" column="0" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="139" column="0" lean-forward="true" selection-start-line="139" selection-start-column="0" selection-end-line="139" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="26" column="40" lean-forward="false" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-153">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
@@ -743,14 +645,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" column="31" lean-forward="false" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-340">
-          <caret line="4" column="31" lean-forward="true" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -835,18 +729,219 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/analysis.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lifesaving_rankings/static/css/project.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="1" lean-forward="false" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/wsgi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rankings/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1700">
+          <caret line="104" column="0" lean-forward="false" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analysis/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rankings/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="490">
+          <caret line="81" column="76" lean-forward="false" selection-start-line="81" selection-start-column="76" selection-end-line="81" selection-end-column="76" />
+          <folding>
+            <marker date="1501321418067" expanded="true" signature="864:1060" ph="SELECT * FRO... rankings_athlete" />
+            <marker date="1501321418067" expanded="true" signature="864:1070" ph="SELECT * FRO... rankings_athlete" />
+            <marker date="1501321418067" expanded="true" signature="896:907" ph="SELECT * FRO... rankings_athlete" />
+            <marker date="1501321418067" expanded="true" signature="896:1060" ph="SELECT * FRO... rankings_athlete" />
+            <marker date="1501321418067" expanded="true" signature="1360:1388" ph="SELECT * FRO... rankings_event" />
+            <marker date="1501321418067" expanded="true" signature="1360:1410" ph="SELECT * FRO... rankings_eventWHERE" />
+            <marker date="1501321418067" expanded="true" signature="1360:1445" ph="SELECT * FRO... rankings_event" />
+            <marker date="1501321418067" expanded="true" signature="1360:1468" ph="SELECT * FRO... rankings_event" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rankings/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="6" lean-forward="false" selection-start-line="21" selection-start-column="6" selection-end-line="21" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analysis/tests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analysis/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="71">
+          <caret line="10" column="30" lean-forward="false" selection-start-line="10" selection-start-column="30" selection-end-line="10" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analysis/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/allauth/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/lifesaving_rankings/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="67" lean-forward="false" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="13" lean-forward="true" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="80" column="70" lean-forward="true" selection-start-line="80" selection-start-column="70" selection-end-line="80" selection-end-column="70" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/analysis/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="23" lean-forward="true" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="33" column="18" lean-forward="true" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
+          <folding>
+            <element signature="e#653#694#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/analysis/analysis.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="45" lean-forward="false" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="45" lean-forward="false" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="45" lean-forward="false" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="45" lean-forward="false" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="45" lean-forward="true" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
           <folding />
         </state>
       </provider>

@@ -20,9 +20,4 @@ urlpatterns = [
         view=views.BestByEvent.as_view(),
         name='best-by-event'
     ),
-    url(
-        regex=r'analysis/(?P<gender>\bmen\b|\bwomen\b)',
-        view=views.Analysis.as_view(),
-        name='analysis'
-    ),
 ]

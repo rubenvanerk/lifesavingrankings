@@ -1,6 +1,7 @@
-{% extends "base.html" %}
+{% extends "lifesaving_rankings/base.html" %}
 {% load datetime_filter %}
 {% load to_url_filter %}
+{% load static %}
 
 {% block head_title %}
     Home
@@ -28,7 +29,6 @@
                                 {{ top_result.event__name }}</a>
                         </td>
                         <td>
-                            {#                    {% var name =  %}#}
                             <a href="{% url 'rankings:athlete-overview' top_result.athlete__first_name|lower|add:top_result.athlete__last_name|lower %}">
                                 {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                             </a>
