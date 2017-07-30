@@ -36,16 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
+    'rankings',
+    'lifesaving_rankings',
+    'analysis',
     'debug_toolbar',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'crispy_forms',
-
-    'rankings',
-    'lifesaving_rankings',
-    'analysis',
 ]
 
 SITE_ID = 1
@@ -71,7 +69,7 @@ ROOT_URLCONF = 'lifesaving_rankings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'account')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

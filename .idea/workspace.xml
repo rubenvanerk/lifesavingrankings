@@ -2,24 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0e21f0a8-ca78-490e-94c3-fc9b32561199" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/analysis/urls.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/base.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/lifesaving_rankings/base.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/analysis.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/analysis/analysis.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/settings.py" afterPath="$PROJECT_DIR$/lifesaving_rankings/settings.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/urls.py" afterPath="$PROJECT_DIR$/lifesaving_rankings/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rankings/models.py" afterPath="$PROJECT_DIR$/rankings/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rankings/urls.py" afterPath="$PROJECT_DIR$/rankings/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rankings/views.py" afterPath="$PROJECT_DIR$/rankings/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_done.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_done.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key_done.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key_done.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_set.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_set.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup_closed.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup_closed.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/verification_sent.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/verification_sent.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lifesaving_rankings/templates/account/verified_email_required.html" afterPath="$PROJECT_DIR$/lifesaving_rankings/templates/account/verified_email_required.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -67,51 +66,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="account_inactive.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="email.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="email_confirm.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="login.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+            <state relative-caret-position="340">
+              <caret line="68" column="13" lean-forward="true" selection-start-line="68" selection-start-column="13" selection-end-line="68" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -146,12 +105,12 @@
       <find>account_email</find>
       <find>database</find>
       <find>email_</find>
-      <find>&lt;button</find>
       <find>bootstrap</find>
       <find>staticfiles_d</find>
       <find>anal</find>
       <find>analy</find>
       <find>templ</find>
+      <find>&lt;button</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\ruben\home\projects\lifesavingrankings.nl</dir>
@@ -176,12 +135,6 @@
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/pinax_theme_bootstrap/templates/site_base.html" />
         <option value="$PROJECT_DIR$/req" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_set.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/analysis.html" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/static/css/project.css" />
@@ -191,20 +144,32 @@
         <option value="$PROJECT_DIR$/rankings/urls.py" />
         <option value="$PROJECT_DIR$/rankings/views.py" />
         <option value="$PROJECT_DIR$/analysis/views.py" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/settings.py" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/urls.py" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/base.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/site_base.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/personal_best.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/event_by_athlete.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/best_by_event.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/analysis/analysis.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/rankings/front_page_records.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_done.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key_done.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup_closed.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/verification_sent.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/verified_email_required.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html" />
         <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html" />
-        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/password_set.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/account/signup.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/templates/allauth/account/signup.html" />
+        <option value="$PROJECT_DIR$/lifesaving_rankings/settings.py" />
       </list>
     </option>
   </component>
@@ -295,10 +260,11 @@
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\rankings" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates" />
+      <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\allauth" />
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\lifesaving_rankings" />
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\analysis" />
       <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl\lifesaving_rankings\templates\rankings" />
-      <recent name="C:\Users\ruben\home\projects\lifesavingrankings.nl" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -478,14 +444,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3043478" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3043478" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22867803" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3001066" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -633,94 +598,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="32" lean-forward="false" selection-start-line="16" selection-start-column="32" selection-end-line="16" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="31" lean-forward="false" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="31" lean-forward="false" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_done.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key_done.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_set.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="31" lean-forward="false" selection-start-line="3" selection-start-column="31" selection-end-line="3" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/verified_email_required.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/verification_sent.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/signup_closed.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/signup.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="250">
@@ -814,14 +691,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/allauth/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/lifesaving_rankings/base.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -834,14 +703,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="18" column="13" lean-forward="true" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="80" column="70" lean-forward="true" selection-start-line="80" selection-start-column="70" selection-end-line="80" selection-end-column="70" />
           <folding />
         </state>
       </provider>
@@ -906,18 +767,98 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/allauth/templates/base.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="86" lean-forward="true" selection-start-line="16" selection-start-column="86" selection-end-line="16" selection-end-column="86" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_done.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_change.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_reset_from_key_done.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/signup_closed.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/verification_sent.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/verified_email_required.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/account_inactive.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="12" selection-end-line="0" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -925,7 +866,7 @@
     <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
           <folding />
         </state>
       </provider>
@@ -933,15 +874,39 @@
     <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/email_confirm.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/login.html">
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/logout.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/password_set.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/templates/account/signup.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="37" lean-forward="true" selection-start-line="10" selection-start-column="37" selection-end-line="10" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lifesaving_rankings/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="68" column="13" lean-forward="true" selection-start-line="68" selection-start-column="13" selection-end-line="68" selection-end-column="13" />
           <folding />
         </state>
       </provider>

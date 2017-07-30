@@ -1,4 +1,4 @@
-{% extends "account/base.html" %}
+{% extends "lifesaving_rankings/base.html" %}
 
 {% load i18n %}
 {% load crispy_forms_filters %}
@@ -8,7 +8,7 @@
 {% block content %}
 <h1>{% trans "Sign Up" %}</h1>
 
-<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+<p>{% blocktrans %}Already have a account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
 <form class="signup col-xs-12 col-sm-8 col-md-5 col-lg-4" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}
