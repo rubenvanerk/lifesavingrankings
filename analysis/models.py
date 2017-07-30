@@ -25,6 +25,17 @@ class SpecialResult(models.Model):
 
 
 class AnalysisGroup(models.Model):
+    UNKNOWN = 0
+    MALE = 1
+    FEMALE = 2
+    GENDER_CHOICES = (
+        (UNKNOWN, 'Unknown'),
+        (MALE, 'Male'),
+        (FEMALE, 'Female')
+    )
+
+    gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
+
     name = models.CharField(max_length=60)
     creator = ForeignKey(User)
     public = models.BooleanField(default=False)

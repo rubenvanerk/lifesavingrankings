@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load staticfiles i18n %}
 {% load account %}
+{% load active_menu_filter %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -32,17 +33,24 @@
                 <a class="navbar-brand" href="/">Lifesaving Rankings</a>
                 {% block nav %}
                     <ul class="nav navbar-nav">
-                        <li role="presentation" class="active"><a href="#">Home</a></li>
-
+                        <li class="dropdown {% active 'analysis' %}">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'analysis:analysis' 'men' %}">Men</a></li>
+                                <li><a href="{% url 'analysis:analysis' 'women' %}">Women</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{% url 'analysis:group-list' %}">Groups</a></li>
+                            </ul>
+                        </li>
                     </ul>
 
                     <ul class="nav navbar-nav pull-right">
                         <li role="presentation" class="navbar-text">{% user_display user %}</li>
                         {% if user.is_authenticated %}
-                            <li role="presentation"><a href="{% url 'account_logout' %}">Logout</a></li>
+                            <li role="presentation" class="{% active 'account_logout' %}"><a href="{% url 'account_logout' %}">Logout</a></li>
                         {% else %}
-                            <li role="presentation"><a href="{% url 'account_login' %}">Login</a></li>
-                            <li role="presentation"><a href="{% url 'account_signup' %}">Sign up</a></li>
+                            <li role="presentation" class="{% active 'account_login' %}"><a href="{% url 'account_login' %}">Login</a></li>
+                            <li role="presentation" class="{% active 'account_signup' %}"><a href="{% url 'account_signup' %}">Sign up</a></li>
                         {% endif %}
                     </ul>
                 {% endblock %}
