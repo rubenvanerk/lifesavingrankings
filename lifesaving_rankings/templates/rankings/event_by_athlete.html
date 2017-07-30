@@ -2,6 +2,8 @@
 {% load datetime_filter %}
 {% load to_url_filter %}
 
+{% block head_title %}{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}{% endblock %}
+
 {% block content %}
     <div class="table-responsive">
         <a href="{% url 'rankings:athlete-overview' object_list.0.athlete__first_name|add:object_list.0.athlete__last_name|to_url %}">

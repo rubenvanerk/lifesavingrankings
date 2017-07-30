@@ -2,9 +2,9 @@
 {% load datetime_filter %}
 {% load year_of_birth_filter %}
 {% load to_url_filter %}
-{% block title %}Lifesaving Rankings - {{ object_list.0.event__name }}{% endblock %}
+{% block head_title %}{{ object_list.0.event__name }}{% endblock %}
 {% block content %}
-    <h1>{{ object_list.0.event__name }} top results  {{ kwargs.gender }}</h1>
+    <h1>{{ object_list.0.event__name }} top results</h1>
     <div class="table-responsive">
         <table class="table table-striped">
             <tr>

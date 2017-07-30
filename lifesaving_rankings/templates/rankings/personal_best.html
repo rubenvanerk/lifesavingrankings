@@ -3,7 +3,7 @@
 {% load to_url_filter %}
 {% load gender_to_text_filter %}
 
-{% block title %}Lifesaving Rankings - {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}{% endblock %}
+{% block head_title %}{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}{% endblock %}
 
 {% block content %}
 <h1>{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}</h1>
