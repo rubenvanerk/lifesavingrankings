@@ -1,8 +1,8 @@
 from django.db.models import Min
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
-from analysis.models import SpecialResult
+from analysis.models import SpecialResult, AnalysisGroup
 from rankings.models import Event, Athlete, IndividualResult
 from rankings.views import gender_name_to_int
 
@@ -34,3 +34,38 @@ class Analysis(TemplateView):
                 individual_results.append(qs)
             results[athlete.id] = individual_results
         return results
+
+
+class AnalysisGroupListView(ListView):
+
+    model = AnalysisGroup
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = super(AnalysisGroupListView, self).get_queryset()
+        qs.filter(creator=user)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(AnalysisGroupListView, self).get_context_data(**kwargs)
+        context['extra'] = 'extra'
+
+        return context
+
+
+class AnalysisGroupUpdate(UpdateView):
+
+    model = AnalysisGroup
+    fields = ['name', 'athlete', 'public']
+    success_url = reverse_lazy('analysis:group-list')
+
+
+class AnalysisGroupCreate(CreateView):
+
+    model = AnalysisGroup
+    fields = ['name', 'athlete', 'public']
+    success_url = reverse_lazy('analysis:group-list')
+
+    def form_valid(self, form):
+        form.instance.creator = self.request.user
+        return super(AnalysisGroupCreate, self).form_valid(form)

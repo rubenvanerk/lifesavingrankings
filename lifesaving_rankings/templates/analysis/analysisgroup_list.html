@@ -1,0 +1,42 @@
+{% extends "lifesaving_rankings/base.html" %}
+
+{% block title %}Lifesaving Rankings - My Groups{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-xs-10">
+            <h1>My Groups</h1>
+        </div>
+        <div class="col-xs-2 text-right">
+            <a href="{% url 'analysis:group-create' %}"><h1><i class="glyphicon glyphicon-plus"></i></h1></a>
+        </div>
+    </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td>Group id</td>
+                <td>Group name</td>
+                <td>Number of members</td>
+                <td>Edit</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for group in object_list %}
+                <tr>
+                    <td>{{ group.id }}</td>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.athlete.count }}</td>
+                    <td>
+                        <a href="{% url 'analysis:group-edit' group.id %}">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                No groups yet.
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+{% endblock %}

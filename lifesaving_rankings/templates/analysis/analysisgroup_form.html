@@ -1,0 +1,12 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load crispy_forms_filters %}
+
+{% block title %}Lifesaving Rankings - Edit Group{% endblock %}
+{% block content %}
+    <form action="" method="post">{% csrf_token %}
+        {{ form|crispy }}
+        <a href="{% url "analysis:group-list" %}"></a>
+        <button class="btn secondary">Cancel</button>
+        <input type="submit" value="Update" class="btn btn-primary"/>
+    </form>
+{% endblock %}

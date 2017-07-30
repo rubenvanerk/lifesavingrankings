@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models import ForeignKey
 
-from rankings.models import Event
+from rankings.models import Event, Athlete
+from django.contrib.auth.models import User
 
 
 class SpecialResult(models.Model):
@@ -21,3 +22,10 @@ class SpecialResult(models.Model):
 
     def __str__(self):
         return self.time
+
+
+class AnalysisGroup(models.Model):
+    name = models.CharField(max_length=60)
+    creator = ForeignKey(User)
+    public = models.BooleanField(default=False)
+    athlete = models.ManyToManyField(Athlete)

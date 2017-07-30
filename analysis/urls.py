@@ -10,4 +10,19 @@ urlpatterns = [
         view=views.Analysis.as_view(),
         name='analysis'
     ),
+    url(
+        regex=r'^groups/',
+        view=views.AnalysisGroupListView.as_view(),
+        name='group-list'
+    ),
+    url(
+        regex=r'^group/(?P<pk>[0-9]+)/edit',
+        view=views.AnalysisGroupUpdate.as_view(),
+        name='group-edit'
+    ),
+    url(
+        regex=r'^group/create',
+        view=views.AnalysisGroupCreate.as_view(),
+        name='group-create'
+    )
 ]
