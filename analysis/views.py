@@ -65,11 +65,14 @@ class AnalysisGroupListView(LoginRequiredMixin, ListView):
         qs = qs.filter(creator=user).order_by('id')
         return qs
 
-    def get_context_data(self, **kwargs):
-        context = super(AnalysisGroupListView, self).get_context_data(**kwargs)
-        context['extra'] = 'extra'
 
-        return context
+class PublicAnalysisGroupListView(ListView):
+    model = AnalysisGroup
+
+    def get_queryset(self):
+        qs = super(PublicAnalysisGroupListView, self).get_queryset()
+        qs = qs.filter(public=True)
+        return qs
 
 
 class AnalysisGroupForm(forms.ModelForm):
@@ -84,7 +87,7 @@ class AnalysisGroupForm(forms.ModelForm):
 class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
-    success_url = reverse_lazy('analysis:group-list')
+    success_url = reverse_lazy('analysis:private-group-list')
 
     def get_object(self, queryset=None):
         obj = super(AnalysisGroupUpdate, self).get_object()
@@ -97,7 +100,7 @@ class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
 class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
-    success_url = reverse_lazy('analysis:group-list')
+    success_url = reverse_lazy('analysis:private-group-list')
 
     def form_valid(self, form):
         form.instance.creator = self.request.user

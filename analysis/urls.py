@@ -21,13 +21,18 @@ urlpatterns = [
         name='group-analysis'
     ),
     url(
-        regex=r'^groups/',
-        view=views.AnalysisGroupListView.as_view(),
-        name='group-list'
-    ),
-    url(
         regex=r'^group/create',
         view=views.AnalysisGroupCreate.as_view(),
         name='group-create'
-    )
+    ),
+    url(
+        regex=r'^my-groups/',
+        view=views.AnalysisGroupListView.as_view(),
+        name='private-group-list'
+    ),
+    url(
+        regex=r'^public-groups/',
+        view=views.PublicAnalysisGroupListView.as_view(),
+        name='public-group-list'
+    ),
 ]

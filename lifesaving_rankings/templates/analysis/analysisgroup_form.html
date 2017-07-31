@@ -5,7 +5,7 @@
 {% block content %}
     <form action="" method="post">{% csrf_token %}
         {{ form|crispy }}
-        <a href="{% url "analysis:group-list" %}"></a>
+        <a href="{% url "analysis:private-group-list" %}"></a>
         <button class="btn secondary">Cancel</button>
         <input type="submit" value="Update" class="btn btn-primary"/>
     </form>
