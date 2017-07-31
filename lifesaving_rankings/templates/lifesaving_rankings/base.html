@@ -39,8 +39,10 @@
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'analysis:analysis' 'men' %}">Men</a></li>
                                 <li><a href="{% url 'analysis:analysis' 'women' %}">Women</a></li>
+                                {% if user.is_authenticated %}
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{% url 'analysis:group-list' %}">Groups</a></li>
+                                <li><a href="{% url 'analysis:group-list' %}">My groups</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                     </ul>

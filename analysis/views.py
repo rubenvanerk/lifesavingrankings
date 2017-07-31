@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.db.models import Min
 from django import forms
 from django.urls import reverse_lazy
@@ -28,6 +30,8 @@ class GroupAnalysis(TemplateView):
         context = super(GroupAnalysis, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
         group = AnalysisGroup.objects.get(pk=group_id)
+        if not group.public and group.creator != self.request.user:
+            raise PermissionDenied
         context['results'] = get_top_results_by_athlete(athletes=group.athlete.all())
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender)
         context['events'] = Event.objects.all()
@@ -52,7 +56,7 @@ def get_top_results_by_athlete(gender=None, athletes=None):
     return results
 
 
-class AnalysisGroupListView(ListView):
+class AnalysisGroupListView(LoginRequiredMixin, ListView):
     model = AnalysisGroup
 
     def get_queryset(self):
@@ -77,13 +81,20 @@ class AnalysisGroupForm(forms.ModelForm):
         }
 
 
-class AnalysisGroupUpdate(UpdateView):
+class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
     success_url = reverse_lazy('analysis:group-list')
 
+    def get_object(self, queryset=None):
+        obj = super(AnalysisGroupUpdate, self).get_object()
+        if obj.creator != self.request.user:
+            raise PermissionDenied
+        else:
+            return obj
 
-class AnalysisGroupCreate(CreateView):
+
+class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
     success_url = reverse_lazy('analysis:group-list')
