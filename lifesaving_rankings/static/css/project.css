@@ -34,3 +34,9 @@ body {
     padding-left: 60px;
     padding-right: 45px;
 }
+
+.analysis-time {
+    padding: 0.5em;
+    width: 5em;
+    overflow: hidden;
+}

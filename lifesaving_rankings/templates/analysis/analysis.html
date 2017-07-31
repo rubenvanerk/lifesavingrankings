@@ -39,8 +39,11 @@
                         {% if results %}
                             {% for result in results %}
                                 <td>
+                                    <div class="analysis-time">
                                     {{ result.pb|format_time }}<br>
                                     <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
+                                    </div>
+
                                 </td>
                             {% endfor %}
                         {% else %}
