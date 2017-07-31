@@ -73,7 +73,7 @@ class AnalysisGroupForm(forms.ModelForm):
         model = AnalysisGroup
         fields = ['name', 'athlete', 'public', 'gender']
         widgets = {
-            'athlete': forms.SelectMultiple
+            'athlete': forms.CheckboxSelectMultiple
         }
 
 

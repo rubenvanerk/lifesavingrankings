@@ -34,7 +34,8 @@
                 {% block nav %}
                     <ul class="nav navbar-nav">
                         <li class="dropdown {% active 'analysis' %}">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span
+                                    class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'analysis:analysis' 'men' %}">Men</a></li>
                                 <li><a href="{% url 'analysis:analysis' 'women' %}">Women</a></li>
@@ -47,10 +48,13 @@
                     <ul class="nav navbar-nav pull-right">
                         <li role="presentation" class="navbar-text">{% user_display user %}</li>
                         {% if user.is_authenticated %}
-                            <li role="presentation" class="{% active 'account_logout' %}"><a href="{% url 'account_logout' %}">Logout</a></li>
+                            <li role="presentation" class="{% active 'account_logout' %}"><a
+                                    href="{% url 'account_logout' %}">Logout</a></li>
                         {% else %}
-                            <li role="presentation" class="{% active 'account_login' %}"><a href="{% url 'account_login' %}">Login</a></li>
-                            <li role="presentation" class="{% active 'account_signup' %}"><a href="{% url 'account_signup' %}">Sign up</a></li>
+                            <li role="presentation" class="{% active 'account_login' %}"><a
+                                    href="{% url 'account_login' %}">Login</a></li>
+                            <li role="presentation" class="{% active 'account_signup' %}"><a
+                                    href="{% url 'account_signup' %}">Sign up</a></li>
                         {% endif %}
                     </ul>
                 {% endblock %}
@@ -63,7 +67,7 @@
             {% endfor %}
         {% endif %}
 
-        <div class="container">
+        <div class="container" id="main">
             {% block content %}
                 <p>Use this document as a way to quick start any new project.</p>
             {% endblock %}
@@ -96,7 +100,13 @@
 
 
     {% endblock %}
-
+    <footer id="footer">
+        <div class="container">
+            <span class="pull-right">
+            Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>
+            </span>
+        </div>
+    </footer>
     {% block footer %}
 
     {% endblock %}

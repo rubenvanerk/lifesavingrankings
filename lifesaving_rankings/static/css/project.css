@@ -2,6 +2,35 @@ body {
     background: url('../images/whitediamond.png') repeat;
 }
 
+html {
+    height: 100%;
+}
+
+body {
+    padding-bottom: 50px;
+    min-height: 100%;
+    position: relative;
+}
+
 .navbar {
     margin-top: 1em;
+}
+
+#main {
+    padding-left: 30px;
+    padding-right: 60px;
+}
+
+#footer {
+    background-color: white;
+    padding: 1em;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid lightgrey;
+}
+
+#footer > .container {
+    padding-left: 60px;
+    padding-right: 45px;
 }
