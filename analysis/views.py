@@ -74,6 +74,11 @@ class PublicAnalysisGroupListView(ListView):
         qs = qs.filter(public=True)
         return qs
 
+    def get_context_data(self, **kwargs):
+        context = super(PublicAnalysisGroupListView, self).get_context_data()
+        context['public'] = True
+        return context
+
 
 class AnalysisGroupForm(forms.ModelForm):
     class Meta:

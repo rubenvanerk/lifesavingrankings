@@ -17,7 +17,9 @@
             <td>Group id</td>
             <td>Group name</td>
             <td>Number of members</td>
-            <td>Edit</td>
+            {% if not public %}
+                <td>Edit</td>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -30,11 +32,13 @@
                     </a>
                 </td>
                 <td>{{ group.athlete.count }}</td>
-                <td>
-                    <a href="{% url 'analysis:group-edit' group.id %}">
-                        <i class="glyphicon glyphicon-pencil"></i>
-                    </a>
-                </td>
+                {% if not public %}
+                    <td>
+                        <a href="{% url 'analysis:group-edit' group.id %}">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </a>
+                    </td>
+                {% endif %}
             </tr>
         {% empty %}
             No groups yet.
