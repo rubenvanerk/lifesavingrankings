@@ -2,7 +2,6 @@ from django.db.models import Min
 from django.views.generic import ListView, TemplateView
 from .models import *
 from django.http import Http404
-import numpy as numpy
 
 
 class FrontPageRecords(ListView):
