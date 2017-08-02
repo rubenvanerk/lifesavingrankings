@@ -1,5 +1,9 @@
 import os
+import environ
 
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -8,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = env('SECRET_KEY')
 
 
 # Application definition
@@ -78,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'lifesaving_rankings',
         'USER': 'lifesaving_rankings_django',
-        'PASSWORD': os.environ['DB_PASS'],
+        'PASSWORD': env('DB_PASS'),
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
