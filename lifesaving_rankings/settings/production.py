@@ -1,6 +1,6 @@
 from .base import *
 
-ALLOWED_HOSTS = ['www.lifesavingrankings.nl']
+ALLOWED_HOSTS = ['www.lifesavingrankings.nl', 'lifesavingrankings.nl']
 DEBUG = False
 
 STATIC_URL = 'http://91.218.127.89:8000/static/'
