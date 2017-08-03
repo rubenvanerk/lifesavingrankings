@@ -28,40 +28,54 @@
 {% block body %}
 
     <div class="container">
+
         <nav class="navbar navbar-default">
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <a class="navbar-brand" href="/">Lifesaving Rankings</a>
-                {% block nav %}
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown {% active 'analysis' %}">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span
-                                    class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'analysis:analysis' 'men' %}">Men</a></li>
-                                <li><a href="{% url 'analysis:analysis' 'women' %}">Women</a></li>
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#navbar-collapse" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Lifesaving Rankings</a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar-collapse">
+                    {% block nav %}
+                        <ul class="nav navbar-nav">
+                            <li class="dropdown {% active 'analysis' %}">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span
+                                        class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{% url 'analysis:analysis' 'men' %}">Men</a></li>
+                                    <li><a href="{% url 'analysis:analysis' 'women' %}">Women</a></li>
 
-                                <li role="separator" class="divider"></li>
-                                {% if user.is_authenticated %}
-                                <li><a href="{% url 'analysis:private-group-list' %}">My groups</a></li>
-                                {% endif %}
-                                <li><a href="{% url 'analysis:public-group-list' %}">Public groups</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                                    <li role="separator" class="divider"></li>
 
-                    <ul class="nav navbar-nav pull-right">
-                        <li role="presentation" class="navbar-text">{% user_display user %}</li>
-                        {% if user.is_authenticated %}
-                            <li role="presentation" class="{% active 'account_logout' %}"><a
-                                    href="{% url 'account_logout' %}">Logout</a></li>
-                        {% else %}
-                            <li role="presentation" class="{% active 'account_login' %}"><a
-                                    href="{% url 'account_login' %}">Login</a></li>
-                            <li role="presentation" class="{% active 'account_signup' %}"><a
-                                    href="{% url 'account_signup' %}">Sign up</a></li>
-                        {% endif %}
-                    </ul>
-                {% endblock %}
+                                    {% if user.is_authenticated %}
+                                        <li><a href="{% url 'analysis:private-group-list' %}">My groups</a></li>
+                                    {% endif %}
+                                    <li><a href="{% url 'analysis:public-group-list' %}">Public groups</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <p class="navbar-text navbar-right">Logged in as: {% user_display user %}</p>
+
+                        <ul class="nav navbar-nav navbar-right">
+                            {% if user.is_authenticated %}
+                                <li role="presentation" class="{% active 'account_logout' %}"><a
+                                        href="{% url 'account_logout' %}">Logout</a></li>
+                            {% else %}
+                                <li role="presentation" class="{% active 'account_login' %}"><a
+                                        href="{% url 'account_login' %}">Login</a></li>
+                                <li role="presentation" class="{% active 'account_signup' %}"><a
+                                        href="{% url 'account_signup' %}">Sign up</a></li>
+                            {% endif %}
+                        </ul>
+                    {% endblock %}
+                </div>
             </div>
         </nav>
 
@@ -71,7 +85,7 @@
             {% endfor %}
         {% endif %}
 
-        <div class="container" id="main">
+        <div class="container-fluid" id="main">
             {% block content %}
                 <p>Use this document as a way to quick start any new project.</p>
             {% endblock %}
