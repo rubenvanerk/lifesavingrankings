@@ -4,7 +4,13 @@
 {% block content %}
     <div class="row">
         <div class="col-xs-10">
-            <h1>My Groups</h1>
+            <h1>
+                {% if public %}
+                    Public groups
+                {% else %}
+                    My groups
+                {% endif %}
+            </h1>
         </div>
         <div class="col-xs-2 text-right">
             <a href="{% url 'analysis:group-create' %}"><h1><i class="glyphicon glyphicon-plus"></i></h1></a>

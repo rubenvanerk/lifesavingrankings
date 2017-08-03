@@ -3,12 +3,14 @@
 
 {% block title %}Lifesaving Rankings - Edit Group{% endblock %}
 {% block content %}
-    <div class="col-md-4">
-        <form action="" method="post">{% csrf_token %}
-            {{ form|crispy }}
-            <a href="{% url "analysis:private-group-list" %}"></a>
-            <button class="btn secondary">Cancel</button>
-            <input type="submit" value="Update" class="btn btn-primary"/>
-        </form>
+    <div class="row">
+        <div class="col-md-4">
+            <form action="" method="post">{% csrf_token %}
+                {{ form|crispy }}
+                <a href="{% url "analysis:private-group-list" %}"></a>
+                <button class="btn secondary">Cancel</button>
+                <input type="submit" value="Update" class="btn btn-primary"/>
+            </form>
+        </div>
     </div>
 {% endblock %}
