@@ -61,7 +61,9 @@
                             </li>
                         </ul>
 
-                        <p class="navbar-text navbar-right">Logged in as: {% user_display user %}</p>
+                        {% if user.is_authenticated %}
+                            <p class="navbar-text navbar-right">Logged in as: {% user_display user %}</p>
+                        {% endif %}
 
                         <ul class="nav navbar-nav navbar-right">
                             {% if user.is_authenticated %}
