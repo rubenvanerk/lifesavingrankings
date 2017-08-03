@@ -1,10 +1,24 @@
 {% extends "lifesaving_rankings/base.html" %}
 {% load crispy_forms_filters %}
 
-{% block title %}Lifesaving Rankings - Edit Group{% endblock %}
+{% block head_title %}
+    {% if new_group %}
+        Create new group
+    {% else %}
+        Edit group
+    {% endif %}
+{% endblock %}
 {% block content %}
     <div class="row">
+
         <div class="col-md-4">
+            <h1>
+                {% if new_group %}
+                    Create new group
+                {% else %}
+                    Edit group
+                {% endif %}
+            </h1>
             <form action="" method="post">{% csrf_token %}
                 {{ form|crispy }}
                 <a href="{% url "analysis:private-group-list" %}"></a>

@@ -111,4 +111,9 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
         form.instance.creator = self.request.user
         return super(AnalysisGroupCreate, self).form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super(AnalysisGroupCreate, self).get_context_data()
+        context['new_group'] = True
+        return context
+
 
