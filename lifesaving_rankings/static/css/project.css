@@ -29,6 +29,7 @@ body {
     padding: 0.5em;
     width: 5em;
     overflow: hidden;
+    border-radius: 4px;
 }
 
 .analysis-red {
