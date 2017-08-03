@@ -34,14 +34,18 @@
 
             {% for athlete_id, qs in results.items %}
                 <tr>
-                    <td>{{ athlete_id|id_to_athlete_name }}</td>
+                    <td>
+                        <a href="{% url 'rankings:athlete-overview' athlete_id|id_to_athlete_name|to_url %}">
+                            {{ athlete_id|id_to_athlete_name }}
+                        </a>
+                    </td>
                     {% for results in qs %}
                         {% if results %}
                             {% for result in results %}
                                 <td>
                                     <div class="analysis-time">
-                                    {{ result.pb|format_time }}<br>
-                                    <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
+                                        {{ result.pb|format_time }}<br>
+                                        <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
                                     </div>
 
                                 </td>
