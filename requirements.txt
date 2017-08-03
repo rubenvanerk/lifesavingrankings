@@ -9,6 +9,7 @@ django-crispy-forms==1.6.1
 django-debug-toolbar==1.8
 django-environ==0.4.3
 django-sites==0.9
+environ==1.0
 idna==2.5
 oauthlib==2.0.2
 psycopg2==2.7.2
