@@ -4,15 +4,15 @@ var colorPercentages = function () {
     analysisResults.each(function () {
         var percentage = $(this).text();
         percentage = percentage.replace('%', '');
-        var color = 'red';
+        var color = '';
         if(percentage < 100) {
-            color = 'green';
+            color = 'analysis-green';
         } else if(percentage < 105) {
-            color = 'orange';
+            color = 'analysis-orange';
         } else {
-            color = 'red';
+            color = 'analysis-red';
         }
-        $(this).parent().css('background-color', color);
+        $(this).parent().addClass(color);
     });
 
 };

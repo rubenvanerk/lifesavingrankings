@@ -16,11 +16,6 @@ body {
     margin-top: 1em;
 }
 
-/*#main {*/
-    /*padding-left: 30px;*/
-    /*padding-right: 60px;*/
-/*}*/
-
 #footer {
     background-color: white;
     padding: 1em;
@@ -30,13 +25,20 @@ body {
     border-top: 1px solid lightgrey;
 }
 
-/*#footer > .container {*/
-    /*padding-left: 60px;*/
-    /*padding-right: 45px;*/
-/*}*/
-
 .analysis-time {
     padding: 0.5em;
     width: 5em;
     overflow: hidden;
+}
+
+.analysis-red {
+    background-color: #C52011;
+}
+
+.analysis-orange {
+    background-color: #fdb430;
+}
+
+.analysis-green {
+    background-color: #178901;
 }
