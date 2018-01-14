@@ -17,7 +17,7 @@ class SpecialResult(models.Model):
 
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
 
-    event = ForeignKey(Event)
+    event = ForeignKey(Event, on_delete=models.CASCADE)
     time = models.DurationField()
 
     def __str__(self):
@@ -37,6 +37,6 @@ class AnalysisGroup(models.Model):
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
 
     name = models.CharField(max_length=60)
-    creator = ForeignKey(User)
+    creator = ForeignKey(User, on_delete=models.SET_NULL, null=True)
     public = models.BooleanField(default=False)
     athlete = models.ManyToManyField(Athlete)

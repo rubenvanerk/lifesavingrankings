@@ -27,8 +27,8 @@ urlpatterns = [
     url(regex=r'^accounts/profile/',
         view=views.FrontPageRecords.as_view(),
         name='profile'),
-    url(r'^rankings/', include('rankings.urls', namespace='rankings')),
-    url(r'^analysis/', include('analysis.urls', namespace='analysis'))
+    url(r'^rankings/', include('rankings.urls')),
+    url(r'^analysis/', include('analysis.urls'))
 ]
 
 if settings.DEBUG:

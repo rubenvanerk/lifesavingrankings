@@ -8,3 +8,4 @@ ALLOWED_HOSTS = []
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 STATIC_URL = '/static/'
+

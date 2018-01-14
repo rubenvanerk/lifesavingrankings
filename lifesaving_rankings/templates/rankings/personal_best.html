@@ -16,11 +16,11 @@
         {% for personal_best in object_list %}
         <tr>
             <td>
-                <a href="{% url 'rankings:best-by-event' event_name=personal_best.event__name|to_url gender=object_list.0.athlete__gender|gender_to_text %}">
+                <a href="{% url 'best-by-event' event_name=personal_best.event__name|to_url gender=object_list.0.athlete__gender|gender_to_text %}">
                     {{ personal_best.event__name }}</a>
             </td>
             <td>
-                <a href="{% url 'rankings:athlete-event' athlete_name=personal_best.athlete__first_name|add:personal_best.athlete__last_name|to_url event_name=personal_best.event__name|to_url %}">
+                <a href="{% url 'athlete-event' athlete_name=personal_best.athlete__first_name|add:personal_best.athlete__last_name|to_url event_name=personal_best.event__name|to_url %}">
                     {{ personal_best.time|format_time }}</a></td>
         </tr>
         {% endfor %}

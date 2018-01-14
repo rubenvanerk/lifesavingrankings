@@ -68,9 +68,9 @@ class Competition(models.Model):
 
 
 class IndividualResult(models.Model):
-    athlete = ForeignKey(Athlete)
-    event = ForeignKey(Event)
-    competition = ForeignKey(Competition)
+    athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
+    event = ForeignKey(Event, on_delete=models.CASCADE)
+    competition = ForeignKey(Competition,on_delete=models.CASCADE)
     time = models.DurationField()
 
     @staticmethod

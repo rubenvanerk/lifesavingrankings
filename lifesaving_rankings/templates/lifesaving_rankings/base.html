@@ -75,15 +75,15 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span
                                         class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{% url 'analysis:analysis' 'men' %}">Men</a></li>
-                                    <li><a href="{% url 'analysis:analysis' 'women' %}">Women</a></li>
+                                    <li><a href="{% url 'analysis' 'men' %}">Men</a></li>
+                                    <li><a href="{% url 'analysis' 'women' %}">Women</a></li>
 
                                     <li role="separator" class="divider"></li>
 
                                     {% if user.is_authenticated %}
-                                        <li><a href="{% url 'analysis:private-group-list' %}">My groups</a></li>
+                                        <li><a href="{% url 'private-group-list' %}">My groups</a></li>
                                     {% endif %}
-                                    <li><a href="{% url 'analysis:public-group-list' %}">Public groups</a></li>
+                                    <li><a href="{% url 'public-group-list' %}">Public groups</a></li>
                                 </ul>
                             </li>
                         </ul>
