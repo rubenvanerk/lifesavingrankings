@@ -35,7 +35,7 @@
             {% for athlete_id, qs in results.items %}
                 <tr>
                     <td>
-                        <a href="{% url 'rankings:athlete-overview' athlete_id|id_to_athlete_name|to_url %}">
+                        <a href="{% url 'athlete-overview' athlete_id|id_to_athlete_name|to_url %}">
                             {{ athlete_id|id_to_athlete_name }}
                         </a>
                     </td>

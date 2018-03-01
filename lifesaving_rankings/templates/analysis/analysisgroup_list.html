@@ -14,7 +14,7 @@
             </h1>
         </div>
         <div class="col-xs-2 text-right">
-            <a href="{% url 'analysis:group-create' %}"><h1><i class="glyphicon glyphicon-plus"></i></h1></a>
+            <a href="{% url 'group-create' %}"><h1><i class="glyphicon glyphicon-plus"></i></h1></a>
         </div>
     </div>
 
@@ -34,14 +34,14 @@
             <tr>
                 <td>{{ group.id }}</td>
                 <td>
-                    <a href="{% url 'analysis:group-analysis' group.id %}">
+                    <a href="{% url 'group-analysis' group.id %}">
                         {{ group.name }}
                     </a>
                 </td>
                 <td>{{ group.athlete.count }}</td>
                 {% if not public %}
                     <td>
-                        <a href="{% url 'analysis:group-edit' group.id %}">
+                        <a href="{% url 'group-edit' group.id %}">
                             <i class="glyphicon glyphicon-pencil"></i>
                         </a>
                     </td>

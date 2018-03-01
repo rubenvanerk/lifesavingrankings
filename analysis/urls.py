@@ -5,11 +5,11 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(
-        regex=r'(?P<gender>\bmen\b|\bwomen\b)',
-        view=views.Analysis.as_view(),
-        name='analysis'
-    ),
+    # url(
+    #     regex=r'(?P<gender>\bmen\b|\bwomen\b)',
+    #     view=views.Analysis.as_view(),
+    #     name='analysis'
+    # ),
     url(
         regex=r'^group/(?P<pk>[0-9]+)/edit',
         view=views.AnalysisGroupUpdate.as_view(),
