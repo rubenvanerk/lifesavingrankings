@@ -1,4 +1,0 @@
-database:
-    name: lifesaving_rankings
-    user: lifesaving_rankings_django
-    pass: 5EydU!G3jwTuewDq

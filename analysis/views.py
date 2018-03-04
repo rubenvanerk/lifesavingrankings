@@ -20,7 +20,7 @@ class GroupAnalysis(TemplateView):
             raise PermissionDenied
         context['results'] = get_top_results_by_athlete(athletes=group.athlete.all())
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender)
-        context['events'] = Event.objects.all()
+        context['events'] = Event.objects.all().order_by('id')
         return context
 
 

@@ -51,12 +51,12 @@ class PersonalBests(ListView):
         qs = qs.values('event__name', 'athlete__first_name', 'athlete__last_name', 'athlete__gender', 'athlete_id',
                        'event_id')
         qs = qs.annotate(time=Min('time'))
-        result['individual'] = qs
+        result['individual'] = qs.order_by('event_id')
         qs = IndividualResult.find_by_athlete(athlete).filter(event__type=2)
         qs = qs.values('event__name', 'athlete__first_name', 'athlete__last_name', 'athlete__gender', 'athlete_id',
                        'event_id')
         qs = qs.annotate(time=Min('time'))
-        result['relay'] = qs
+        result['relay'] = qs.order_by('event_id')
         return result
 
     template_name = 'rankings/personal_best.html'
@@ -107,7 +107,6 @@ def merge_athletes(request):
         return render(request, 'rankings/merge_athletes.html', {'form': form})
 
 
-
 class BestByEvent(ListView):
     model = IndividualResult
 
@@ -118,7 +117,7 @@ class BestByEvent(ListView):
         qs = qs.filter(event=event_id).order_by('time')
 
         gender = gender_name_to_int(self.kwargs.get('gender'))
-        qs = qs.filter(athlete__gender=gender)
+        qs = qs.filter(athlete__gender=gender).order_by(event_id)
 
         qs = qs.values('athlete_id',
                        'athlete__first_name',
