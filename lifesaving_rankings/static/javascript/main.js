@@ -3,6 +3,7 @@ var colorPercentages = function () {
 
     analysisResults.each(function () {
         var percentage = $(this).text();
+        if(percentage === "") {return;}
         percentage = percentage.replace('%', '');
         var color = '';
         if(percentage < 100) {

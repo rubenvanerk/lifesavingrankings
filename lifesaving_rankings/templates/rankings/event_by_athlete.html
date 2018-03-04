@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="table-responsive">
-        <a href="{% url 'athlete-overview' object_list.0.athlete__first_name|add:object_list.0.athlete__last_name|to_url %}">
+        <a href="{% url 'athlete-overview' athlete_id=object_list.0.athlete_id %}">
             < back
         </a>
         <h1>

@@ -22,4 +22,4 @@ def calculate_percentage(result, special_results):
             special_result_time = special_result.time.seconds + (special_result.time.microseconds / 1000000)
             percentage = round(personal_best / special_result_time * 100, 1)
             return str(percentage) + '%'
-    return 9001
+    return ""

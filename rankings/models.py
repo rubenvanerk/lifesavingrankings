@@ -38,11 +38,22 @@ class Athlete(models.Model):
             "LIMIT 1",
             [name, name]
         )
-        return athlete[0]
+        for result in athlete:
+            return result
+        return False
 
 
 class Event(models.Model):
+    UNKNOWN = 0
+    INDIVIDUAL = 1
+    RELAY_SEGMENT = 2
+    TYPES = (
+        (UNKNOWN, 'Unknown'),
+        (INDIVIDUAL, 'Individual'),
+        (RELAY_SEGMENT, 'Relay segment')
+    )
     name = models.CharField(max_length=60)
+    type = models.IntegerField(default=UNKNOWN, choices=TYPES)
 
     def __str__(self):
         return self.name
@@ -59,9 +70,18 @@ class Event(models.Model):
 
 
 class Competition(models.Model):
+    UNKNOWN = 0
+    ELECTRONIC = 1
+    BY_HAND = 2
+    TYPES = (
+        (UNKNOWN, 'Unknown'),
+        (ELECTRONIC, 'Electronic'),
+        (BY_HAND, 'By hand')
+    )
     name = models.CharField(max_length=60, unique=True)
     date = models.DateField()
     location = models.CharField(max_length=30)
+    type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
 
     def __str__(self):
         return self.name
@@ -70,7 +90,7 @@ class Competition(models.Model):
 class IndividualResult(models.Model):
     athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
     event = ForeignKey(Event, on_delete=models.CASCADE)
-    competition = ForeignKey(Competition,on_delete=models.CASCADE)
+    competition = ForeignKey(Competition, on_delete=models.CASCADE)
     time = models.DurationField()
 
     @staticmethod
