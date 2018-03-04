@@ -19,13 +19,13 @@ class GroupAnalysis(TemplateView):
         if not group.public and group.creator != self.request.user:
             raise PermissionDenied
         context['results'] = get_top_results_by_athlete(athletes=group.athlete.all())
-        context['special_results'] = SpecialResult.objects.filter(gender=group.gender)
+        context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
         context['events'] = Event.objects.all().order_by('id')
         return context
 
 
 def get_top_results_by_athlete(gender=None, athletes=None):
-    events = Event.objects.all()
+    events = Event.objects.all().order_by('id')
     if athletes is None:
         athletes = Athlete.objects.filter(gender=gender)
     results = {}

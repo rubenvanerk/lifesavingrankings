@@ -117,7 +117,7 @@ class BestByEvent(ListView):
         qs = qs.filter(event=event_id).order_by('time')
 
         gender = gender_name_to_int(self.kwargs.get('gender'))
-        qs = qs.filter(athlete__gender=gender).order_by(event_id)
+        qs = qs.filter(athlete__gender=gender)
 
         qs = qs.values('athlete_id',
                        'athlete__first_name',

@@ -10,21 +10,23 @@
     <h1>{{ object_list.individual.0.athlete__first_name }} {{ object_list.individual.0.athlete__last_name }}</h1>
     <div class="table-responsive">
         <table class="table table-striped">
-            <tr>
-                <th>Individual event</th>
-                <th>PB</th>
-            </tr>
-            {% for personal_best in object_list.individual %}
+            {% if object_list.individual|length > 0 %}
                 <tr>
-                    <td>
-                        <a href="{% url 'best-by-event' event_id=personal_best.event_id gender=object_list.individual.0.athlete__gender|gender_to_text %}">
-                            {{ personal_best.event__name }}</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'athlete-event' athlete_id=personal_best.athlete_id event_id=personal_best.event_id %}">
-                            {{ personal_best.time|format_time }}</a></td>
+                    <th>Individual event</th>
+                    <th>PB</th>
                 </tr>
-            {% endfor %}
+                {% for personal_best in object_list.individual %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'best-by-event' event_id=personal_best.event_id gender=object_list.individual.0.athlete__gender|gender_to_text %}">
+                                {{ personal_best.event__name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'athlete-event' athlete_id=personal_best.athlete_id event_id=personal_best.event_id %}">
+                                {{ personal_best.time|format_time }}</a></td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
             {% if object_list.relay|length > 0 %}
                 <tr>
                     <th>Relays</th>
