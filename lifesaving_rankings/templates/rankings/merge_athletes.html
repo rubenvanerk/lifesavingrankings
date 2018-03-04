@@ -1,0 +1,20 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load crispy_forms_filters %}
+
+{% block head_title %}
+    Merge athletes
+{% endblock %}
+{% block content %}
+    <div class="row">
+
+        <div class="col-md-4">
+            <h1>
+                Merge athletes
+            </h1>
+            <form action="" method="post">{% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="Merge" class="btn btn-primary"/>
+            </form>
+        </div>
+    </div>
+{% endblock %}

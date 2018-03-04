@@ -1,7 +1,12 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Min
+from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import ListView, TemplateView
 from .models import *
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
+from .forms import *
 
 
 class FrontPageRecords(ListView):
@@ -74,6 +79,35 @@ class EventByAthlete(ListView):
     template_name = 'rankings/event_by_athlete.html'
 
 
+@login_required
+def merge_athletes(request):
+    if request.method == 'POST':
+
+        form = MergeAthletesForm(request.POST)
+
+        if form.is_valid():
+            first_athlete = form['first_athlete'].value()
+            second_athlete = form['second_athlete'].value()
+
+            first_athlete_object = Athlete.objects.get(pk=first_athlete)
+
+            individual_results = IndividualResult.objects.filter(athlete=second_athlete)
+            for result in individual_results:
+                result.athlete = first_athlete_object
+                result.save()
+
+            second_athlete_object = Athlete.objects.get(pk=second_athlete)
+            second_athlete_object.delete()
+
+            return HttpResponseRedirect(reverse('athlete-overview', args=[first_athlete]))
+
+    else:
+        form = MergeAthletesForm
+
+        return render(request, 'rankings/merge_athletes.html', {'form': form})
+
+
+
 class BestByEvent(ListView):
     model = IndividualResult
 
@@ -111,22 +145,6 @@ def best_result_per_athlete(qs):
     return final_list
 
 
-def get_top_results_by_athlete_and_event(event_name, gender):
-    qs = IndividualResult.objects.filter(athlete__gender=gender)
-    event = Event.find_by_name(event_name)
-    qs = qs.filter(event=event).order_by('time')
-
-    qs = qs.values('athlete_id',
-                   'athlete__first_name',
-                   'athlete__last_name',
-                   'athlete__year_of_birth',
-                   'time',
-                   'competition__date',
-                   'competition__name',
-                   'event__name')
-    return qs
-
-
 def gender_name_to_int(gender):
     if gender == 'men':
         return 1
@@ -134,7 +152,3 @@ def gender_name_to_int(gender):
         return 2
     else:
         raise Http404
-
-
-
-

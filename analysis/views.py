@@ -7,20 +7,6 @@ from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from analysis.models import SpecialResult, AnalysisGroup
 from rankings.models import Event, Athlete, IndividualResult
-from rankings.views import gender_name_to_int
-
-
-class Analysis(TemplateView):
-    template_name = 'analysis/analysis.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(Analysis, self).get_context_data(**kwargs)
-        gender = gender_name_to_int(self.kwargs.get('gender'))
-        context['gender'] = gender
-        context['results'] = get_top_results_by_athlete(gender=gender)
-        context['special_results'] = SpecialResult.objects.filter(gender=gender)
-        context['events'] = Event.objects.all()
-        return context
 
 
 class GroupAnalysis(TemplateView):

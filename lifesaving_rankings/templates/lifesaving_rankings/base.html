@@ -30,12 +30,16 @@
         /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
-        (function() {
-            var u="//piwik.rubenvanerk.nl/";
-            _paq.push(['setTrackerUrl', u+'piwik.php']);
+        (function () {
+            var u = "//piwik.rubenvanerk.nl/";
+            _paq.push(['setTrackerUrl', u + 'piwik.php']);
             _paq.push(['setSiteId', '2']);
-            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+            g.type = 'text/javascript';
+            g.async = true;
+            g.defer = true;
+            g.src = u + 'piwik.js';
+            s.parentNode.insertBefore(g, s);
         })();
     </script>
     <!-- End Matomo Code -->
@@ -65,17 +69,17 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Analysis <span
                                         class="caret"></span></a>
                                 <ul class="dropdown-menu">
-{#                                    <li><a href="{% url 'analysis' 'men' %}">Men</a></li>#}
-{#                                    <li><a href="{% url 'analysis' 'women' %}">Women</a></li>#}
-
-{#                                    <li role="separator" class="divider"></li>#}
-
                                     {% if user.is_authenticated %}
                                         <li><a href="{% url 'private-group-list' %}">My groups</a></li>
                                     {% endif %}
                                     <li><a href="{% url 'public-group-list' %}">Public groups</a></li>
                                 </ul>
                             </li>
+                            {% if user.is_authenticated %}
+                                <li class="{% active 'merge-athletes' %}" role="presentation">
+                                    <a href="{% url 'merge-athletes' %}">Merge athletes</a>
+                                </li>
+                            {% endif %}
                         </ul>
 
                         {% if user.is_authenticated %}
@@ -89,8 +93,6 @@
                             {% else %}
                                 <li role="presentation" class="{% active 'account_login' %}"><a
                                         href="{% url 'account_login' %}">Login</a></li>
-{#                                <li role="presentation" class="{% active 'account_signup' %}"><a#}
-{#                                        href="{% url 'account_signup' %}">Sign up</a></li>#}
                             {% endif %}
                         </ul>
                     {% endblock %}
@@ -143,7 +145,7 @@
             <span class="pull-left">
                 Missing a competition? Mail me at results@lifesavingrankings.nl
             </span>
-            <span class="pull-right">
+                <span class="pull-right">
             Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>
             </span>
             </div>

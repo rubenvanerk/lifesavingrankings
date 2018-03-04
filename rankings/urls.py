@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
+from django.urls import path
 
 from . import views
 
@@ -19,5 +20,10 @@ urlpatterns = [
         regex=r'^top/(?P<event_id>[0-9]+)/(?P<gender>\bmen\b|\bwomen\b)',
         view=views.BestByEvent.as_view(),
         name='best-by-event'
+    ),
+    url(
+        regex=r'^merge-athletes',
+        view=views.merge_athletes,
+        name='merge-athletes'
     ),
 ]
