@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.contrib import admin
 from rankings import views
 from django.conf import settings
 
@@ -28,6 +29,7 @@ urlpatterns = [
         view=views.FrontPageRecords.as_view(),
         name='profile'),
     url(r'^rankings/', include('rankings.urls')),
-    url(r'^analysis/', include('analysis.urls'))
+    url(r'^analysis/', include('analysis.urls')),
+    url(r'^admin/', admin.site.urls)
 ]
 

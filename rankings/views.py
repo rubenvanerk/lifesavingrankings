@@ -1,9 +1,8 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Min
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView
 from .models import *
 from django.http import Http404, HttpResponseRedirect
 from .forms import *
@@ -79,7 +78,7 @@ class EventByAthlete(ListView):
     template_name = 'rankings/event_by_athlete.html'
 
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def merge_athletes(request):
     if request.method == 'POST':
 

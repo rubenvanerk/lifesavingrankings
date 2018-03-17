@@ -75,14 +75,14 @@
                                     <li><a href="{% url 'public-group-list' %}">Public groups</a></li>
                                 </ul>
                             </li>
-                            {% if user.is_authenticated %}
+                            {% if request.user.is_superuser %}
                                 <li class="{% active 'merge-athletes' %}" role="presentation">
                                     <a href="{% url 'merge-athletes' %}">Merge athletes</a>
                                 </li>
                             {% endif %}
                         </ul>
 
-                        {% if user.is_authenticated %}
+                        {% if user.is_superuser %}
                             <p class="navbar-text navbar-right">Logged in as: {% user_display user %}</p>
                         {% endif %}
 
