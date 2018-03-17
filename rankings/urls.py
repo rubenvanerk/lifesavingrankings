@@ -26,4 +26,9 @@ urlpatterns = [
         view=views.merge_athletes,
         name='merge-athletes'
     ),
+    url(
+        regex=r'^search',
+        view=views.Search.as_view(),
+        name='search'
+    ),
 ]

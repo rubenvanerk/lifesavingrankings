@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Min
+from django.db.models import Min, Q
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
@@ -130,6 +130,35 @@ class BestByEvent(ListView):
         return best_result_per_athlete(qs)
 
     template_name = 'rankings/best_by_event.html'
+
+
+class Search(ListView):
+    model = Athlete
+
+    def get_queryset(self):
+        qs = super(Search, self).get_queryset()
+
+        query = self.request.GET.get('athlete')
+
+        parts = query.split(' ')
+
+        if query and len(parts) > 1:
+            qs = qs.filter(
+                (Q(first_name__icontains=query) | Q(last_name__icontains=query))
+                | (Q(first_name__icontains=parts[0]) | Q(last_name__icontains=parts[len(parts) - 1]))
+            )
+        else:
+            qs = qs.filter((Q(first_name__icontains=query) | Q(last_name__icontains=query)))
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(Search, self).get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('athlete')
+        return context
+
+
+    template_name = 'rankings/search.html'
 
 
 def best_result_per_athlete(qs):
