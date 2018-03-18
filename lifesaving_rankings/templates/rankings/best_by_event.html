@@ -6,7 +6,8 @@
 {% block content %}
     <h1>{{ object_list.0.event__name }} top results</h1>
     <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered" id="bestByEvent">
+            <thead>
             <tr>
                 <th>#</th>
                 <th>Athlete</th>
@@ -15,6 +16,8 @@
                 <th>Date</th>
                 <th>Competition</th>
             </tr>
+            </thead>
+            <tbody>
             {% for top_result in object_list %}
                 <tr>
                     <td>
@@ -31,6 +34,7 @@
                     <td>{{ top_result.competition__name }}</td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}
