@@ -94,3 +94,6 @@ ENV/
 
 # Jetbrains IDE
 .idea
+
+# Zappa
+le-account.key
