@@ -5,7 +5,6 @@
 {% block head_title %}{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}{% endblock %}
 
 {% block content %}
-    <div class="table-responsive">
         <a href="{% url 'athlete-overview' athlete_id=object_list.0.athlete_id %}">
             < back
         </a>
@@ -14,6 +13,8 @@
         </h1>
 
         <h2>{{ object_list.0.event__name }}</h2>
+
+    <div class="table-responsive">
         <table class="table table-striped">
             <tr>
                 <th>Wedstrijd</th>

@@ -19,12 +19,13 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tr>
-                        <th>Event</th>
-                        <th>Athlete</th>
+                        <th class="hidden-xs">Event</th>
+                        <th class="hidden-xs">Athlete</th>
+                        <th class="hidden-sm hidden-md hidden-lg">Athlete <br> Event</th>
                         <th>Time</th>
                     </tr>
                     {% for top_result in object_list.0 %}
-                        <tr>
+                        <tr class="hidden-xs">
                             <td>
                                 <a href="{% url 'best-by-event' event_id=top_result.event__id gender='men' %}">
                                     {{ top_result.event__name }}</a>
@@ -33,6 +34,18 @@
                                 <a href="{% url 'athlete-overview' top_result.athlete__id %}">
                                     {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                                 </a>
+                            </td>
+                            <td>{{ top_result.time|format_time }}</td>
+                        </tr>
+
+                        <tr class="hidden-sm hidden-md hidden-lg">
+                            <td>
+                                <a href="{% url 'athlete-overview' top_result.athlete__id %}">
+                                    {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
+                                </a> <br>
+                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='women' %}">
+                                    {{ top_result.event__name }}</a>
+
                             </td>
                             <td>{{ top_result.time|format_time }}</td>
                         </tr>
@@ -46,20 +59,33 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tr>
-                        <th>Event</th>
-                        <th>Athlete</th>
+                        <th class="hidden-xs">Event</th>
+                        <th class="hidden-xs">Athlete</th>
+                        <th class="hidden-sm hidden-md hidden-lg">Athlete <br> Event</th>
                         <th>Time</th>
                     </tr>
                     {% for top_result in object_list.1 %}
-                        <tr>
+                        <tr class="hidden-xs">
                             <td>
-                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='women' %}">
+                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='men' %}">
                                     {{ top_result.event__name }}</a>
                             </td>
                             <td>
                                 <a href="{% url 'athlete-overview' top_result.athlete__id %}">
                                     {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                                 </a>
+                            </td>
+                            <td>{{ top_result.time|format_time }}</td>
+                        </tr>
+
+                        <tr class="hidden-sm hidden-md hidden-lg">
+                            <td>
+                                <a href="{% url 'athlete-overview' top_result.athlete__id %}">
+                                    {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
+                                </a> <br>
+                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='women' %}">
+                                    {{ top_result.event__name }}</a>
+
                             </td>
                             <td>{{ top_result.time|format_time }}</td>
                         </tr>

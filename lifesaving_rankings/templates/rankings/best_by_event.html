@@ -11,10 +11,10 @@
             <tr>
                 <th>#</th>
                 <th>Athlete</th>
-                <th>YoB</th>
+                <th class="hidden-xs">YoB</th>
                 <th>Time</th>
-                <th>Date</th>
-                <th>Competition</th>
+                <th class="hidden-xs">Date</th>
+                <th class="hidden-xs">Competition</th>
             </tr>
             </thead>
             <tbody>
@@ -28,13 +28,14 @@
                             {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                         </a>
                     </td>
-                    <td>{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
+                    <td class="hidden-xs">{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
                     <td>{{ top_result.time|format_time }}</td>
-                    <td>{{ top_result.competition__date }}</td>
-                    <td>{{ top_result.competition__name }}</td>
+                    <td class="hidden-xs">{{ top_result.competition__date }}</td>
+                    <td class="hidden-xs">{{ top_result.competition__name }}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
+
 {% endblock %}

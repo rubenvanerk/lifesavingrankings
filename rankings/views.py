@@ -157,8 +157,11 @@ class Search(ListView):
         context['query'] = self.request.GET.get('athlete')
         return context
 
-
     template_name = 'rankings/search.html'
+
+
+# class Competition(DetailView):
+
 
 
 def best_result_per_athlete(qs):
