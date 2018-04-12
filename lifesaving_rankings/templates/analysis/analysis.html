@@ -2,6 +2,7 @@
 {% load datetime_filter %}
 {% load to_url_filter %}
 {% load id_to_athlete_name %}
+{% load id_to_slug %}
 {% load analysis_filters %}
 {% block head_title %}Analysis {% endblock %}
 {% block content %}
@@ -35,7 +36,7 @@
             {% for athlete_id, qs in results.items %}
                 <tr>
                     <td>
-                        <a href="{% url 'athlete-overview' athlete_id %}">
+                        <a href="{% url 'athlete-overview' athlete_id|id_to_slug %}">
                             {{ athlete_id|id_to_athlete_name }}
                         </a>
                     </td>

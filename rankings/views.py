@@ -16,11 +16,13 @@ class FrontPageRecords(ListView):
         athletes = Athlete.objects.all
 
         men = qs.filter(athlete__gender=1)
-        men = men.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id')
+        men = men.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
+                         'athlete__slug')
         men = men.annotate(time=Min('time')).order_by('event_id', 'time')
 
         women = qs.filter(athlete__gender=2)
-        women = women.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id')
+        women = women.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
+                             'athlete__slug')
         women = women.annotate(time=Min('time')).order_by('event_id', 'time')
         return best_result_per_event(men), best_result_per_event(women), qs, athletes
 
@@ -42,18 +44,18 @@ class PersonalBests(ListView):
 
     def get_queryset(self):
         result = {}
-        athlete_id = self.kwargs.get('athlete_id')
-        athlete = Athlete.objects.get(pk=athlete_id)
+        slug = self.kwargs.get('slug')
+        athlete = Athlete.objects.get(slug=slug)
         if not athlete:
             raise Http404
         qs = IndividualResult.find_by_athlete(athlete).filter(event__type=1)
         qs = qs.values('event__name', 'athlete__first_name', 'athlete__last_name', 'athlete__gender', 'athlete_id',
-                       'event_id')
+                       'event_id', 'athlete__slug')
         qs = qs.annotate(time=Min('time'))
         result['individual'] = qs.order_by('event_id')
         qs = IndividualResult.find_by_athlete(athlete).filter(event__type=2)
         qs = qs.values('event__name', 'athlete__first_name', 'athlete__last_name', 'athlete__gender', 'athlete_id',
-                       'event_id')
+                       'event_id', 'athlete__slug')
         qs = qs.annotate(time=Min('time'))
         result['relay'] = qs.order_by('event_id')
         return result
@@ -66,12 +68,12 @@ class EventByAthlete(ListView):
 
     def get_queryset(self):
         qs = super(EventByAthlete, self).get_queryset()
-        athlete = Athlete.objects.get(pk=self.kwargs.get('athlete_id'))
+        athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
         event = Event.objects.get(pk=self.kwargs.get('event_id'))
         qs = qs.filter(athlete=athlete)
         qs = qs.filter(event=event)
         qs = qs.values('event__name', 'athlete_id', 'athlete__first_name', 'athlete__last_name', 'athlete__gender',
-                       'time', 'competition__date', 'competition__name')
+                       'time', 'competition__date', 'competition__name', 'athlete__slug')
         qs = qs.order_by('time')
         return qs
 
@@ -125,7 +127,8 @@ class BestByEvent(ListView):
                        'time',
                        'competition__date',
                        'competition__name',
-                       'event__name')
+                       'event__name',
+                       'athlete__slug')
 
         return best_result_per_athlete(qs)
 
@@ -161,7 +164,6 @@ class Search(ListView):
 
 
 # class Competition(DetailView):
-
 
 
 def best_result_per_athlete(qs):

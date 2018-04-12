@@ -24,7 +24,7 @@
                         {{ forloop.counter }}
                     </td>
                     <td>
-                        <a href="{% url 'athlete-overview' top_result.athlete_id %}">
+                        <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
                             {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                         </a>
                     </td>

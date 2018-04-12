@@ -16,6 +16,8 @@ class Athlete(models.Model):
 
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=30)
+    slug = models.URLField(unique=True, null=True)
+
     year_of_birth = models.IntegerField()
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
 

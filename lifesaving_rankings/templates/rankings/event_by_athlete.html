@@ -5,7 +5,7 @@
 {% block head_title %}{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}{% endblock %}
 
 {% block content %}
-        <a href="{% url 'athlete-overview' athlete_id=object_list.0.athlete_id %}">
+        <a href="{% url 'athlete-overview' slug=object_list.0.athlete__slug %}">
             < back
         </a>
         <h1>
