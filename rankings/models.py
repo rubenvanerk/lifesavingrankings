@@ -64,11 +64,14 @@ class Event(models.Model):
     def find_by_name(cls, event_name):
         event = Event.objects.raw(
             "SELECT * FROM rankings_event " 
-            "WHERE LOWER(REPLACE(name, ' ', '')) = %s "
+            "WHERE LOWER(REPLACE(name, ' ', '-')) = %s "
             "LIMIT 1",
             [event_name]
         )
-        return event[0]
+        if len(list(event)):
+            return event[0]
+        else:
+            return False
 
 
 class Competition(models.Model):

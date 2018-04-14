@@ -68,8 +68,16 @@ class EventByAthlete(ListView):
 
     def get_queryset(self):
         qs = super(EventByAthlete, self).get_queryset()
+
+        if not Athlete.objects.filter(slug=self.kwargs.get('slug')).exists():
+            raise Http404
         athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
-        event = Event.objects.get(pk=self.kwargs.get('event_id'))
+
+        event_name = self.kwargs.get('event_name')
+        event = Event.find_by_name(event_name)
+        if not event:
+            raise Http404
+
         qs = qs.filter(athlete=athlete)
         qs = qs.filter(event=event)
         qs = qs.values('event__name', 'athlete_id', 'athlete__first_name', 'athlete__last_name', 'athlete__gender',
@@ -114,7 +122,12 @@ class BestByEvent(ListView):
     def get_queryset(self):
         qs = super(BestByEvent, self).get_queryset()
 
-        event_id = self.kwargs.get('event_id')
+        event_name = self.kwargs.get('event_name')
+        event = Event.find_by_name(event_name)
+        if not event:
+            raise Http404
+        event_id = event.id
+
         qs = qs.filter(event=event_id).order_by('time')
 
         gender = gender_name_to_int(self.kwargs.get('gender'))

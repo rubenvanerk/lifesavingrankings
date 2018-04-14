@@ -27,7 +27,7 @@
                     {% for top_result in object_list.0 %}
                         <tr class="hidden-xs">
                             <td>
-                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='men' %}">
+                                <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender='men' %}">
                                     {{ top_result.event__name }}</a>
                             </td>
                             <td>
@@ -43,7 +43,7 @@
                                 <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
                                     {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                                 </a> <br>
-                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='women' %}">
+                                <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender='women' %}">
                                     {{ top_result.event__name }}</a>
 
                             </td>
@@ -67,7 +67,7 @@
                     {% for top_result in object_list.1 %}
                         <tr class="hidden-xs">
                             <td>
-                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='men' %}">
+                                <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender='men' %}">
                                     {{ top_result.event__name }}</a>
                             </td>
                             <td>
@@ -83,7 +83,7 @@
                                 <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
                                     {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                                 </a> <br>
-                                <a href="{% url 'best-by-event' event_id=top_result.event__id gender='women' %}">
+                                <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender='women' %}">
                                     {{ top_result.event__name }}</a>
 
                             </td>

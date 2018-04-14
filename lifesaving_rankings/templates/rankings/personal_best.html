@@ -18,11 +18,11 @@
                 {% for personal_best in object_list.individual %}
                     <tr>
                         <td>
-                            <a href="{% url 'best-by-event' event_id=personal_best.event_id gender=object_list.individual.0.athlete__gender|gender_to_text %}">
+                            <a href="{% url 'best-by-event' event_name=personal_best.event__name|to_url gender=object_list.individual.0.athlete__gender|gender_to_text %}">
                                 {{ personal_best.event__name }}</a>
                         </td>
                         <td>
-                            <a href="{% url 'athlete-event' slug=personal_best.athlete__slug event_id=personal_best.event_id %}">
+                            <a href="{% url 'athlete-event' slug=personal_best.athlete__slug event_name=personal_best.event__name|to_url %}">
                                 {{ personal_best.time|format_time }}</a></td>
                     </tr>
                 {% endfor %}
@@ -35,11 +35,11 @@
                 {% for personal_best in object_list.relay %}
                     <tr>
                         <td>
-                            <a href="{% url 'best-by-event' event_id=personal_best.event_id gender=object_list.individual.0.athlete__gender|gender_to_text %}">
+                            <a href="{% url 'best-by-event' event_name=personal_best.event__name|to_url gender=object_list.individual.0.athlete__gender|gender_to_text %}">
                                 {{ personal_best.event__name }}</a>
                         </td>
                         <td>
-                            <a href="{% url 'athlete-event' slug=personal_best.athlete__slug event_id=personal_best.event_id %}">
+                            <a href="{% url 'athlete-event' slug=personal_best.athlete__slug event_name=personal_best.event__name|to_url %}">
                                 {{ personal_best.time|format_time }}</a></td>
                     </tr>
                 {% endfor %}
