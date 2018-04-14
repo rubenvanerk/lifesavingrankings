@@ -7,9 +7,15 @@ html {
 }
 
 body {
-    padding-bottom: 100px;
+    /*padding-bottom: 100px;*/
     min-height: 100%;
     position: relative;
+}
+
+.wrapper {
+    min-height: 100vh;
+    padding-bottom: 5em;
+    background-color: #fdfdfd;
 }
 
 .navbar {
@@ -42,4 +48,8 @@ body {
 
 .analysis-green {
     background-color: #178901;
+}
+
+.website-title {
+    margin-top: 4em;
 }

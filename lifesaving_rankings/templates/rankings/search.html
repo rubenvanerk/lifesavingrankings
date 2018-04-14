@@ -10,7 +10,7 @@
         {% for athlete in object_list %}
             <tr>
                 <td>
-                    <a href="{% url 'athlete-overview' athlete.id %}">
+                    <a href="{% url 'athlete-overview' athlete.slug %}">
                         {{ athlete.first_name }} {{ athlete.last_name }}
                     </a>
                 </td>
