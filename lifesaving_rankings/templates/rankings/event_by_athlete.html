@@ -3,7 +3,7 @@
 {% load to_url_filter %}
 
 {% block head_title %}{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}: {{ object_list.0.event__name }}{% endblock %}
-{% block meta_description %}All the times {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }} on the {{ object_list.0.event__name }}, collected on Lifesaving Rankings{% endblock %}
+{% block meta_description %}All the times of {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }} on the {{ object_list.0.event__name }}, collected on Lifesaving Rankings{% endblock %}
 
 {% block content %}
         <a href="{% url 'athlete-overview' slug=object_list.0.athlete__slug %}">
