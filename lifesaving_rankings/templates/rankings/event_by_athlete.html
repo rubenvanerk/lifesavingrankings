@@ -2,18 +2,18 @@
 {% load datetime_filter %}
 {% load to_url_filter %}
 
-{% block head_title %}{{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}: {{ object_list.0.event__name }}{% endblock %}
-{% block meta_description %}All the times of {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }} on the {{ object_list.0.event__name }}, collected on Lifesaving Rankings{% endblock %}
+{% block head_title %}{{ athlete.first_name }} {{ athlete.last_name }}: {{ event.name }}{% endblock %}
+{% block meta_description %}All the times of {{ athlete.first_name }} {{ athlete.last_name }} on the {{ event.name }}, collected on Lifesaving Rankings{% endblock %}
 
 {% block content %}
-        <a href="{% url 'athlete-overview' slug=object_list.0.athlete__slug %}">
+        <a href="{% url 'athlete-overview' slug=athlete.slug %}">
             < back
         </a>
         <h1>
-            {{ object_list.0.athlete__first_name }} {{ object_list.0.athlete__last_name }}
+            {{ athlete.first_name }} {{ athlete.last_name }}
         </h1>
 
-        <h2>{{ object_list.0.event__name }}</h2>
+        <h2>{{ event.name }}</h2>
 
     <div class="table-responsive">
         <table class="table table-striped">

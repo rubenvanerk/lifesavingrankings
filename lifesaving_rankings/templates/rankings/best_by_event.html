@@ -2,10 +2,10 @@
 {% load datetime_filter %}
 {% load year_of_birth_filter %}
 {% load to_url_filter %}
-{% block head_title %}{{ object_list.0.event__name }}{% endblock %}
-{% block meta_description %}Find out who has the fastest time for {{ object_list.0.event__name }} on Lifesaving Rankings{% endblock %}
+{% block head_title %}{{ event.name }}{% endblock %}
+{% block meta_description %}Find out who has the fastest time for {{ event.name }} on Lifesaving Rankings{% endblock %}
 {% block content %}
-    <h1>{{ object_list.0.event__name }} top results</h1>
+    <h1>{{ event.name }} top results</h1>
     <div class="table-responsive">
         <table class="table table-striped table-bordered" id="bestByEvent">
             <thead>

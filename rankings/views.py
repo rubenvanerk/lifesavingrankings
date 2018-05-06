@@ -24,7 +24,16 @@ class FrontPageRecords(ListView):
         women = women.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
                              'athlete__slug')
         women = women.annotate(time=Min('time')).order_by('event_id', 'time')
-        return best_result_per_event(men), best_result_per_event(women), qs, athletes
+
+        result = {'men': best_result_per_event(men), 'women': best_result_per_event(women), 'times': qs,
+                  'athletes': athletes}
+        return result
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['athlete_count'] = Athlete.objects.all().count()
+        context['result_count'] = IndividualResult.objects.all().count()
+        return context
 
     template_name = 'rankings/front_page_records.html'
 
@@ -41,49 +50,77 @@ def best_result_per_event(qs):
 
 class PersonalBests(ListView):
     model = IndividualResult
+    athlete = None
+
+    def get_athlete(self):
+        if self.athlete is not Athlete:
+            slug = self.kwargs.get('slug')
+            self.athlete = Athlete.objects.get(slug=slug)
+            if not self.athlete:
+                raise Http404
+        return self.athlete
 
     def get_queryset(self):
         result = {}
-        slug = self.kwargs.get('slug')
-        athlete = Athlete.objects.get(slug=slug)
-        if not athlete:
-            raise Http404
+        athlete = self.get_athlete()
+
         qs = IndividualResult.find_by_athlete(athlete).filter(event__type=1)
-        qs = qs.values('event__name', 'athlete__first_name', 'athlete__last_name', 'athlete__gender', 'athlete_id',
-                       'event_id', 'athlete__slug')
+        qs = qs.values('event__name', 'event_id')
         qs = qs.annotate(time=Min('time'))
         result['individual'] = qs.order_by('event_id')
+
         qs = IndividualResult.find_by_athlete(athlete).filter(event__type=2)
-        qs = qs.values('event__name', 'athlete__first_name', 'athlete__last_name', 'athlete__gender', 'athlete_id',
-                       'event_id', 'athlete__slug')
+        qs = qs.values('event__name', 'event_id')
         qs = qs.annotate(time=Min('time'))
         result['relay'] = qs.order_by('event_id')
+
         return result
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['athlete'] = self.get_athlete()
+        return context
 
     template_name = 'rankings/personal_best.html'
 
 
 class EventByAthlete(ListView):
     model = IndividualResult
+    athlete = None
+    event = None
+
+    def get_athlete(self):
+        if self.athlete is not Athlete:
+            self.athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
+            if not self.athlete:
+                raise Http404
+        return self.athlete
+
+    def get_event(self):
+        if self.event is not Event:
+            event_name = self.kwargs.get('event_name')
+            self.event = Event.find_by_name(event_name)
+            if not self.event:
+                raise Http404
+        return self.event
 
     def get_queryset(self):
         qs = super(EventByAthlete, self).get_queryset()
 
-        if not Athlete.objects.filter(slug=self.kwargs.get('slug')).exists():
-            raise Http404
-        athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
-
-        event_name = self.kwargs.get('event_name')
-        event = Event.find_by_name(event_name)
-        if not event:
-            raise Http404
+        athlete = self.get_athlete()
+        event = self.get_event()
 
         qs = qs.filter(athlete=athlete)
         qs = qs.filter(event=event)
-        qs = qs.values('event__name', 'athlete_id', 'athlete__first_name', 'athlete__last_name', 'athlete__gender',
-                       'time', 'competition__date', 'competition__name', 'athlete__slug')
+        qs = qs.values('time', 'competition__date', 'competition__name')
         qs = qs.order_by('time')
         return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['athlete'] = self.get_athlete()
+        context['event'] = self.get_event()
+        return context
 
     template_name = 'rankings/event_by_athlete.html'
 
@@ -118,17 +155,22 @@ def merge_athletes(request):
 
 class BestByEvent(ListView):
     model = IndividualResult
+    event = None
+
+    def get_event(self):
+        if self.event is not Event:
+            event_name = self.kwargs.get('event_name')
+            self.event = Event.find_by_name(event_name)
+            if not self.event:
+                raise Http404
+        return self.event
 
     def get_queryset(self):
         qs = super(BestByEvent, self).get_queryset()
 
-        event_name = self.kwargs.get('event_name')
-        event = Event.find_by_name(event_name)
-        if not event:
-            raise Http404
-        event_id = event.id
+        event = self.get_event()
 
-        qs = qs.filter(event=event_id).order_by('time')
+        qs = qs.filter(event=event.id).order_by('time')
 
         gender = gender_name_to_int(self.kwargs.get('gender'))
         qs = qs.filter(athlete__gender=gender)
@@ -144,6 +186,11 @@ class BestByEvent(ListView):
                        'athlete__slug')
 
         return best_result_per_athlete(qs)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['event'] = self.get_event()
+        return context
 
     template_name = 'rankings/best_by_event.html'
 

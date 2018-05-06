@@ -28,7 +28,7 @@
                         <th class="hidden-sm hidden-md hidden-lg">Athlete <br> Event</th>
                         <th>Time</th>
                     </tr>
-                    {% for top_result in object_list.0 %}
+                    {% for top_result in object_list.men %}
                         <tr class="hidden-xs">
                             <td>
                                 <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender='men' %}">
@@ -68,7 +68,7 @@
                         <th class="hidden-sm hidden-md hidden-lg">Athlete <br> Event</th>
                         <th>Time</th>
                     </tr>
-                    {% for top_result in object_list.1 %}
+                    {% for top_result in object_list.women %}
                         <tr class="hidden-xs">
                             <td>
                                 <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender='women' %}">
@@ -100,6 +100,6 @@
     </div>
 
     <div class="text-center">
-        <h3>Tracking <b>{{ object_list.2.count }}</b> results for <b>{{ object_list.3.count }}</b> athletes.</h3>
+        <h3>Tracking <b>{{ result_count }}</b> results for <b>{{ athlete_count }}</b> athletes.</h3>
     </div>
 {% endblock %}
