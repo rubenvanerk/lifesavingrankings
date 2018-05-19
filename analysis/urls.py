@@ -11,12 +11,17 @@ urlpatterns = [
     #     name='analysis'
     # ),
     url(
+        regex=r'^group/(?P<group_id>[0-9]+)/team-maker/',
+        view=views.TeamMaker.as_view(),
+        name='team-maker'
+    ),
+    url(
         regex=r'^group/(?P<pk>[0-9]+)/edit',
         view=views.AnalysisGroupUpdate.as_view(),
         name='group-edit'
     ),
     url(
-        regex=r'^group/(?P<group_id>[0-9]+)',
+        regex=r'^group/(?P<group_id>[0-9]+)/',
         view=views.GroupAnalysis.as_view(),
         name='group-analysis'
     ),
@@ -34,5 +39,5 @@ urlpatterns = [
         regex=r'^public-groups/',
         view=views.PublicAnalysisGroupListView.as_view(),
         name='public-group-list'
-    ),
+    )
 ]

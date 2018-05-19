@@ -135,14 +135,14 @@ def merge_athletes(request):
             first_athlete = form['first_athlete'].value()
             second_athlete = form['second_athlete'].value()
 
-            first_athlete_object = Athlete.objects.get(pk=first_athlete)
+            first_athlete_object = Athlete.objects.filter(slug=first_athlete).first()
+            second_athlete_object = Athlete.objects.filter(slug=second_athlete).first()
 
-            individual_results = IndividualResult.objects.filter(athlete=second_athlete)
+            individual_results = IndividualResult.objects.filter(athlete=second_athlete_object)
             for result in individual_results:
                 result.athlete = first_athlete_object
                 result.save()
 
-            second_athlete_object = Athlete.objects.get(pk=second_athlete)
             second_athlete_object.delete()
 
             return HttpResponseRedirect(reverse('athlete-overview', args=[first_athlete]))
@@ -221,9 +221,6 @@ class Search(ListView):
         return context
 
     template_name = 'rankings/search.html'
-
-
-# class Competition(DetailView):
 
 
 def best_result_per_athlete(qs):

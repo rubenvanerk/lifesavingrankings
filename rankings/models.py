@@ -49,10 +49,12 @@ class Event(models.Model):
     UNKNOWN = 0
     INDIVIDUAL = 1
     RELAY_SEGMENT = 2
+    RELAY_COMPLETE = 3
     TYPES = (
         (UNKNOWN, 'Unknown'),
         (INDIVIDUAL, 'Individual'),
-        (RELAY_SEGMENT, 'Relay segment')
+        (RELAY_SEGMENT, 'Relay segment'),
+        (RELAY_COMPLETE, 'Relay complete')
     )
     name = models.CharField(max_length=60)
     type = models.IntegerField(default=UNKNOWN, choices=TYPES)
@@ -72,6 +74,15 @@ class Event(models.Model):
             return event[0]
         else:
             return False
+
+    def are_segments_same(self):
+        relay_orders = RelayOrder.objects.filter(event=self).all()
+        previous_segment = relay_orders.first().event
+        for relay_order in relay_orders:
+            if relay_order.segment is not previous_segment:
+                return False
+            previous_segment = relay_order.segment
+        return True
 
 
 class Competition(models.Model):
@@ -105,3 +116,13 @@ class IndividualResult(models.Model):
     @staticmethod
     def find_by_athlete_and_event(athlete, event):
         return IndividualResult.objects.filter(athlete=athlete, event=event)
+
+    @staticmethod
+    def find_fastest_by_athlete_and_event(athlete, event):
+        return IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time').first()
+
+
+class RelayOrder(models.Model):
+    event = ForeignKey(Event, on_delete=models.CASCADE, related_name='relay')
+    segment = ForeignKey(Event, on_delete=models.CASCADE, related_name='segment')
+    index = models.IntegerField()

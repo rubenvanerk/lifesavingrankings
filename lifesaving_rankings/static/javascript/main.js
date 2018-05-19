@@ -20,4 +20,5 @@ var colorPercentages = function () {
 
 $(document).ready( function () {
     $('#bestByEvent').DataTable();
+    $('#teamMaker').DataTable();
 } );

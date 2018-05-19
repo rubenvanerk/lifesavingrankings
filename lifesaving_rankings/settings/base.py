@@ -121,6 +121,8 @@ USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+DATE_INPUT_FORMATS = '%d-%m-%Y'
+
 
 
 

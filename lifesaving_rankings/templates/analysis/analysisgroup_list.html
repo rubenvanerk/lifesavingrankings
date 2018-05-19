@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-xs-10">
+        <div class="col-10">
             <h1>
                 {% if public %}
                     Public groups
@@ -39,13 +39,13 @@
                     </a>
                 </td>
                 <td>{{ group.athlete.count }}</td>
-                {% if not public %}
-                    <td>
+                <td>
+                    {% if not public %}
                         <a href="{% url 'group-edit' group.id %}">
                             <i class="glyphicon glyphicon-pencil"></i>
                         </a>
-                    </td>
-                {% endif %}
+                    {% endif %}
+                </td>
             </tr>
         {% empty %}
             No groups yet.

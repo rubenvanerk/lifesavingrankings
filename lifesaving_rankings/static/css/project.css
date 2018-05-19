@@ -12,14 +12,11 @@ body {
     position: relative;
 }
 
-.wrapper {
+#wrapper {
     min-height: 100vh;
     padding-bottom: 5em;
-    background-color: #fdfdfd;
-}
-
-.navbar {
-    margin-top: 1em;
+    background-color: #fcfcfc;
+    padding-top: 1em;
 }
 
 #footer {
@@ -39,17 +36,22 @@ body {
 }
 
 .analysis-red {
-    background-color: #C52011;
+    background-color: #E3746A;
 }
 
 .analysis-orange {
-    background-color: #fdb430;
+    background-color: #ffbe49;
 }
 
 .analysis-green {
-    background-color: #178901;
+    background-color: #64b054;
 }
 
 .website-title {
     margin-top: 4em;
 }
+
+#main {
+    padding-top: 2em;
+}
+

@@ -1,0 +1,41 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load datetime_filter %}
+
+{% block content %}
+    <br>
+    <table class="table table-bordered" id="teamMaker">
+        <thead>
+        <tr>
+            <th>Team</th>
+            {% for key, event in combinations.team0.times.items %}
+                <th>{{ key }}</th>
+            {% endfor %}
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key, team in combinations.items %}
+            <tr>
+                <td>
+                    {% for athlete in team.athletes %}
+                        {{ athlete.first_name }} {{ athlete.last_name }}<br>
+                    {% endfor %}
+                </td>
+                {% for i, event in team.times.items %}
+                    <td>
+                        {% if event.time %}
+                            {% for athlete in event.setup %}
+                                {{ athlete.first_name }}<br>
+                            {% endfor %}
+                            <strong>{{ event.time|format_time }}</strong>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+                <td>
+                    {{ team.total_time|format_time }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

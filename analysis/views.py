@@ -1,3 +1,7 @@
+import itertools
+from datetime import timedelta
+
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Min
@@ -5,8 +9,9 @@ from django import forms
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
+from analysis.forms import ChooseFromDateForm
 from analysis.models import SpecialResult, AnalysisGroup
-from rankings.models import Event, Athlete, IndividualResult
+from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
 
 class GroupAnalysis(TemplateView):
@@ -18,13 +23,23 @@ class GroupAnalysis(TemplateView):
         group = AnalysisGroup.objects.get(pk=group_id)
         if not group.public and group.creator != self.request.user:
             raise PermissionDenied
-        context['results'] = get_top_results_by_athlete(athletes=group.athlete.all())
+
+        date = None
+        form = ChooseFromDateForm(self.request.GET)
+        if form.is_valid():
+            date = form['from_date'].value()
+        if form is None:
+            context['form'] = ChooseFromDateForm()
+        else:
+            context['form'] = form
+
+        context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date)
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
         context['events'] = Event.objects.all().order_by('id')
         return context
 
 
-def get_top_results_by_athlete(gender=None, athletes=None):
+def get_top_results_by_athlete(gender=None, athletes=None, date=None):
     events = Event.objects.all().order_by('id')
     if athletes is None:
         athletes = Athlete.objects.filter(gender=gender)
@@ -34,6 +49,8 @@ def get_top_results_by_athlete(gender=None, athletes=None):
         individual_results = []
         for event in events:
             qs = IndividualResult.find_by_athlete_and_event(athlete, event)
+            if date is not None:
+                qs = qs.filter(competition__date__gte=date)
             qs = qs.values('event__name',
                            'event_id')
             qs = qs.annotate(pb=Min('time'))
@@ -103,3 +120,88 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
         return context
 
 
+class TeamMaker(TemplateView):
+    template_name = "analysis/team_maker.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamMaker, self).get_context_data(**kwargs)
+        group_id = self.kwargs.get('group_id')
+        group = AnalysisGroup.objects.get(pk=group_id)
+        if not group.public and group.creator != self.request.user:
+            raise PermissionDenied
+        context["combinations"] = get_combinations(group)
+        return context
+
+
+def get_combinations(group):
+    athletes = group.athlete.all()
+    possible_teams = itertools.combinations(athletes, 6)
+    events = Event.objects.filter(type=3)
+    combinations = {}
+    team_index = 0
+    event_index = 0
+    for team in possible_teams:
+        total_time = timedelta(0)
+        combinations["team" + str(team_index)] = {}
+        combinations["team" + str(team_index)]["athletes"] = team
+        combinations["team" + str(team_index)]["times"] = {}
+        missing_setup = False
+        for event in events:
+            fastest_setup = get_fastest_setup(team, event)
+            combinations["team" + str(team_index)]["times"][event.name] = fastest_setup
+            if fastest_setup:
+                total_time += fastest_setup["time"]
+            else:
+                missing_setup = True
+                combinations.pop("team" + str(team_index))
+                break
+            event_index += 1
+        if not missing_setup:
+            combinations["team" + str(team_index)]["total_time"] = total_time
+            team_index += 1
+        event_index = 0
+    return combinations
+
+
+def get_fastest_setup(team, event):
+    """
+
+    :param team:
+    :type event: Event
+    """
+    fastest = None
+    for ordered_setup in itertools.combinations(team, 4):
+        if event.are_segments_same():
+            time_for_current_setup = get_time_for_setup(ordered_setup, event)
+            current_setup = ordered_setup
+            if time_for_current_setup and (fastest is None or fastest["time"] > time_for_current_setup):
+                fastest = {'setup': current_setup, 'time': time_for_current_setup}
+        else:
+            for setup in itertools.permutations(ordered_setup):
+                current_setup = setup
+                time_for_current_setup = get_time_for_setup(setup, event)
+                if time_for_current_setup and (fastest is None or fastest["time"] > time_for_current_setup):
+                    fastest = {'setup': current_setup, 'time': time_for_current_setup}
+    return fastest
+
+
+def get_time_for_setup(setup, event):
+    index = 0
+    time_for_current_setup = timedelta(0)
+    for athlete in setup:
+        time = get_time_by_event_athlete_and_index(event, athlete, index)
+        if time:
+            time_for_current_setup += time
+        else:
+            return False
+        index += 1
+    return time_for_current_setup
+
+
+def get_time_by_event_athlete_and_index(event, athlete, index):
+    relay_order = RelayOrder.objects.filter(event=event, index=index).first()
+    segment = relay_order.segment
+    individual_result = IndividualResult.find_fastest_by_athlete_and_event(athlete, segment)
+    if individual_result:
+        return individual_result.time
+    return False

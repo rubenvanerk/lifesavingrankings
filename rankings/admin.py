@@ -5,5 +5,7 @@ from rankings.models import *
 
 admin.site.register(IndividualResult)
 admin.site.register(Competition)
+admin.site.register(Event)
+admin.site.register(RelayOrder)
 
 
