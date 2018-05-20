@@ -39,5 +39,15 @@ urlpatterns = [
         regex=r'^public-groups/',
         view=views.PublicAnalysisGroupListView.as_view(),
         name='public-group-list'
+    ),
+    url(
+        regex=r'^analyse/fastest-by-group-event/',
+        view=views.get_fastest_time_for_team_and_event,
+        name='get_fastest_time_for_team_and_event'
+    ),
+    url(
+        regex=r'^analyse/create-fastest-setups/',
+        view=views.create_fastest_setups,
+        name='create-setups'
     )
 ]

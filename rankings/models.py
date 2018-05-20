@@ -77,9 +77,9 @@ class Event(models.Model):
 
     def are_segments_same(self):
         relay_orders = RelayOrder.objects.filter(event=self).all()
-        previous_segment = relay_orders.first().event
+        previous_segment = relay_orders.first().segment
         for relay_order in relay_orders:
-            if relay_order.segment is not previous_segment:
+            if relay_order.segment.pk is not previous_segment.pk:
                 return False
             previous_segment = relay_order.segment
         return True

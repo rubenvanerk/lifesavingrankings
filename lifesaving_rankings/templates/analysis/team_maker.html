@@ -7,32 +7,32 @@
         <thead>
         <tr>
             <th>Team</th>
-            {% for key, event in combinations.team0.times.items %}
-                <th>{{ key }}</th>
+            {% for event in events %}
+                <th>{{ event.name }}</th>
             {% endfor %}
             <th>Total</th>
         </tr>
         </thead>
         <tbody>
-        {% for key, team in combinations.items %}
+        {% for group_team in group_teams %}
             <tr>
                 <td>
-                    {% for athlete in team.athletes %}
+                    {% for athlete in group_team.athletes.all %}
                         {{ athlete.first_name }} {{ athlete.last_name }}<br>
                     {% endfor %}
                 </td>
-                {% for i, event in team.times.items %}
+                {% for setup in group_team.get_ordered_setups %}
                     <td>
-                        {% if event.time %}
-                            {% for athlete in event.setup %}
+                        {% if setup.time %}
+                            <strong>{{ setup.time|format_time }}</strong><br>
+                            {% for athlete in setup.athletes.all %}
                                 {{ athlete.first_name }}<br>
                             {% endfor %}
-                            <strong>{{ event.time|format_time }}</strong>
                         {% endif %}
                     </td>
                 {% endfor %}
                 <td>
-                    {{ team.total_time|format_time }}
+                    {{ group_team.get_total_time|format_time }}
                 </td>
             </tr>
         {% endfor %}

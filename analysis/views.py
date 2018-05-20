@@ -1,16 +1,21 @@
+import functools
 import itertools
 from datetime import timedelta
+from multiprocessing import Process
+from time import sleep
 
-from django.contrib.auth.decorators import user_passes_test
+import requests
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Min
 from django import forms
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from analysis.forms import ChooseFromDateForm
-from analysis.models import SpecialResult, AnalysisGroup
+from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
 
@@ -126,63 +131,65 @@ class TeamMaker(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TeamMaker, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
-        group = AnalysisGroup.objects.get(pk=group_id)
-        if not group.public and group.creator != self.request.user:
+        analysis_group = AnalysisGroup.objects.get(pk=group_id)
+        if not analysis_group.public and analysis_group.creator != self.request.user:
             raise PermissionDenied
-        context["combinations"] = get_combinations(group)
+        if 'recalculate' in self.request.GET and self.request.GET['recalculate'] is '1':
+            create_combinations(analysis_group)
+        context['events'] = Event.objects.filter(type=3).order_by('pk').all()
+        context['analysis_group'] = analysis_group
+        context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
         return context
 
 
-def get_combinations(group):
-    athletes = group.athlete.all()
+def create_combinations(analysis_group):
+    analysis_group.delete_all_previous_analysis()
+    athletes = analysis_group.athlete.all()
     possible_teams = itertools.combinations(athletes, 6)
+
+    group_teams = map(functools.partial(create_group_teams, analysis_group), possible_teams)
+    group_teams = list(group_teams)
+    last_group_team = group_teams[-1]
+    first_group_team = next(iter(group_teams or []), None)
+
+    params = {'current_group_team': first_group_team.id, 'last_group_team': last_group_team.id}
+    url = 'https://www.lifesavingrankings.nl/analysis/analyse/create-fastest-setups/'
+    p = Process(target=async_request, args=(url, params))
+    p.daemon = True
+    p.start()
+
+
+def create_fastest_setups(request):
+    if 'current_group_team' not in request.GET or 'last_group_team' not in request.GET:
+        return HttpResponseBadRequest
+    last_group_team = GroupTeam.objects.get(pk=request.GET['last_group_team'])
+    current_group_team = GroupTeam.objects.get(pk=request.GET['current_group_team'])
     events = Event.objects.filter(type=3)
-    combinations = {}
-    team_index = 0
-    event_index = 0
-    for team in possible_teams:
-        total_time = timedelta(0)
-        combinations["team" + str(team_index)] = {}
-        combinations["team" + str(team_index)]["athletes"] = team
-        combinations["team" + str(team_index)]["times"] = {}
-        missing_setup = False
-        for event in events:
-            fastest_setup = get_fastest_setup(team, event)
-            combinations["team" + str(team_index)]["times"][event.name] = fastest_setup
-            if fastest_setup:
-                total_time += fastest_setup["time"]
-            else:
-                missing_setup = True
-                combinations.pop("team" + str(team_index))
-                break
-            event_index += 1
-        if not missing_setup:
-            combinations["team" + str(team_index)]["total_time"] = total_time
-            team_index += 1
-        event_index = 0
-    return combinations
+    for event in events:
+        get_fastest_time_for_team_and_event(current_group_team, event)
+
+    if last_group_team.id is not current_group_team.id:
+        params = {'current_group_team': current_group_team.id + 1, 'last_group_team': last_group_team.id}
+        url = 'https://www.lifesavingrankings.nl/analysis/analyse/create-fastest-setups/'
+        p = Process(target=async_request, args=(url, params))
+        p.daemon = True
+        p.start()
+        sleep(1)
+
+    return HttpResponse()
 
 
-def get_fastest_setup(team, event):
-    """
+def get_fastest_setup(event, group_team):
+    params = {'event': event.id, 'group_team': group_team.id}
+    url = 'https://www.lifesavingrankings.nl/analysis/analyse/fastest-by-group-event/'
+    p = Process(target=async_request, args=(url, params))
+    p.daemon = True
+    p.start()
 
-    :param team:
-    :type event: Event
-    """
-    fastest = None
-    for ordered_setup in itertools.combinations(team, 4):
-        if event.are_segments_same():
-            time_for_current_setup = get_time_for_setup(ordered_setup, event)
-            current_setup = ordered_setup
-            if time_for_current_setup and (fastest is None or fastest["time"] > time_for_current_setup):
-                fastest = {'setup': current_setup, 'time': time_for_current_setup}
-        else:
-            for setup in itertools.permutations(ordered_setup):
-                current_setup = setup
-                time_for_current_setup = get_time_for_setup(setup, event)
-                if time_for_current_setup and (fastest is None or fastest["time"] > time_for_current_setup):
-                    fastest = {'setup': current_setup, 'time': time_for_current_setup}
-    return fastest
+
+def async_request(url, params):
+    session = requests.Session()
+    session.get(url, params=params)
 
 
 def get_time_for_setup(setup, event):
@@ -205,3 +212,70 @@ def get_time_by_event_athlete_and_index(event, athlete, index):
     if individual_result:
         return individual_result.time
     return False
+
+
+def create_possible_teams(request):
+    if 'analysis_group' not in request.GET:
+        return HttpResponseBadRequest()
+    analysis_group = AnalysisGroup.objects.get(pk=request.GET['analysis_group'])
+
+    athletes = analysis_group.athlete.all()
+    possible_teams = itertools.combinations(athletes, 6)
+
+    for team in possible_teams:
+        group_team = GroupTeam(analysis_group=analysis_group)
+        for athlete in team:
+            group_team.athletes.add(athlete)
+
+    return HttpResponse()
+
+
+def create_group_teams(group, possible_team):
+    group_team = GroupTeam()
+    group_team.analysis_group = group
+    group_team.save()
+    for athlete in possible_team:
+        group_team.athletes.add(athlete)
+    group_team.save()
+    return group_team
+
+
+def get_fastest_time_for_team_and_event(group_team, event):
+    # if 'group_team' not in request.GET or 'event' not in request.GET:
+    #     return HttpResponseBadRequest
+
+    # group_team = GroupTeam.objects.get(pk=request.GET['group_team'])
+    # event = Event.objects.get(pk=request.GET['event'])
+
+    fastest = None
+    athletes = group_team.athletes.all()
+
+    if event.are_segments_same():
+        relay_order = RelayOrder.objects.filter(event=event).first()
+        segment = relay_order.segment
+        results = IndividualResult.objects.filter(event=segment, athlete__in=athletes).values('athlete')\
+            .annotate(pb=Min('time')).order_by('pb').all()[:4]
+        current_setup = []
+        total_time = timedelta(0)
+        for result in results:
+            current_setup.append(result['athlete'])
+            total_time += result['pb']
+        fastest = {'setup': current_setup, 'time': total_time}
+    else:
+        for ordered_setup in itertools.combinations(athletes, 4):
+            for setup in itertools.permutations(ordered_setup):
+                time_for_current_setup = get_time_for_setup(setup, event)
+                if time_for_current_setup and (fastest is None or fastest["time"] > time_for_current_setup):
+                    fastest = {'setup': setup, 'time': time_for_current_setup}
+    if fastest is None:
+        return
+    fastest_setup = GroupEventSetup()
+    fastest_setup.event = event
+    fastest_setup.time = fastest['time']
+    fastest_setup.save()
+    for athlete in fastest['setup']:
+        fastest_setup.athletes.add(athlete)
+    fastest_setup.save()
+    group_team.setups.add(fastest_setup)
+    group_team.save()
+    # return HttpResponse()
