@@ -55,3 +55,6 @@ body {
     padding-top: 2em;
 }
 
+.analysis-actions .analysis-action {
+    padding-right: 15px;
+}

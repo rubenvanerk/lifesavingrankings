@@ -56,6 +56,13 @@ class AnalysisGroup(models.Model):
             setups.delete()
         group_teams.delete()
 
+    def relay_analysis_available(self):
+        group_teams = list(self.groupteam_set.all().order_by('analysis_group__groupteam'))
+        if len(group_teams) == 0:
+            return False
+        last_group_team = group_teams[-1]
+        return len(last_group_team.setups.all()) > 0
+
 
 class GroupEventSetup(models.Model):
     athletes = models.ManyToManyField(Athlete)

@@ -3,12 +3,14 @@ var colorPercentages = function () {
 
     analysisResults.each(function () {
         var percentage = $(this).text();
-        if(percentage === "") {return;}
+        if (percentage === "") {
+            return;
+        }
         percentage = percentage.replace('%', '');
         var color = '';
-        if(percentage < 100) {
+        if (percentage < 100) {
             color = 'analysis-green';
-        } else if(percentage < 105) {
+        } else if (percentage < 105) {
             color = 'analysis-orange';
         } else {
             color = 'analysis-red';
@@ -18,7 +20,8 @@ var colorPercentages = function () {
 
 };
 
-$(document).ready( function () {
+$(document).ready(function () {
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
-} );
+    $('[data-toggle="tooltip"]').tooltip();
+});

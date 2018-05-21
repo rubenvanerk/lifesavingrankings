@@ -78,7 +78,7 @@ class PublicAnalysisGroupListView(ListView):
     model = AnalysisGroup
 
     def get_queryset(self):
-        qs = super(PublicAnalysisGroupListView, self).get_queryset()
+        qs = super(PublicAnalysisGroupListView, self).get_queryset().order_by('pk')
         qs = qs.filter(public=True)
         return qs
 
