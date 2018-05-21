@@ -33,3 +33,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls)
 ]
 
+handler404 = 'lifesaving_rankings.views.error_404_view'
+handler500 = 'lifesaving_rankings.views.error_500_view'
