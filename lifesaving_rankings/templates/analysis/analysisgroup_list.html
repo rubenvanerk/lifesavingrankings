@@ -37,7 +37,7 @@
                 <td>{{ group.athlete.count }}</td>
                 <td class="analysis-actions">
                 <span class="analysis-action" data-toggle="tooltip" title="Individual analysis">
-                    <a href="{% url 'group-analysis' group.id %}">
+                    <a href="{% url 'individual-analysis' group.id %}">
                         <i class="fa fa-user"></i>
                     </a>
                 </span>
@@ -45,7 +45,7 @@
                                                             {% if group.relay_analysis_available %}Relay analysis
                                                             {% else %}Relay analysis not available
                                                             {% endif %}">
-                    <a {% if group.relay_analysis_available %}href="{% url 'team-maker' group.id %}"{% endif %}>
+                    <a {% if group.relay_analysis_available %}href="{% url 'relay-analysis' group.id %}"{% endif %}>
                             <i class="fa fa-users"></i>
                     </a>
                 </span>

@@ -2,7 +2,6 @@
 {% load datetime_filter %}
 
 {% block content %}
-    <br>
     <table class="table table-bordered" id="teamMaker">
         <thead>
         <tr>
@@ -38,4 +37,9 @@
         {% endfor %}
         </tbody>
     </table>
+    <br>
+
+    {% if request.user.is_superuser %}
+        <a href="{% url 'relay-analysis' analysis_group.id %}?run_simulation=1" class="float-right"><i class="fa fa-sync"></i></a>
+    {% endif %}
 {% endblock %}

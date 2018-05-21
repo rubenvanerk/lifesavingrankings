@@ -8,7 +8,7 @@ urlpatterns = [
     url(
         regex=r'^group/(?P<group_id>[0-9]+)/relay-analysis/',
         view=views.RelayAnalysis.as_view(),
-        name='team-maker'
+        name='relay-analysis'
     ),
     url(
         regex=r'^group/(?P<pk>[0-9]+)/edit',
@@ -18,7 +18,7 @@ urlpatterns = [
     url(
         regex=r'^group/(?P<group_id>[0-9]+)/individual-analysis/',
         view=views.IndividualAnalysis.as_view(),
-        name='group-analysis'
+        name='individual-analysis'
     ),
     url(
         regex=r'^group/create/',
