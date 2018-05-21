@@ -40,12 +40,12 @@ class GroupAnalysis(TemplateView):
 
         context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date)
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
-        context['events'] = Event.objects.all().order_by('id')
+        context['events'] = Event.objects.filter(type__in=[1, 2]).order_by('id')
         return context
 
 
 def get_top_results_by_athlete(gender=None, athletes=None, date=None):
-    events = Event.objects.all().order_by('id')
+    events = Event.objects.filter(type__in=[1, 2]).order_by('id')
     if athletes is None:
         athletes = Athlete.objects.filter(gender=gender)
     results = {}
