@@ -1,6 +1,6 @@
 {% extends "lifesaving_rankings/base.html" %}
 
-{% block head_title %}My groups{% endblock %}
+{% block head_title %}{% if public %}Public groups{% else %}My groups{% endif %}{% endblock %}
 
 {% block content %}
     <div class="row">
