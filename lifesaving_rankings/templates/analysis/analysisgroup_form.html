@@ -20,9 +20,16 @@
                 {% endif %}
             </h1>
             <form action="" method="post">{% csrf_token %}
-                {{ form|crispy }}
-                <a href="{% url "private-group-list" %}"></a>
-                <button class="btn secondary">Cancel</button>
+
+                {{ form.non_field_errors }}
+                {{ form.name|as_crispy_field }}
+                {{ form.athlete }}
+                {{ form.public|as_crispy_field }}
+                {{ form.gender|as_crispy_field }}
+
+                <a href="{% url "private-group-list" %}">
+                    <button class="btn secondary">Cancel</button>
+                </a>
                 <input type="submit" value="Update" class="btn btn-primary"/>
             </form>
         </div>

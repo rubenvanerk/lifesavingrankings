@@ -24,4 +24,15 @@ $(document).ready(function () {
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
     $('[data-toggle="tooltip"]').tooltip();
+    $('#pick-athletes').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        persist: false,
+        create: function(input) {
+            return {
+                value: input,
+                text: input
+            }
+    }
+});
 });

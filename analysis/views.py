@@ -93,14 +93,14 @@ class AnalysisGroupForm(forms.ModelForm):
         model = AnalysisGroup
         fields = ['name', 'athlete', 'public', 'gender']
         widgets = {
-            'athlete': forms.CheckboxSelectMultiple
+            'athlete': forms.SelectMultiple(attrs={'id': 'pick-athletes'})
         }
 
 
 class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
-    success_url = reverse_lazy('analysis:private-group-list')
+    success_url = reverse_lazy('private-group-list')
 
     def get_object(self, queryset=None):
         obj = super(AnalysisGroupUpdate, self).get_object()
@@ -113,7 +113,7 @@ class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
 class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
-    success_url = reverse_lazy('analysis:private-group-list')
+    success_url = reverse_lazy('private-group-list')
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
