@@ -55,7 +55,7 @@ class PersonalBests(ListView):
     def get_athlete(self):
         if self.athlete is not Athlete:
             slug = self.kwargs.get('slug')
-            self.athlete = Athlete.objects.get(slug=slug)
+            self.athlete = Athlete.objects.filter(slug=slug).first()
             if not self.athlete:
                 raise Http404
         return self.athlete
