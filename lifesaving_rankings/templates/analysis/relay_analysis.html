@@ -26,7 +26,7 @@
                     <td>
                         {% if setup.time %}
                             <strong>{{ setup.time|format_time }}</strong><br>
-                            {% for athlete in setup.athletes.all %}
+                            {% for athlete in setup.get_athletes_ordered_by_index %}
                                 {{ athlete.first_name }}<br>
                             {% endfor %}
                         {% endif %}
