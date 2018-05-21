@@ -5,14 +5,9 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    # url(
-    #     regex=r'(?P<gender>\bmen\b|\bwomen\b)',
-    #     view=views.Analysis.as_view(),
-    #     name='analysis'
-    # ),
     url(
-        regex=r'^group/(?P<group_id>[0-9]+)/team-maker/',
-        view=views.TeamMaker.as_view(),
+        regex=r'^group/(?P<group_id>[0-9]+)/relay-analysis/',
+        view=views.RelayAnalysis.as_view(),
         name='team-maker'
     ),
     url(
@@ -21,12 +16,12 @@ urlpatterns = [
         name='group-edit'
     ),
     url(
-        regex=r'^group/(?P<group_id>[0-9]+)/',
-        view=views.GroupAnalysis.as_view(),
+        regex=r'^group/(?P<group_id>[0-9]+)/individual-analysis/',
+        view=views.IndividualAnalysis.as_view(),
         name='group-analysis'
     ),
     url(
-        regex=r'^group/create',
+        regex=r'^group/create/',
         view=views.AnalysisGroupCreate.as_view(),
         name='group-create'
     ),

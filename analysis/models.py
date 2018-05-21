@@ -56,12 +56,17 @@ class AnalysisGroup(models.Model):
             setups.delete()
         group_teams.delete()
 
+    relay_analysis_is_available = None
+
     def relay_analysis_available(self):
-        group_teams = list(self.groupteam_set.all().order_by('analysis_group__groupteam'))
-        if len(group_teams) == 0:
-            return False
-        last_group_team = group_teams[-1]
-        return len(last_group_team.setups.all()) > 0
+        if self.relay_analysis_is_available is None:
+            group_teams = list(self.groupteam_set.all().order_by('analysis_group__groupteam'))
+            if len(group_teams) is 0:
+                self.relay_analysis_is_available = False
+                return self.relay_analysis_is_available
+            last_group_team = group_teams[-1]
+            self.relay_analysis_is_available = len(list(last_group_team.setups.all())) > 0
+        return self.relay_analysis_is_available
 
 
 class GroupEventSetup(models.Model):

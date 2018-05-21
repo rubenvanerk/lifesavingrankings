@@ -19,11 +19,11 @@ from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventS
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
 
-class GroupAnalysis(TemplateView):
-    template_name = 'analysis/analysis.html'
+class IndividualAnalysis(TemplateView):
+    template_name = 'analysis/individual_analysis.html'
 
     def get_context_data(self, **kwargs):
-        context = super(GroupAnalysis, self).get_context_data(**kwargs)
+        context = super(IndividualAnalysis, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
         group = AnalysisGroup.objects.get(pk=group_id)
         if not group.public and group.creator != self.request.user:
@@ -125,16 +125,16 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
         return context
 
 
-class TeamMaker(TemplateView):
-    template_name = "analysis/team_maker.html"
+class RelayAnalysis(TemplateView):
+    template_name = "analysis/relay_analysis.html"
 
     def get_context_data(self, **kwargs):
-        context = super(TeamMaker, self).get_context_data(**kwargs)
+        context = super(RelayAnalysis, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
         analysis_group = AnalysisGroup.objects.get(pk=group_id)
         if not analysis_group.public and analysis_group.creator != self.request.user:
             raise PermissionDenied
-        if 'recalculate' in self.request.GET and self.request.GET['recalculate'] is '1':
+        if 'run_simulation' in self.request.GET and self.request.GET['run_simulation'] is '1':
             create_combinations(analysis_group)
         context['events'] = Event.objects.filter(type=3).order_by('pk').all()
         context['analysis_group'] = analysis_group
