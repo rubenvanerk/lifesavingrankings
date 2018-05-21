@@ -15,7 +15,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from analysis.forms import ChooseFromDateForm
-from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup
+from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
 
@@ -225,6 +225,8 @@ def get_fastest_time_for_team_and_event(group_team, event):
         segment = relay_order.segment
         results = IndividualResult.objects.filter(event=segment, athlete__in=athletes).values('athlete')\
             .annotate(pb=Min('time')).order_by('pb').all()[:4]
+        if len(list(results)) < 4:
+            return
         current_setup = []
         total_time = timedelta(0)
         for result in results:
@@ -243,8 +245,17 @@ def get_fastest_time_for_team_and_event(group_team, event):
     fastest_setup.event = event
     fastest_setup.time = fastest['time']
     fastest_setup.save()
+    index = 0
     for athlete in fastest['setup']:
-        fastest_setup.athletes.add(athlete)
+        if type(athlete) is not Athlete:
+            athlete = Athlete.objects.get(pk=athlete)
+        segment = GroupEvenSetupSegment.objects.create(
+            athlete=athlete,
+            index=index,
+            group_event_setup=fastest_setup
+        )
+        segment.save()
+        index += 1
     fastest_setup.save()
     group_team.setups.add(fastest_setup)
     group_team.save()

@@ -70,9 +70,18 @@ class AnalysisGroup(models.Model):
 
 
 class GroupEventSetup(models.Model):
-    athletes = models.ManyToManyField(Athlete)
+    athletes = models.ManyToManyField(Athlete, through='GroupEvenSetupSegment')
     event = ForeignKey(Event, on_delete=models.CASCADE)
     time = models.DurationField()
+
+    def get_athletes_ordered_by_index(self):
+        return self.athletes.all().order_by('groupevensetupsegment__index')
+
+
+class GroupEvenSetupSegment(models.Model):
+    athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
+    group_event_setup = ForeignKey(GroupEventSetup, on_delete=models.CASCADE)
+    index = models.IntegerField()
 
 
 class GroupTeam(models.Model):
