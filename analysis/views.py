@@ -179,14 +179,6 @@ def create_fastest_setups(request):
     return HttpResponse()
 
 
-def get_fastest_setup(event, group_team):
-    params = {'event': event.id, 'group_team': group_team.id}
-    url = 'https://www.lifesavingrankings.nl/analysis/analyse/fastest-by-group-event/'
-    p = Process(target=async_request, args=(url, params))
-    p.daemon = True
-    p.start()
-
-
 def async_request(url, params):
     session = requests.Session()
     session.get(url, params=params)
@@ -214,22 +206,6 @@ def get_time_by_event_athlete_and_index(event, athlete, index):
     return False
 
 
-def create_possible_teams(request):
-    if 'analysis_group' not in request.GET:
-        return HttpResponseBadRequest()
-    analysis_group = AnalysisGroup.objects.get(pk=request.GET['analysis_group'])
-
-    athletes = analysis_group.athlete.all()
-    possible_teams = itertools.combinations(athletes, 6)
-
-    for team in possible_teams:
-        group_team = GroupTeam(analysis_group=analysis_group)
-        for athlete in team:
-            group_team.athletes.add(athlete)
-
-    return HttpResponse()
-
-
 def create_group_teams(group, possible_team):
     group_team = GroupTeam()
     group_team.analysis_group = group
@@ -241,12 +217,6 @@ def create_group_teams(group, possible_team):
 
 
 def get_fastest_time_for_team_and_event(group_team, event):
-    # if 'group_team' not in request.GET or 'event' not in request.GET:
-    #     return HttpResponseBadRequest
-
-    # group_team = GroupTeam.objects.get(pk=request.GET['group_team'])
-    # event = Event.objects.get(pk=request.GET['event'])
-
     fastest = None
     athletes = group_team.athletes.all()
 
@@ -278,4 +248,3 @@ def get_fastest_time_for_team_and_event(group_team, event):
     fastest_setup.save()
     group_team.setups.add(fastest_setup)
     group_team.save()
-    # return HttpResponse()
