@@ -49,7 +49,7 @@
                             <i class="fa fa-users"></i>
                     </a>
                 </span>
-                    {% if not public %}
+                    {% if not public or group.creator == request.user %}
                         <span class="analysis-action" data-toggle="tooltip" title="Edit">
                         <a href="{% url 'group-edit' group.id %}">
                             <i class="fa fa-pencil-alt"></i>
