@@ -1,8 +1,12 @@
 from __future__ import unicode_literals
 
+import urllib
+from urllib.parse import urlencode
+
 from django.db import models
 from django.db.models import ForeignKey
 from django.urls import reverse
+from django.utils.text import slugify
 
 
 class Athlete(models.Model):
@@ -65,6 +69,9 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
+    def generate_slug(self):
+        return slugify(self.name)
 
     @classmethod
     def find_by_name(cls, event_name):

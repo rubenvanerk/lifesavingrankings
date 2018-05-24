@@ -84,11 +84,18 @@ class PersonalBests(ListView):
     template_name = 'rankings/personal_best.html'
 
 
-def athlete_redirect_id_to_slug(request, athlete_id):
+def athlete_redirect_athlete_id_to_slug(request, athlete_id):
     athlete = Athlete.objects.filter(pk=athlete_id).first()
     if athlete is None:
         raise Http404
     return redirect(athlete, permanent=True)
+
+
+def athlete_redirect_event_id_to_slug(request, slug, event_id):
+    event = Event.objects.filter(pk=event_id).first()
+    if event is None:
+        raise Http404
+    return redirect(reverse('athlete-event', args=[slug, event.generate_slug()]), permanent=True)
 
 
 class EventByAthlete(ListView):
