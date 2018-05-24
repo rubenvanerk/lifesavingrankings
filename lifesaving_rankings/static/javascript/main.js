@@ -21,6 +21,7 @@ var colorPercentages = function () {
 };
 
 $(document).ready(function () {
+    $('#dataTable').DataTable();
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
     $('[data-toggle="tooltip"]').tooltip();

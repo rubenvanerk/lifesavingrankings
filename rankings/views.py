@@ -95,7 +95,12 @@ def athlete_redirect_event_id_to_slug(request, slug, event_id):
     event = Event.objects.filter(pk=event_id).first()
     if event is None:
         raise Http404
-    return redirect(reverse('athlete-event', args=[slug, event.generate_slug()]), permanent=True)
+    athlete = Athlete.objects.filter(slug=slug).first()
+    if athlete is None:
+        athlete = Athlete.objects.filter(pk=slug).first()
+        if athlete is None:
+            raise Http404
+    return redirect(reverse('athlete-event', args=[athlete.slug, event.generate_slug()]), permanent=True)
 
 
 def redirect_event_id_to_slug(request, event_id, gender):
