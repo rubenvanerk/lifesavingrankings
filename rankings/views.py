@@ -98,6 +98,13 @@ def athlete_redirect_event_id_to_slug(request, slug, event_id):
     return redirect(reverse('athlete-event', args=[slug, event.generate_slug()]), permanent=True)
 
 
+def redirect_event_id_to_slug(request, event_id, gender):
+    event = Event.objects.filter(pk=event_id).first()
+    if event is None:
+        raise Http404
+    return redirect(reverse('best-by-event', args=[event.generate_slug(), gender]), permanent=True)
+
+
 class EventByAthlete(ListView):
     model = IndividualResult
     athlete = None

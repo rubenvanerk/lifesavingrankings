@@ -1,7 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
-from rankings.views import athlete_redirect_athlete_id_to_slug, athlete_redirect_event_id_to_slug
+from rankings.views import athlete_redirect_athlete_id_to_slug, athlete_redirect_event_id_to_slug, \
+    redirect_event_id_to_slug
 from . import views
 
 urlpatterns = [
@@ -24,6 +25,11 @@ urlpatterns = [
         regex=r'^athlete/(?P<slug>[a-z0-9\-]+)',
         view=views.PersonalBests.as_view(),
         name='athlete-overview'
+    ),
+    url(
+        regex=r'^top/(?P<event_id>[0-9]+)/(?P<gender>\bmen\b|\bwomen\b)',
+        view=redirect_event_id_to_slug,
+        name='best-by-event'
     ),
     url(
         regex=r'^top/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
