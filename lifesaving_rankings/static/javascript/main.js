@@ -21,7 +21,11 @@ var colorPercentages = function () {
 };
 
 $(document).ready(function () {
-    $('#dataTable').DataTable();
+    $(document).ready(function() {
+    $('#eventByAthlete').DataTable( {
+        "order": [[ 2, "asc" ]]
+    } );
+} );
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
     $('[data-toggle="tooltip"]').tooltip();
