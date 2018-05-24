@@ -13,12 +13,19 @@
 
 {% block content %}
 
-    <div class="text-center website-title"><h1>Lifesaving Rankings</h1></div>
+    <div id="home-top" style="background-image: url({% static 'images/pool.jpg' %})">
+        <div class="ui container">
+            <div class="name">
+                <h1><span class="de-emphasis">Lifesaving</span> Rankings</h1>
+            </div>
+        </div>
+    </div>
 
     <br>
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="ui stackable two column grid">
+
+        <div class="column">
             <h2>Men</h2>
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -68,7 +75,7 @@
             </div>
         </div>  <!-- End men-->
 
-        <div class="col-6">
+        <div class="column">
             <h2>Women</h2>
             <div class="table-responsive">
                 <table class="table table-striped">

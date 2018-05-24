@@ -21,23 +21,29 @@ var colorPercentages = function () {
 };
 
 $(document).ready(function () {
-    $(document).ready(function() {
-    $('#eventByAthlete').DataTable( {
-        "order": [[ 2, "asc" ]]
-    } );
-} );
+    $(document).ready(function () {
+        $('#eventByAthlete').DataTable({
+            "order": [[2, "asc"]]
+        });
+    });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
-    $('[data-toggle="tooltip"]').tooltip();
+    $('.popup').popup();
     $('#pick-athletes').selectize({
         plugins: ['remove_button'],
         delimiter: ',',
         persist: false,
-        create: function(input) {
+        create: function (input) {
             return {
                 value: input,
                 text: input
             }
-    }
-});
+        }
+    });
+
+    //initialize mobile menu
+    $('.ui.sidebar').sidebar({
+        context: $('.ui.pushable'),
+        transition: 'overlay'
+    }).sidebar('attach events', '#mobile_item');
 });

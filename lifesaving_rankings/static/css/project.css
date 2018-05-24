@@ -12,13 +12,6 @@ body {
     position: relative;
 }
 
-#wrapper {
-    min-height: 100vh;
-    padding-bottom: 5em;
-    background-color: #fcfcfc;
-    padding-top: 1em;
-}
-
 #footer {
     background-color: white;
     padding: 1em;
@@ -51,10 +44,58 @@ body {
     margin-top: 4em;
 }
 
-#main {
-    padding-top: 2em;
-}
 
 .analysis-actions .analysis-action {
     padding-right: 15px;
+}
+
+.ghost-button {
+  background: none;
+  padding: 0;
+  border: none;
+}
+
+.ghost-button:hover {
+    cursor: pointer;
+}
+
+
+#home-top {
+    -webkit-background-size: 100%;
+    background: no-repeat fixed center;
+    background-size: cover;
+}
+
+#home-top .name {
+    font-size: 20px;
+    padding: 9em 0;
+    text-transform: uppercase;
+}
+
+
+#home-top .name .de-emphasis {
+    display: block;
+    font-weight: 500;
+}
+
+#home-top .name {
+    letter-spacing: .1em;
+}
+
+.main-desktop-margin {
+    margin-top: 44px;
+}
+
+.main-mobile-margin {
+    margin-top: 23px;
+}
+
+.no-margin {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#sidebar{
+    position: fixed;
+    top: 20px;
 }
