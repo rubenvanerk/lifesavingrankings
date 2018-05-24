@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Min, Q
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView
 from .models import *
@@ -82,6 +82,13 @@ class PersonalBests(ListView):
         return context
 
     template_name = 'rankings/personal_best.html'
+
+
+def athlete_redirect_id_to_slug(request, athlete_id):
+    athlete = Athlete.objects.filter(pk=athlete_id).first()
+    if athlete is None:
+        raise Http404
+    return redirect(athlete, permanent=True)
 
 
 class EventByAthlete(ListView):

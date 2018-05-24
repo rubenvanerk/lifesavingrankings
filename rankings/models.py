@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models import ForeignKey
+from django.urls import reverse
 
 
 class Athlete(models.Model):
@@ -43,6 +44,9 @@ class Athlete(models.Model):
         for result in athlete:
             return result
         return False
+
+    def get_absolute_url(self):
+        return reverse('athlete-overview', args=[self.slug])
 
 
 class Event(models.Model):
