@@ -55,7 +55,9 @@
 
 {% block body %}
 
+    {# menu bar #}
     <div class="ui inverted top fixed menu grid">
+        {# content menu bar mobile #}
         <div class="computer only row">
             <div class="item"><a href="/">Lifesaving Rankings</a></div>
             <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
@@ -93,6 +95,7 @@
             </div>
         </div>
 
+        {# content menu bar mobile #}
         <div class="tablet mobile only row">
             <div class="ui inverted massive top fixed menu">
 
@@ -107,11 +110,13 @@
 
     </div>
 
+{#     hacky margins to align content with menu bar #}
     <div class="ui grid no-margin">
         <div class="column computer only main-desktop-margin"></div>
         <div class="column tablet mobile only main-mobile-margin"></div>
     </div>
 
+    {# side bar #}
     <div class="ui right fixed sidebar vertical inverted menu" id="sidebar">
         <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
 
@@ -145,45 +150,49 @@
 
     </div>
 
-    <div class="ui pushable">
 
 
-        <div class="pusher">
-            <div id="content">
+    <div class="pusher">
 
-
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-
-
-                {% block content %}
-
-                {% endblock %}
-
+        {% if home %}
+            <div id="home-top" style="background-image: url({% static 'images/pool.jpg' %})">
+                <div class="ui container">
+                    <div class="name">
+                        <h1><span class="de-emphasis">Lifesaving</span> Rankings</h1>
+                    </div>
+                </div>
             </div>
-        </div>
+        {% endif %}
 
+        <div id="content" class="ui container">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+
+            {% block content %}
+
+            {% endblock %}
+
+        </div>
     </div>
+
 
 
 {% endblock %}
 
 
-<footer id="footer">
-    <div class="container">
-        <div class="container-fluid">
-            {#            <span class="pull-left">#}
-            {#                Missing a competition? Mail me at results@lifesavingrankings.nl#}
-            {#            </span>#}
-            <span class="pull-right">
-            Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>
-            </span>
-        </div>
-    </div>
-</footer>
+{#<footer id="footer">#}
+    {#            <span class="pull-left">#}
+    {#                Missing a competition? Mail me at results@lifesavingrankings.nl#}
+    {#            </span>#}
+{#    <span class="pull-right">#}
+{#            Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>#}
+{#            </span>#}
+{#</footer>#}
 
 
 {% block footer %}

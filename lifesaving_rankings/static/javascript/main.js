@@ -28,6 +28,8 @@ $(document).ready(function () {
     });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
+
+
     $('.popup').popup();
     $('#pick-athletes').selectize({
         plugins: ['remove_button'],
@@ -41,9 +43,17 @@ $(document).ready(function () {
         }
     });
 
+
+    var label = $('.dataTables_filter label');
+    console.log(label);
+    label.addClass('ui input').contents().filter(function(){
+    return (this.nodeType == 3);
+}).remove();
+    var input = label.find('input');
+    input.prop('placeholder', 'Search..');
+
     //initialize mobile menu
-    $('.ui.sidebar').sidebar({
-        context: $('.ui.pushable'),
-        transition: 'overlay'
-    }).sidebar('attach events', '#mobile_item');
+    $('.ui.sidebar').sidebar('attach events', '#mobile_item');
+
+    $('#content').fadeIn("slow")
 });

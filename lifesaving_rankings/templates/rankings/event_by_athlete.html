@@ -8,32 +8,35 @@
 
 {% block content %}
     <a href="{% url 'athlete-overview' slug=athlete.slug %}">
-        < back
+        <button class="ui left labeled icon button">
+            <i class="left arrow icon"></i>
+            Back
+        </button>
     </a>
+
     <h1>
         {{ athlete.first_name }} {{ athlete.last_name }}
     </h1>
 
     <h2>{{ event.name }}</h2>
 
-    <div class="table-responsive">
-        <table class="table table-striped" id="eventByAthlete">
-            <thead>
+    <table class="ui celled table" id="eventByAthlete">
+        <thead>
+        <tr>
+            <td>Competition</td>
+            <td>Date</td>
+            <td>Time</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for times in object_list %}
             <tr>
-                <td>Competition</td>
-                <td>Date</td>
-                <td>Time</td>
+                <td>{{ times.competition__name }}</td>
+                <td><span hidden>{{ times.competition__date|date:"Y-m-d" }}</span>{{ times.competition__date }}</td>
+                <td>{{ times.time|format_time }}</td>
             </tr>
-            </thead>
-            <tbody>
-            {% for times in object_list %}
-                <tr>
-                    <td>{{ times.competition__name }}</td>
-                    <td><span class="d-none">{{ times.competition__date|date:"Y-m-d" }}</span>{{ times.competition__date }}</td>
-                    <td>{{ times.time|format_time }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

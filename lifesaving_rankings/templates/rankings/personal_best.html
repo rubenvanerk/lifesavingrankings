@@ -10,13 +10,16 @@
 
 {% block content %}
     <h1>{{ athlete.first_name }} {{ athlete.last_name }}</h1>
-    <div class="table-responsive">
-        <table class="table table-striped">
+    {% for event_type, times in object_list.items %}
+        <table class="ui celled table">
             {% if object_list.individual|length > 0 %}
+                <thead>
                 <tr>
-                    <th>Individual events</th>
+                    <th>{{ event_type|capfirst }}</th>
                     <th>PB</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for personal_best in object_list.individual %}
                     <tr>
                         <td>
@@ -29,23 +32,7 @@
                     </tr>
                 {% endfor %}
             {% endif %}
-            {% if object_list.relay|length > 0 %}
-                <tr>
-                    <th>Relays</th>
-                    <th></th>
-                </tr>
-                {% for personal_best in object_list.relay %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'best-by-event' event_name=personal_best.event__name|to_url gender=athlete.gender|gender_to_text %}">
-                                {{ personal_best.event__name }}</a>
-                        </td>
-                        <td>
-                            <a href="{% url 'athlete-event' slug=athlete.slug event_name=personal_best.event__name|to_url %}">
-                                {{ personal_best.time|format_time }}</a></td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+            </tbody>
         </table>
-    </div>
+    {% endfor %}
 {% endblock %}

@@ -29,7 +29,7 @@ urlpatterns = [
     url(
         regex=r'^top/(?P<event_id>[0-9]+)/(?P<gender>\bmen\b|\bwomen\b)',
         view=redirect_event_id_to_slug,
-        name='best-by-event'
+        name='best-by-event-redirect'
     ),
     url(
         regex=r'^top/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',

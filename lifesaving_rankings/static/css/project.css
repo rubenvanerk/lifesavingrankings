@@ -1,53 +1,27 @@
+html,
 body {
-    background: url('../images/whitediamond.png') repeat;
-}
-
-html {
-    height: 100%;
-}
-
-body {
-    /*padding-bottom: 100px;*/
-    min-height: 100%;
-    position: relative;
+   margin:0;
+   padding:0;
+   height:100%;
 }
 
 #footer {
-    background-color: white;
     padding: 1em;
     width: 100%;
     position: absolute;
     bottom: 0;
     border-top: 1px solid lightgrey;
+    z-index: 10;
 }
 
-.analysis-time {
-    padding: 0.5em;
-    width: 5em;
-    overflow: hidden;
-    border-radius: 4px;
+#content {
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 3em;
+    padding-bottom: 3em;
+    display: none;
 }
 
-.analysis-red {
-    background-color: #E3746A;
-}
-
-.analysis-orange {
-    background-color: #ffbe49;
-}
-
-.analysis-green {
-    background-color: #64b054;
-}
-
-.website-title {
-    margin-top: 4em;
-}
-
-
-.analysis-actions .analysis-action {
-    padding-right: 15px;
-}
 
 .ghost-button {
   background: none;
@@ -68,8 +42,10 @@ body {
 
 #home-top .name {
     font-size: 20px;
-    padding: 9em 0;
+    padding: 5em 0;
     text-transform: uppercase;
+    filter: brightness(100%);
+    color: white;
 }
 
 
@@ -97,5 +73,31 @@ body {
 
 #sidebar{
     position: fixed;
-    top: 20px;
+    top: 50px;
+}
+
+
+
+
+.analysis-time {
+    padding: 0.5em;
+    width: 5em;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.analysis-red {
+    background-color: #E3746A;
+}
+
+.analysis-orange {
+    background-color: #ffbe49;
+}
+
+.analysis-green {
+    background-color: #64b054;
+}
+
+.analysis-actions .analysis-action {
+    padding-right: 15px;
 }
