@@ -11,8 +11,8 @@
 {% block content %}
     <h1>{{ athlete.first_name }} {{ athlete.last_name }}</h1>
     {% for event_type, times in object_list.items %}
+        {% if times %}
         <table class="ui celled table">
-            {% if object_list.individual|length > 0 %}
                 <thead>
                 <tr>
                     <th>{{ event_type|capfirst }}</th>
@@ -31,8 +31,8 @@
                                 {{ personal_best.time|format_time }}</a></td>
                     </tr>
                 {% endfor %}
-            {% endif %}
             </tbody>
         </table>
+        {% endif %}
     {% endfor %}
 {% endblock %}
