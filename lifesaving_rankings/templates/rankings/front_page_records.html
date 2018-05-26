@@ -13,13 +13,11 @@
 
 {% block content %}
 
-    <br>
-
     <div class="ui stackable two column grid">
 
         {% for gender, results in object_list.genders.items %}
             <div class="column">
-                <h2>{{ gender|capfirst }}</h2>
+                <h2 class="ui header">{{ gender|capfirst }}</h2>
                 <table class="ui celled table">
                     <thead>
                     <tr>

@@ -20,7 +20,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for personal_best in object_list.individual %}
+                {% for personal_best in times %}
                     <tr>
                         <td>
                             <a href="{% url 'best-by-event' event_name=personal_best.event__name|to_url gender=athlete.gender|gender_to_text %}">

@@ -1,9 +1,9 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load crispy_forms_filters %}
+{% load widget_tweaks %}
 
 {% block head_title %}
     {% if new_group %}
-        Create new group
+        Create a new group
     {% else %}
         Edit group
     {% endif %}
@@ -14,23 +14,37 @@
         <div class="col-md-4">
             <h1>
                 {% if new_group %}
-                    Create new group
+                    Create a new group
                 {% else %}
                     Edit group
                 {% endif %}
             </h1>
-            <form action="" method="post">{% csrf_token %}
+            <form action="" method="post" class="ui form narrow">{% csrf_token %}
 
-                {{ form.non_field_errors }}
-                {{ form.name|as_crispy_field }}
-                {{ form.athlete }}
-                {{ form.public|as_crispy_field }}
-                {{ form.gender|as_crispy_field }}
+                {% for field in form %}
+                    {% if field.name == 'public' %}
+                        <div class="inline field">
+                            <div class="ui toggle checkbox">
+                                {{ field }}
+                                <label>{{ field.label }}</label>
+                            </div>
+                        </div>
+                    {% else %}
+                        <label for="{{ field.name }}">{{ field.label }}</label>
+                        {% render_field field %}
+                    {% endif %}
+                {% endfor %}
 
-                <a href="{% url "private-group-list" %}">
-                    <button class="btn secondary">Cancel</button>
-                </a>
-                <input type="submit" value="Update" class="btn btn-primary"/>
+                <br>
+                <div class="ui buttons">
+                    <a href="{% url "private-group-list" %}">
+                        <button class="ui button">Cancel</button>
+                    </a>
+                    <div class="or"></div>
+                    <button class="ui positive button" type="submit" value="Update">Update</button>
+                </div>
+
+
             </form>
         </div>
     </div>

@@ -110,11 +110,8 @@
 
     </div>
 
-{#     hacky margins to align content with menu bar #}
-    <div class="ui grid no-margin">
-        <div class="column computer only main-desktop-margin"></div>
-        <div class="column tablet mobile only main-mobile-margin"></div>
-    </div>
+    {#     hacky margins to align content with menu bar #}
+
 
     {# side bar #}
     <div class="ui right fixed sidebar vertical inverted menu" id="sidebar">
@@ -154,6 +151,11 @@
 
     <div class="pusher">
 
+        <div class="ui grid no-margin">
+            <div class="column computer only main-desktop-margin"></div>
+            <div class="column tablet mobile only main-mobile-margin"></div>
+        </div>
+
         {% if home %}
             <div id="home-top" style="background-image: url({% static 'images/pool.jpg' %})">
                 <div class="ui container">
@@ -178,21 +180,18 @@
             {% endblock %}
 
         </div>
+
+        <footer id="footer" class="ui inverted">
+            <span class="right floated">
+            Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>
+            </span>
+        </footer>
+
     </div>
 
 
 
 {% endblock %}
-
-
-{#<footer id="footer">#}
-    {#            <span class="pull-left">#}
-    {#                Missing a competition? Mail me at results@lifesavingrankings.nl#}
-    {#            </span>#}
-{#    <span class="pull-right">#}
-{#            Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>#}
-{#            </span>#}
-{#</footer>#}
 
 
 {% block footer %}

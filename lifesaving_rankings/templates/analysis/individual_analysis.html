@@ -4,73 +4,71 @@
 {% load id_to_athlete_name %}
 {% load id_to_slug %}
 {% load analysis_filters %}
-{% load crispy_forms_filters %}
+{% load widget_tweaks %}
 {% block head_title %}Individual analysis{% endblock %}
 {% block content %}
 
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Name</th>
-                {% for event in events %}
-                    <th>
-                        {{ event.name }}
-                    </th>
-                {% endfor %}
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-            <tr>
-                <td>WC 2016 best 16</td>
-                {% for event in events %}
-                    <td>
-                        {{ special_results|find_special_time_by_event:event }}
-                    </td>
-                {% endfor %}
-            </tr>
-
-
-
-            {% for athlete_id, qs in results.items %}
-                <tr>
-                    <td>
-                        <a href="{% url 'athlete-overview' athlete_id|id_to_slug %}">
-                            {{ athlete_id|id_to_athlete_name }}
-                        </a>
-                    </td>
-                    {% for results in qs %}
-                        {% if results %}
-                            {% for result in results %}
-                                <td>
-                                    <div class="analysis-time">
-                                        {{ result.pb|format_time }}<br>
-                                        <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
-                                    </div>
-
-                                </td>
-                            {% endfor %}
-                        {% else %}
-                            <td></td>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            {% for event in events %}
+                <th>
+                    {{ event.name }}
+                </th>
             {% endfor %}
-            </tbody>
-        </table>
-    </div>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>WC 2016 best 16</td>
+            {% for event in events %}
+                <td>
+                    {{ special_results|find_special_time_by_event:event }}
+                </td>
+            {% endfor %}
+        </tr>
+
+
+
+        {% for athlete_id, qs in results.items %}
+            <tr>
+                <td>
+                    <a href="{% url 'athlete-overview' athlete_id|id_to_slug %}">
+                        {{ athlete_id|id_to_athlete_name }}
+                    </a>
+                </td>
+                {% for results in qs %}
+                    {% if results %}
+                        {% for result in results %}
+                            <td>
+                                <div class="analysis-time">
+                                    {{ result.pb|format_time }}<br>
+                                    <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
+                                </div>
+
+                            </td>
+                        {% endfor %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <br>
 
-    <div class="col-md-4">
-        <form action="" method="get">{% csrf_token %}
-            {{ form|crispy }}
-            <input type="submit" value="Filter" class="btn btn-primary"/>
-        </form>
-    </div>
+    <form action="" method="get" class="ui input filter">{% csrf_token %}
+        {% for field in form %}
+            {% render_field field %}
+        {% endfor %}
+        <button class="ui submit button" type="submit">Filter</button>
+    </form>
 {% endblock %}
 
 {% block javascript_after %}

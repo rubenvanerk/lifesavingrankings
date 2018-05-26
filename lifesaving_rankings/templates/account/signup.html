@@ -1,7 +1,6 @@
 {% extends "lifesaving_rankings/base.html" %}
 
 {% load i18n %}
-{% load crispy_forms_filters %}
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
@@ -10,13 +9,13 @@
 
 <p>{% blocktrans %}Already have a account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
-<form class="signup col-xs-12 col-sm-8 col-md-5 col-lg-4" id="signup_form" method="post" action="{% url 'account_signup' %}">
+<form class="signup ui form narrow" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}
-  {{ form|crispy}}
+  {{ form}}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
-  <button type="submit" class="btn btn-primary">{% trans "Sign Up" %} &raquo;</button>
+  <button type="submit" class="ui button">{% trans "Sign Up" %} &raquo;</button>
 </form>
 
 {% endblock %}

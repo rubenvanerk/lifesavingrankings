@@ -3,28 +3,42 @@
 {% block head_title %}{% if public %}Public groups{% else %}My groups{% endif %}{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-10">
-            <h1>
-                {% if public %}
-                    Public groups
-                {% else %}
-                    My groups
-                {% endif %}
-            </h1>
-        </div>
-        <div class="col-xs-2 text-right">
-            <a href="{% url 'group-create' %}"><h1><i class="glyphicon glyphicon-plus"></i></h1></a>
-        </div>
-    </div>
+    <h1>
+        {% if public %}
+            Public groups
+        {% else %}
+            My groups
+        {% endif %}
+    </h1>
+    {% if public %}
+        <a href="{% url 'private-group-list' %}">
+            <button class="ui right labeled icon button">
+                <i class="right arrow icon"></i>
+                Go to My Groups
+            </button>
+        </a>
+    {% else %}
+        <a href="{% url 'public-group-list' %}">
+            <button class="ui left labeled icon button">
+                <i class="left arrow icon"></i>
+                Go to Public Groups
+            </button>
+        </a>
+    {% endif %}
 
-    <table class="table table-striped">
+    <a href="{% url 'group-create' %}" class="ui right floated">
+        <button class="ui icon button" data-tooltip="Create a group"><i class="plus square icon"></i></button>
+    </a>
+
+    <br>
+
+    <table class="ui celled table">
         <thead>
         <tr>
-            <td>Group id</td>
-            <td>Group name</td>
-            <td>Number of members</td>
-            <td>Actions</td>
+            <th>Group id</th>
+            <th>Group name</th>
+            <th>Number of members</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -36,26 +50,26 @@
                 </td>
                 <td>{{ group.athlete.count }}</td>
                 <td class="analysis-actions">
-                <span class="analysis-action" data-tooltip="Individual analysis">
-                    <a href="{% url 'individual-analysis' group.id %}">
-                        <i class="fa fa-user"></i>
-                    </a>
-                </span>
-                    <span class="analysis-action" data-tooltip="
-                                                            {% if group.relay_analysis_available %}Relay analysis
-                                                            {% else %}Relay analysis not available
-                                                            {% endif %}">
-                    <a {% if group.relay_analysis_available %}href="{% url 'relay-analysis' group.id %}"{% endif %}>
-                            <i class="fa fa-users"></i>
-                    </a>
-                </span>
-                    {% if not public or group.creator == request.user %}
-                        <span class="analysis-action" data-tooltip="Edit">
-                        <a href="{% url 'group-edit' group.id %}">
-                            <i class="fa fa-pencil-alt"></i>
+
+
+                    <div class="ui icon mini buttons">
+                        <a href="{% url 'individual-analysis' group.id %}">
+                            <button class="ui left attached button" data-tooltip="Individual analysis"><i
+                                    class="user icon"></i></button>
                         </a>
-                        </span>
+                        <a {% if group.relay_analysis_available %}href="{% url 'relay-analysis' group.id %}"{% endif %}>
+                            <button class="right attached ui button{% if not group.relay_analysis_available %} disabled{% endif %}"
+                                    data-tooltip="Relay analysis"><i class="users icon"></i></button>
+                        </a>
+                    </div>
+                    {% if group.creator == request.user %}
+                        <div class="ui icon mini buttons">
+                            <a href="{% url 'group-edit' group.id %}">
+                                <button class="ui button edit"><i class="edit icon"></i></button>
+                            </a>
+                        </div>
                     {% endif %}
+
                 </td>
             </tr>
         {% empty %}
