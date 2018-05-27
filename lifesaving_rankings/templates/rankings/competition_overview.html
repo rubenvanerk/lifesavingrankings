@@ -7,7 +7,7 @@
 
 {% block content %}
 
-    <h1 class="ui header">{{ competition.name }}</h1>
+    <h1 class="ui header">{{ competition.name }} - {{ competition.date }}</h1>
 
      <a href="{% url 'competition-list' %}" class="button back">
         <button class="ui left labeled icon button">
