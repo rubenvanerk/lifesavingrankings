@@ -9,6 +9,14 @@
 
     <h1 class="ui header">{{ competition.name }}</h1>
 
+     <a href="{% url 'competition-list' %}" class="button back">
+        <button class="ui left labeled icon button">
+            <i class="left list icon"></i>
+            All competitions
+        </button>
+    </a>
+
+
     {% for event, results_by_gender in events.items %}
         <h2 class="ui header">{{ event }}</h2>
         <div class="ui stackable two column grid">
