@@ -52,10 +52,11 @@ class CompetitionOverview(TemplateView):
         event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
         events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
         context['events'] = {}
+        limit = 10
         for event in events:
             context['events'][event.name] = {}
-            context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition, 1)
-            context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition, 2)
+            context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition, 1, limit)
+            context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition, 2, limit)
         context['competition'] = competition
         return context
 
@@ -89,6 +90,21 @@ class CompetitionEvent(TemplateView):
 class CompetitionListView(ListView):
     model = Competition
     ordering = ['-date']
+
+
+class EventOverview(TemplateView):
+    template_name = 'rankings/event_overview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        events = Event.objects.filter(type__in=[1, 2]).all().order_by('pk')
+        context['events'] = {}
+        limit = 10
+        for event in events:
+            context['events'][event.name] = {}
+            context['events'][event.name]['men'] = event.get_top_by_gender(1, limit)
+            context['events'][event.name]['women'] = event.get_top_by_gender(2, limit)
+        return context
 
 
 def best_result_per_event(qs):

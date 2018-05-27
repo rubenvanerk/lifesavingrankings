@@ -93,8 +93,11 @@ class Event(models.Model):
             previous_segment = relay_order.segment
         return True
 
-    def get_top_by_competition_and_gender(self, competition, gender):
-        return IndividualResult.objects.filter(event=self, competition=competition, athlete__gender=gender).order_by('time').all()[:10]
+    def get_top_by_competition_and_gender(self, competition, gender, limit):
+        return IndividualResult.objects.filter(event=self, competition=competition, athlete__gender=gender).order_by('time').all()[:limit]
+
+    def get_top_by_gender(self, gender, limit):
+        return IndividualResult.objects.filter(event=self, athlete__gender=gender).order_by('time').all()[:limit]
 
 
 class Competition(models.Model):
