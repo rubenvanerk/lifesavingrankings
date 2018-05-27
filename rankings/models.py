@@ -96,9 +96,6 @@ class Event(models.Model):
     def get_top_by_competition_and_gender(self, competition, gender, limit):
         return IndividualResult.objects.filter(event=self, competition=competition, athlete__gender=gender).order_by('time').all()[:limit]
 
-    def get_top_by_gender(self, gender, limit):
-        return IndividualResult.objects.filter(event=self, athlete__gender=gender).order_by('time').all()[:limit]
-
 
 class Competition(models.Model):
     UNKNOWN = 0

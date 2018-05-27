@@ -52,7 +52,7 @@ urlpatterns = [
         name='search'
     ),
     url(
-        regex=r'^competitions/',
+        regex=r'^competitions',
         view=views.CompetitionListView.as_view(),
         name='competition-list'
     ),

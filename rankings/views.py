@@ -40,6 +40,16 @@ class FrontPageRecords(ListView):
     template_name = 'rankings/front_page_records.html'
 
 
+def best_result_per_event(qs):
+    checked_events = []
+    final_list = []
+    for result in qs:
+        if result.get('event__id') not in checked_events:
+            checked_events.append(result.get('event__id'))
+            final_list.append(result)
+    return final_list
+
+
 class CompetitionOverview(TemplateView):
     template_name = 'rankings/competition_overview.html'
 
@@ -102,17 +112,31 @@ class EventOverview(TemplateView):
         limit = 10
         for event in events:
             context['events'][event.name] = {}
-            context['events'][event.name]['men'] = event.get_top_by_gender(1, limit)
-            context['events'][event.name]['women'] = event.get_top_by_gender(2, limit)
+            results_men = IndividualResult.objects.filter(event=event, athlete__gender=1).order_by('time').all()
+            context['events'][event.name]['men'] = best_result_per_athlete_v2(results_men, limit)
+            results_women = IndividualResult.objects.filter(event=event, athlete__gender=2).order_by('time').all()
+            context['events'][event.name]['women'] = best_result_per_athlete_v2(results_women, limit)
         return context
 
 
-def best_result_per_event(qs):
-    checked_events = []
+def best_result_per_athlete_v2(results, limit):
+    checked_athletes = []
+    final_list = []
+    for result in results:
+        if result.athlete not in checked_athletes:
+            checked_athletes.append(result.athlete)
+            final_list.append(result)
+        if len(final_list) == limit:
+            return final_list
+    return final_list
+
+
+def best_result_per_athlete(qs):
+    checked_athletes = []
     final_list = []
     for result in qs:
-        if result.get('event__id') not in checked_events:
-            checked_events.append(result.get('event__id'))
+        if result.get('athlete_id') not in checked_athletes:
+            checked_athletes.append(result.get('athlete_id'))
             final_list.append(result)
     return final_list
 
@@ -326,7 +350,6 @@ def best_result_per_athlete(qs):
         if result.get('athlete_id') not in checked_athletes:
             checked_athletes.append(result.get('athlete_id'))
             final_list.append(result)
-
     return final_list
 
 
