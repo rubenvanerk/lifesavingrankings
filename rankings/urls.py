@@ -46,4 +46,19 @@ urlpatterns = [
         view=views.Search.as_view(),
         name='search'
     ),
+    url(
+        regex=r'^competitions/',
+        view=views.CompetitionListView.as_view(),
+        name='competition-list'
+    ),
+    url(
+        regex=r'^competition/(?P<competition_slug>[a-z0-9\-]+)/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
+        view=views.CompetitionEvent.as_view(),
+        name='competition-event'
+    ),
+    url(
+        regex=r'^competition/(?P<competition_slug>[a-z0-9\-]+)',
+        view=views.CompetitionOverview.as_view(),
+        name='competition-overview'
+    ),
 ]

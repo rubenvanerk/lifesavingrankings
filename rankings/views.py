@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Min, Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from .models import *
 from django.http import Http404, HttpResponseRedirect
 from .forms import *
@@ -34,9 +34,61 @@ class FrontPageRecords(ListView):
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
         context['home'] = True
+        context['last_added_competition'] = Competition.objects.order_by('-date').first()
         return context
 
     template_name = 'rankings/front_page_records.html'
+
+
+class CompetitionOverview(TemplateView):
+    template_name = 'rankings/competition_overview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        competition_slug = self.kwargs.get('competition_slug')
+        competition = Competition.objects.filter(slug=competition_slug).first()
+        if competition is None:
+            raise Http404
+        event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
+        events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
+        context['events'] = {}
+        for event in events:
+            context['events'][event.name] = {}
+            context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition, 1)
+            context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition, 2)
+        context['competition'] = competition
+        return context
+
+
+class CompetitionEvent(TemplateView):
+    template_name = 'rankings/competition_event.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        competition_slug = self.kwargs.get('competition_slug')
+        competition = Competition.objects.filter(slug=competition_slug).first()
+
+        event_name = self.kwargs.get('event_name')
+        event = Event.find_by_name(event_name)
+        gender = gender_name_to_int(self.kwargs.get('gender'))
+
+        if competition is None or event is False:
+            raise Http404
+
+        results = IndividualResult.objects.filter(competition=competition, event=event,
+                                                  athlete__gender=gender).order_by('time').all()
+        context['results'] = results
+
+        context['competition'] = competition
+        context['event'] = event
+        context['gender'] = gender
+
+        return context
+
+
+class CompetitionListView(ListView):
+    model = Competition
+    ordering = ['-date']
 
 
 def best_result_per_event(qs):
@@ -139,7 +191,7 @@ class EventByAthlete(ListView):
 
         qs = qs.filter(athlete=athlete)
         qs = qs.filter(event=event)
-        qs = qs.values('time', 'competition__date', 'competition__name')
+        qs = qs.values('time', 'competition__date', 'competition__name', 'competition__slug')
         qs = qs.order_by('time')
         return qs
 
@@ -209,6 +261,7 @@ class BestByEvent(ListView):
                        'time',
                        'competition__date',
                        'competition__name',
+                       'competition__slug',
                        'event__name',
                        'athlete__slug')
 

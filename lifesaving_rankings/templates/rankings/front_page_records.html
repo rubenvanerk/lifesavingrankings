@@ -52,11 +52,13 @@
 
     </div>
 
-    <div class="ui center aligned one column grid">
+    <div class="ui center aligned one column grid stats">
         <div class="row">
             <div class="column">
                 <h3>Tracking <b>{{ result_count }}</b> results for <b>{{ athlete_count }}</b> athletes.</h3>
             </div>
         </div>
     </div>
+
+    Last added competition: <a href="{% url 'competition-overview' last_added_competition.slug %}">{{ last_added_competition.name }}</a><br>
 {% endblock %}

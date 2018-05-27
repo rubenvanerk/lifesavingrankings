@@ -41,6 +41,7 @@ class IndividualAnalysis(TemplateView):
         context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date)
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
         context['events'] = Event.objects.filter(type=1).order_by('id')
+        context['analysis_group'] = group
         return context
 
 

@@ -7,5 +7,6 @@ admin.site.register(IndividualResult)
 admin.site.register(Competition)
 admin.site.register(Event)
 admin.site.register(RelayOrder)
+admin.site.register(Athlete)
 
 

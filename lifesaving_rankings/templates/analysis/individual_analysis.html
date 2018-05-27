@@ -8,7 +8,21 @@
 {% block head_title %}Individual analysis{% endblock %}
 {% block content %}
 
-    <h1 class="ui header">Relay Analysis: {{ analysis_group.name }}</h1>
+    <div class="ui stackable grid">
+        <div class="ui twelve wide column">
+            <h1 class="ui header">Individual Analysis: {{ analysis_group.name }}</h1>
+        </div>
+
+        <div class="ui four wide column">
+            {% if request.user == analysis_group.creator %}
+                <a href="{% url 'group-edit' analysis_group.id %}">
+                    <button class="ui labeled icon button right floated">
+                        <i class="edit icon"></i>Edit this group
+                    </button>
+                </a>
+            {% endif %}
+        </div>
+    </div>
 
     <table class="ui celled table">
         <thead>

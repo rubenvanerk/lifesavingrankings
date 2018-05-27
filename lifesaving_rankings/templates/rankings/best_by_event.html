@@ -11,10 +11,10 @@
             <tr>
                 <th>#</th>
                 <th>Athlete</th>
-                <th class="d-none d-md-table-cell">YoB</th>
+                <th>YoB</th>
                 <th>Time</th>
-                <th class="d-none d-md-table-cell">Date</th>
-                <th class="d-none d-md-table-cell">Competition</th>
+                <th>Date</th>
+                <th>Competition</th>
             </tr>
             </thead>
             <tbody>
@@ -28,10 +28,10 @@
                             {{ top_result.athlete__first_name }} {{ top_result.athlete__last_name }}
                         </a>
                     </td>
-                    <td class="d-none d-md-table-cell">{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
+                    <td>{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
                     <td>{{ top_result.time|format_time }}</td>
-                    <td class="d-none d-md-table-cell">{{ top_result.competition__date }}</td>
-                    <td class="d-none d-md-table-cell">{{ top_result.competition__name }}</td>
+                    <td>{{ top_result.competition__date }}</td>
+                    <td><a href="{% url 'competition-overview' top_result.competition__slug %}">{{ top_result.competition__name }}</a></td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -1,8 +1,5 @@
 from __future__ import unicode_literals
 
-import urllib
-from urllib.parse import urlencode
-
 from django.db import models
 from django.db.models import ForeignKey
 from django.urls import reverse
@@ -21,7 +18,8 @@ class Athlete(models.Model):
 
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=30)
-    slug = models.URLField(unique=True, null=True)
+    slug = models.SlugField(unique=True, null=True)
+    prepopulated_fields = {"slug": ("first_name", "last_name")}
 
     year_of_birth = models.IntegerField()
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
@@ -76,7 +74,7 @@ class Event(models.Model):
     @classmethod
     def find_by_name(cls, event_name):
         event = Event.objects.raw(
-            "SELECT * FROM rankings_event " 
+            "SELECT * FROM rankings_event "
             "WHERE LOWER(REPLACE(name, ' ', '-')) = %s "
             "LIMIT 1",
             [event_name]
@@ -95,6 +93,9 @@ class Event(models.Model):
             previous_segment = relay_order.segment
         return True
 
+    def get_top_by_competition_and_gender(self, competition, gender):
+        return IndividualResult.objects.filter(event=self, competition=competition, athlete__gender=gender).order_by('time').all()[:10]
+
 
 class Competition(models.Model):
     UNKNOWN = 0
@@ -106,12 +107,18 @@ class Competition(models.Model):
         (BY_HAND, 'By hand')
     )
     name = models.CharField(max_length=60, unique=True)
+    slug = models.SlugField(null=True)
     date = models.DateField()
     location = models.CharField(max_length=30)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
 
+    prepopulated_fields = {"slug": ("name",)}
+
     def __str__(self):
         return self.name
+
+    def get_athlete_count(self):
+        return IndividualResult.objects.filter(competition=self).values('athlete').distinct().count()
 
 
 class IndividualResult(models.Model):

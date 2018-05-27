@@ -1,0 +1,29 @@
+{% extends "lifesaving_rankings/base.html" %}
+
+{% block head_title %}Competitions{% endblock %}
+{% block meta_description %}All competitions available on Lifesaving Rankings{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Competitions</h1>
+
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>Competition</th>
+            <th>Date</th>
+            <th>Participants</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for competition in object_list %}
+            {% if competition.get_athlete_count > 0 %}
+                <tr>
+                    <td><a href="{% url 'competition-overview' competition.slug %}">{{ competition.name }}</a></td>
+                    <td>{{ competition.date }}</td>
+                    <td>{{ competition.get_athlete_count }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

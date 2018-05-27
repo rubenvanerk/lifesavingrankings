@@ -59,5 +59,5 @@ $(document).ready(function () {
         .checkbox()
     ;
 
-    $('#content').fadeIn("slow")
+    $('#content').fadeIn()
 });

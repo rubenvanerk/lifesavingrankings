@@ -56,6 +56,10 @@ footer {
     letter-spacing: .2em;
 }
 
+.ui.grid.stats {
+    margin: 1em;
+}
+
 .main-desktop-margin {
     margin-top: 44px;
 }

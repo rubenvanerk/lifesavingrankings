@@ -1,0 +1,39 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load datetime_filter %}
+{% load to_url_filter %}
+{% load gender_to_text_filter %}
+
+{% block head_title %}{{ competition.name }} {{ event.name }} {{ gender|gender_to_text }}{% endblock %}
+{% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on {{ competition.name }}{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">{{ competition.name }}</h1>
+
+    <a href="{% url 'competition-overview' competition.slug %}" class="back button">
+        <button class="ui left labeled icon button back">
+            <i class="left arrow icon"></i>
+            Back
+        </button>
+    </a>
+
+    <h2 class="ui header">{{ event.name }} {{ gender|gender_to_text }}</h2>
+
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Athlete</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+            <tr>
+            <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.first_name }} {{ result.athlete.last_name}}</a></td>
+            <td>{{ result.time|format_time }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
