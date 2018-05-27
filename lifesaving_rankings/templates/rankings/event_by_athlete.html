@@ -7,33 +7,37 @@
     collected on Lifesaving Rankings{% endblock %}
 
 {% block content %}
-    <a href="{% url 'athlete-overview' slug=athlete.slug %}">
-        < back
-    </a>
     <h1>
-        {{ athlete.first_name }} {{ athlete.last_name }}
+        {{ athlete.first_name }} {{ athlete.last_name }} - {{ event.name }}
     </h1>
 
-    <h2>{{ event.name }}</h2>
+    <a href="{% url 'athlete-overview' slug=athlete.slug %}" class="back button">
+        <button class="ui left labeled icon button back">
+            <i class="left arrow icon"></i>
+            Back
+        </button>
+    </a>
 
-    <div class="table-responsive">
-        <table class="table table-striped" id="eventByAthlete">
-            <thead>
+
+{#    <h2>{{ event.name }}</h2>#}
+
+    <table class="ui celled table" id="eventByAthlete">
+        <thead>
+        <tr>
+            <th>Competition</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for times in object_list %}
             <tr>
-                <td>Competition</td>
-                <td>Date</td>
-                <td>Time</td>
+                <td>{{ times.competition__name }}</td>
+                <td><span hidden>{{ times.competition__date|date:"Y-m-d" }}</span>{{ times.competition__date }}</td>
+                <td>{{ times.time|format_time }}{% if forloop.first %} <i class="disabled small icon star outline"></i>{% endif %}</td>
             </tr>
-            </thead>
-            <tbody>
-            {% for times in object_list %}
-                <tr>
-                    <td>{{ times.competition__name }}</td>
-                    <td><span class="d-none">{{ times.competition__date|date:"Y-m-d" }}</span>{{ times.competition__date }}</td>
-                    <td>{{ times.time|format_time }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}

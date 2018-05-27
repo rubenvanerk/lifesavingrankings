@@ -25,7 +25,7 @@ class FrontPageRecords(ListView):
                              'athlete__slug')
         women = women.annotate(time=Min('time')).order_by('event_id', 'time')
 
-        result = {'men': best_result_per_event(men), 'women': best_result_per_event(women), 'times': qs,
+        result = {'genders': {'men': best_result_per_event(men), 'women': best_result_per_event(women)}, 'times': qs,
                   'athletes': athletes}
         return result
 
@@ -33,6 +33,7 @@ class FrontPageRecords(ListView):
         context = super().get_context_data()
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
+        context['home'] = True
         return context
 
     template_name = 'rankings/front_page_records.html'

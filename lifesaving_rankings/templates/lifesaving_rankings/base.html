@@ -17,14 +17,14 @@
     <meta name="description" content="{% block meta_description %}{% endblock %}">
 
     {% block css %}
-        <link rel="stylesheet" href="{% static 'css/bootstrap4.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'libs/semantic-ui/semantic.min.css' %}">
 
         <!-- Your stuff: Third-party CSS libraries go here -->
-        {#        <link rel="stylesheet" href="//cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css ">#}
         <link rel="stylesheet" type="text/css"
-              href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css"/>
+              href="https://cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/css/selectize.min.css"
-              integrity="sha256-4BosA+P6Qycvyi2wsMf6zbq9Em7BJqMXk/SpXbQVJJY=" crossorigin="anonymous" />
+              integrity="sha256-4BosA+P6Qycvyi2wsMf6zbq9Em7BJqMXk/SpXbQVJJY=" crossorigin="anonymous"/>
 
         <!-- This file stores project-specific CSS -->
         <link href="{% static 'css/project.css' %}" rel="stylesheet">
@@ -55,103 +55,143 @@
 
 {% block body %}
 
-    <div class="container" id="wrapper">
+    {# menu bar #}
+    <div class="ui inverted top fixed menu grid">
+        {# content menu bar mobile #}
+        <div class="computer only row">
+            <div class="item"><a href="/">Lifesaving Rankings</a></div>
+            <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
 
-        <nav class="navbar navbar-light bg-light navbar-expand-md">
-
-            <div class="container-fluid">
-
-                <button type="button" class="navbar-toggler collapsed" data-toggle="collapse"
-                        data-target="#navbar-collapse" aria-expanded="false"><span
-                        class="sr-only">Toggle navigation</span>
-                    &#x2630;
-                </button>
-                <a class="navbar-brand" href="/">Lifesaving Rankings</a>
-
-                <div class="collapse navbar-collapse" id="navbar-collapse">
-                    {% block nav %}
-                        <ul class="nav navbar-nav">
-                            <li class="dropdown nav-item {% active 'analysis' %}">
-                                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" role="button">Analysis <span
-                                        class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    {% if user.is_authenticated %}
-                                        <li class="dropdown-item"><a href="{% url 'private-group-list' %}">My groups</a></li>
-                                    {% endif %}
-                                    <li class="dropdown-item"><a href="{% url 'public-group-list' %}">Public groups</a></li>
-                                </ul>
-                            </li>
-                            {% if request.user.is_superuser %}
-                                <li class="nav-item {% active 'merge-athletes' %}" role="presentation">
-                                    <a class="nav-link" href="{% url 'merge-athletes' %}">Merge athletes</a>
-                                </li>
-                            {% endif %}
-                        </ul>
+            {% if request.user.is_superuser %}
+                <a href="{% url 'merge-athletes' %}" class="item {% active 'merge-athletes' %}">Merge</a>
+            {% endif %}
 
 
-                        {% if user.is_authenticated %}
-                            <p class="navbar-text ml-auto">Logged in as: {% user_display user %}</p>
-                        {% endif %}
+            <div class="right menu">
 
-
-                        <form class="form-inline ml-auto  row" action="{% url 'search' %}" role="search">
-                            <div class="form-group col-10 m-0">
-                                <input type="text"
-                                       class="form-control"
-                                       placeholder="Search athletes"
-                                       name="athlete"
-                                       {% if query %}value="{{ query }}"{% endif %}>
-                            </div>
-                            <button type="submit" class="btn btn-secondary col-2 m-0">
-                                <i class="fa fa-search"></i>
+                <div class="item">
+                    <form action="{% url 'search' %}" role="search">
+                        <div class="ui inverted transparent icon input">
+                            <input type="text"
+                                   placeholder="Search athletes"
+                                   name="athlete"
+                                   {% if query %}value="{{ query }}"{% endif %}>
+                            <button class="ghost-button" type="submit"><i class="inverted search link icon"></i>
                             </button>
-                        </form>
+                        </div>
+                    </form>
+                </div>
 
-                        <ul class="nav navbar-nav ml-lg-3">
-                            {% if user.is_authenticated %}
-                                <li role="presentation" class="nav-item {% active 'account_logout' %}"><a class="nav-link"
-                                        href="{% url 'account_logout' %}">Logout</a></li>
-                            {% else %}
-                                <li role="presentation" class="nav-item {% active 'account_login' %}"><a class="nav-link"
-                                        href="{% url 'account_login' %}">Login</a></li>
-                            {% endif %}
-                        </ul>
+                {% if user.is_authenticated %}
+                    <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">
+                        Logout
+                    </a>
+                {% else %}
+                    <a class="item {% active 'account_login' %}" href="{% url 'account_login' %}">
+                        Login
+                    </a>
+                {% endif %}
 
-                    {% endblock %}
+            </div>
+        </div>
+
+        {# content menu bar mobile #}
+        <div class="tablet mobile only row">
+            <div class="ui inverted massive top fixed menu">
+
+                <a href="/" class="item">Lifesaving Rankings</a>
+
+                <div class="right menu">
+                    <a id="mobile_item" class="item"><i class="bars icon"></i></a>
                 </div>
 
             </div>
-        </nav>
+        </div>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
-            {% endfor %}
+    </div>
+
+    {#     hacky margins to align content with menu bar #}
+
+
+    {# side bar #}
+    <div class="ui right fixed sidebar vertical inverted menu" id="sidebar">
+        <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
+
+        {% if request.user.is_superuser %}
+            <a href="{% url 'merge-athletes' %}" class="item {% active 'merge-athletes' %}">Merge</a>
         {% endif %}
 
-        <div id="main">
+
+        <div class="item">
+            <form action="{% url 'search' %}" role="search">
+                <div class="ui inverted transparent icon input">
+                    <input type="text"
+                           placeholder="Search athletes"
+                           name="athlete"
+                           {% if query %}value="{{ query }}"{% endif %}>
+                    <button class="ghost-button" type="submit"><i class="inverted search link icon"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% if user.is_authenticated %}
+            <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">
+                Logout
+            </a>
+        {% else %}
+            <a class="item {% active 'account_login' %}" href="{% url 'account_login' %}">
+                Login
+            </a>
+        {% endif %}
+
+    </div>
+
+
+
+    <div class="pusher">
+
+        <div class="ui grid no-margin">
+            <div class="column computer only main-desktop-margin"></div>
+            <div class="column tablet mobile only main-mobile-margin"></div>
+        </div>
+
+        {% if home %}
+            <div id="home-top" style="background-image: url({% static 'images/pool.jpg' %})">
+                <div class="ui container">
+                    <div class="name">
+                        <h1><span class="de-emphasis">Lifesaving</span> Rankings</h1>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div id="content" class="ui container">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+
             {% block content %}
 
             {% endblock %}
+
         </div>
 
-    </div> <!-- /container -->
-
-{% endblock %}
-
-
-<footer id="footer">
-    <div class="container">
-        <div class="container-fluid">
-            {#            <span class="pull-left">#}
-            {#                Missing a competition? Mail me at results@lifesavingrankings.nl#}
-            {#            </span>#}
-            <span class="pull-right">
+        <footer id="footer" class="ui inverted">
+            <span class="right floated">
             Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a>
             </span>
-        </div>
+        </footer>
+
     </div>
-</footer>
+
+
+
+{% endblock %}
 
 
 {% block footer %}
@@ -166,10 +206,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js"
                 integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8"
                 crossorigin="anonymous"></script>
-        {#        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"#}
-        {#                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"#}
-        {#                crossorigin="anonymous"></script>#}
-        <!-- Your stuff: Third-party javascript libraries go here -->
+
         <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js"
                 integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l"
                 crossorigin="anonymous"></script>
@@ -178,15 +215,13 @@
                 crossorigin="anonymous"></script>
         <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript"
-                src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-        {#        <script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js "></script>#}
+                src="https://cdn.datatables.net/1.10.16/js/dataTables.semanticui.min.js "></script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.js"
                 integrity="sha256-YhmtrYJDSZgZFL8jDCR8VNOV/iigJPZYNCk8L9J72Hk=" crossorigin="anonymous"></script>
 
 
-
-        <script src="{% static 'javascript/bootstrap4.bundle.min.js' %}"></script>
+        <script src="{% static 'libs/semantic-ui/semantic.min.js' %}"></script>
         <!-- place project specific Javascript in this file -->
         <script src="{% static 'javascript/main.js' %}"></script>
 

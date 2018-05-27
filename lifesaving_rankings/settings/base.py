@@ -28,10 +28,10 @@ INSTALLED_APPS = [
     'lifesaving_rankings',
     'analysis',
     'debug_toolbar',
+    'widget_tweaks',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'crispy_forms',
     'storages',
 ]
 
@@ -118,8 +118,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
 

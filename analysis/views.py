@@ -14,7 +14,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
-from analysis.forms import ChooseFromDateForm
+from analysis.forms import ChooseFromDateForm, AnalysisGroupForm
 from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
@@ -86,15 +86,6 @@ class PublicAnalysisGroupListView(ListView):
         context = super(PublicAnalysisGroupListView, self).get_context_data()
         context['public'] = True
         return context
-
-
-class AnalysisGroupForm(forms.ModelForm):
-    class Meta:
-        model = AnalysisGroup
-        fields = ['name', 'athlete', 'public', 'gender']
-        widgets = {
-            'athlete': forms.SelectMultiple(attrs={'id': 'pick-athletes'})
-        }
 
 
 class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):

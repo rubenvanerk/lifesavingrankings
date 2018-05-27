@@ -9,35 +9,55 @@ var colorPercentages = function () {
         percentage = percentage.replace('%', '');
         var color = '';
         if (percentage < 100) {
-            color = 'analysis-green';
+            color = 'positive';
         } else if (percentage < 105) {
-            color = 'analysis-orange';
+            color = 'warning';
         } else {
-            color = 'analysis-red';
+            color = 'negative';
         }
-        $(this).parent().addClass(color);
+        $(this).parents('td').addClass(color);
     });
 
 };
 
 $(document).ready(function () {
-    $(document).ready(function() {
-    $('#eventByAthlete').DataTable( {
-        "order": [[ 2, "asc" ]]
-    } );
-} );
+    $(document).ready(function () {
+        $('#eventByAthlete').DataTable({
+            'order': [2, 'asc'],
+            'searching': false
+        });
+    });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
-    $('[data-toggle="tooltip"]').tooltip();
+
+
+    $('.popup').popup();
     $('#pick-athletes').selectize({
         plugins: ['remove_button'],
         delimiter: ',',
         persist: false,
-        create: function(input) {
+        create: function (input) {
             return {
                 value: input,
                 text: input
             }
-    }
-});
+        }
+    });
+
+
+    var label = $('.dataTables_filter label');
+    label.addClass('ui input').contents().filter(function () {
+        return (this.nodeType == 3);
+    }).remove();
+    var input = label.find('input');
+    input.prop('placeholder', 'Search..');
+
+    //initialize mobile menu
+    $('.ui.sidebar').sidebar('attach events', '#mobile_item');
+
+    $('.ui.checkbox')
+        .checkbox()
+    ;
+
+    $('#content').fadeIn("slow")
 });

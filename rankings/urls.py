@@ -9,7 +9,7 @@ urlpatterns = [
     url(
         regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/(?P<event_id>[0-9]+)$',
         view=athlete_redirect_event_id_to_slug,
-        name='athlete-event'
+        name='athlete-event-redirect'
     ),
     url(
         regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/(?P<event_name>[a-z0-9\-()]+)$',
@@ -29,7 +29,7 @@ urlpatterns = [
     url(
         regex=r'^top/(?P<event_id>[0-9]+)/(?P<gender>\bmen\b|\bwomen\b)',
         view=redirect_event_id_to_slug,
-        name='best-by-event'
+        name='best-by-event-redirect'
     ),
     url(
         regex=r'^top/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',

@@ -5,44 +5,43 @@
 
 {% block content %}
 
-    <div class="table-responsive">
-        <table class="table table-striped" id="teamMaker">
-            <thead>
-            <tr>
-                <th>Team</th>
-                {% for event in events %}
-                    <th>{{ event.name }}</th>
-                {% endfor %}
-                <th>Total</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for group_team in group_teams %}
-                <tr>
-                    <td>
-                        {% for athlete in group_team.athletes.all %}
-                            {{ athlete.first_name }} {{ athlete.last_name }}<br>
-                        {% endfor %}
-                    </td>
-                    {% for setup in group_team.get_ordered_setups %}
-                        <td>
-                            {% if setup.time %}
-                                <strong>{{ setup.time|format_time }}</strong><br>
-                                {% for athlete in setup.get_athletes_ordered_by_index %}
-                                    {{ athlete.first_name }}<br>
-                                {% endfor %}
-                            {% endif %}
-                        </td>
-                    {% endfor %}
-                    <td>
-                        {{ group_team.get_total_time|format_time }}
-                    </td>
-                </tr>
+    <h1>Relay Analysis: {{ analysis_group.name }}</h1>
+
+    <table class="ui celled table" id="teamMaker">
+        <thead>
+        <tr>
+            <th>Team</th>
+            {% for event in events %}
+                <th>{{ event.name }}</th>
             {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <br>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for group_team in group_teams %}
+            <tr>
+                <td>
+                    {% for athlete in group_team.athletes.all %}
+                        {{ athlete.first_name }} {{ athlete.last_name }}<br>
+                    {% endfor %}
+                </td>
+                {% for setup in group_team.get_ordered_setups %}
+                    <td>
+                        {% if setup.time %}
+                            <strong>{{ setup.time|format_time }}</strong><br>
+                            {% for athlete in setup.get_athletes_ordered_by_index %}
+                                {{ athlete.first_name }}<br>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+                <td>
+                    {{ group_team.get_total_time|format_time }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     {% if request.user.is_superuser %}
         <a href="{% url 'relay-analysis' analysis_group.id %}?run_simulation=1" class="float-right"><i
