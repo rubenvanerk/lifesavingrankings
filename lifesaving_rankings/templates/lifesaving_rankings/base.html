@@ -112,9 +112,6 @@
 
     </div>
 
-    {#     hacky margins to align content with menu bar #}
-
-
     {# side bar #}
     <div class="ui right fixed sidebar vertical inverted menu" id="sidebar">
         <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
@@ -154,7 +151,8 @@
 
 
     <div class="pusher">
-
+        
+        {# hacky margins to align content with menu bar #}
         <div class="ui grid no-margin">
             <div class="column computer only main-desktop-margin"></div>
             <div class="column tablet mobile only main-mobile-margin"></div>
@@ -174,7 +172,10 @@
 
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                    <div class="ui success message">
+                        <i class="close icon"></i>
+                        <p>{{ message }}</p>
+                    </div>
                 {% endfor %}
             {% endif %}
 
