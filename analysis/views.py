@@ -169,6 +169,10 @@ def create_fastest_setups(request):
     if 'current_group_team' not in request.GET or 'last_group_team' not in request.GET or 'analysis_group' not in request.GET:
         return HttpResponseBadRequest
     analysis_group = AnalysisGroup.objects.get(pk=request.GET['analysis_group'])
+    if not GroupTeam.objects.filter(pk=request.GET['current_group_team']).exists():
+        analysis_group.simulation_in_progress = False
+        analysis_group.save()
+        return HttpResponseBadRequest
 
     last_group_team = GroupTeam.objects.get(pk=request.GET['last_group_team'])
     current_group_team = GroupTeam.objects.get(pk=request.GET['current_group_team'])
@@ -177,7 +181,8 @@ def create_fastest_setups(request):
         get_fastest_time_for_team_and_event(current_group_team, event, analysis_group)
 
     if last_group_team.id is not current_group_team.id:
-        params = {'current_group_team': current_group_team.id + 1, 'last_group_team': last_group_team.id}
+        params = {'current_group_team': current_group_team.id + 1, 'last_group_team': last_group_team.id,
+                  'analysis_group': analysis_group.id}
         url = 'https://www.lifesavingrankings.nl/analysis/analyse/create-fastest-setups/'
         p = Process(target=async_request, args=(url, params))
         p.daemon = True
