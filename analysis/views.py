@@ -8,7 +8,7 @@ import requests
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Min
+from django.db.models import Min, Q
 from django import forms
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
@@ -38,14 +38,14 @@ class IndividualAnalysis(TemplateView):
         else:
             context['form'] = form
 
-        context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date)
+        context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date, user=group.creator)
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
         context['events'] = Event.objects.filter(type=1).order_by('id')
         context['analysis_group'] = group
         return context
 
 
-def get_top_results_by_athlete(gender=None, athletes=None, date=None):
+def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None):
     events = Event.objects.filter(type=1).order_by('id')
     if athletes is None:
         athletes = Athlete.objects.filter(gender=gender)
@@ -55,6 +55,8 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None):
         individual_results = []
         for event in events:
             qs = IndividualResult.find_by_athlete_and_event(athlete, event)
+            if user is not None:
+                qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
             if date is not None:
                 qs = qs.filter(competition__date__gte=date)
             qs = qs.values('event__name',
@@ -144,7 +146,8 @@ def create_combinations(analysis_group):
     last_group_team = group_teams[-1]
     first_group_team = next(iter(group_teams or []), None)
 
-    params = {'current_group_team': first_group_team.id, 'last_group_team': last_group_team.id}
+    params = {'current_group_team': first_group_team.id, 'last_group_team': last_group_team.id,
+              'analysis_group': analysis_group.id}
     url = 'https://www.lifesavingrankings.nl/analysis/analyse/create-fastest-setups/'
     p = Process(target=async_request, args=(url, params))
     p.daemon = True
@@ -152,13 +155,15 @@ def create_combinations(analysis_group):
 
 
 def create_fastest_setups(request):
-    if 'current_group_team' not in request.GET or 'last_group_team' not in request.GET:
+    if 'current_group_team' not in request.GET or 'last_group_team' not in request.GET or 'analysis_group' not in request.GET:
         return HttpResponseBadRequest
+    analysis_group = AnalysisGroup.objects.get(pk=request.GET['analysis_group'])
+
     last_group_team = GroupTeam.objects.get(pk=request.GET['last_group_team'])
     current_group_team = GroupTeam.objects.get(pk=request.GET['current_group_team'])
     events = Event.objects.filter(type=3)
     for event in events:
-        get_fastest_time_for_team_and_event(current_group_team, event)
+        get_fastest_time_for_team_and_event(current_group_team, event, analysis_group)
 
     if last_group_team.id is not current_group_team.id:
         params = {'current_group_team': current_group_team.id + 1, 'last_group_team': last_group_team.id}
@@ -176,11 +181,11 @@ def async_request(url, params):
     session.get(url, params=params)
 
 
-def get_time_for_setup(setup, event):
+def get_time_for_setup(setup, event, analysis_group):
     index = 0
     time_for_current_setup = timedelta(0)
     for athlete in setup:
-        time = get_time_by_event_athlete_and_index(event, athlete, index)
+        time = get_time_by_event_athlete_and_index(event, athlete, index, analysis_group)
         if time:
             time_for_current_setup += time
         else:
@@ -189,10 +194,10 @@ def get_time_for_setup(setup, event):
     return time_for_current_setup
 
 
-def get_time_by_event_athlete_and_index(event, athlete, index):
+def get_time_by_event_athlete_and_index(event, athlete, index, analysis_group):
     relay_order = RelayOrder.objects.filter(event=event, index=index).first()
     segment = relay_order.segment
-    individual_result = IndividualResult.find_fastest_by_athlete_and_event(athlete, segment)
+    individual_result = IndividualResult.find_fastest_by_athlete_and_event(athlete, segment, analysis_group)
     if individual_result:
         return individual_result.time
     return False
@@ -208,15 +213,17 @@ def create_group_teams(group, possible_team):
     return group_team
 
 
-def get_fastest_time_for_team_and_event(group_team, event):
+def get_fastest_time_for_team_and_event(group_team, event, analysis_group):
     fastest = None
     athletes = group_team.athletes.all()
 
     if event.are_segments_same():
         relay_order = RelayOrder.objects.filter(event=event).first()
         segment = relay_order.segment
-        results = IndividualResult.objects.filter(event=segment, athlete__in=athletes).values('athlete')\
-            .annotate(pb=Min('time')).order_by('pb').all()[:4]
+        qs = IndividualResult.objects.filter(
+            Q(extra_analysis_time_by=analysis_group.creator) | Q(extra_analysis_time_by=None))
+        results = qs.filter(event=segment, athlete__in=athletes).values('athlete') \
+                      .annotate(pb=Min('time')).order_by('pb').all()[:4]
         if len(list(results)) < 4:
             return
         current_setup = []
@@ -228,7 +235,7 @@ def get_fastest_time_for_team_and_event(group_team, event):
     else:
         for ordered_setup in itertools.combinations(athletes, 4):
             for setup in itertools.permutations(ordered_setup):
-                time_for_current_setup = get_time_for_setup(setup, event)
+                time_for_current_setup = get_time_for_setup(setup, event, analysis_group)
                 if time_for_current_setup and (fastest is None or fastest["time"] > time_for_current_setup):
                     fastest = {'setup': setup, 'time': time_for_current_setup}
     if fastest is None:

@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from rankings.views import athlete_redirect_athlete_id_to_slug, athlete_redirect_event_id_to_slug, \
-    redirect_event_id_to_slug
+    redirect_event_id_to_slug, add_result
 from . import views
 
 urlpatterns = [
@@ -10,6 +10,11 @@ urlpatterns = [
         regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/(?P<event_id>[0-9]+)$',
         view=athlete_redirect_event_id_to_slug,
         name='athlete-event-redirect'
+    ),
+    url(
+        regex=r'^athlete/add-time/(?P<athlete_slug>[a-z0-9\-]+)/(?P<event_slug>[a-z0-9\-()]+)$',
+        view=add_result,
+        name='athlete-add-time'
     ),
     url(
         regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/(?P<event_name>[a-z0-9\-()]+)$',

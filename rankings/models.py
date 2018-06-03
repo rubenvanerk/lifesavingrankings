@@ -1,7 +1,8 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey
+from django.db.models import ForeignKey, Q
 from django.urls import reverse
 from django.utils.text import slugify
 
@@ -106,7 +107,7 @@ class Competition(models.Model):
         (ELECTRONIC, 'Electronic'),
         (BY_HAND, 'By hand')
     )
-    name = models.CharField(max_length=60, unique=True)
+    name = models.CharField(max_length=60, unique=True, null=True)
     slug = models.SlugField(null=True)
     date = models.DateField()
     location = models.CharField(max_length=30)
@@ -131,6 +132,8 @@ class IndividualResult(models.Model):
     competition = ForeignKey(Competition, on_delete=models.CASCADE)
     time = models.DurationField()
 
+    extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None)
+
     @staticmethod
     def find_by_athlete(athlete):
         return IndividualResult.objects.filter(athlete=athlete)
@@ -140,8 +143,10 @@ class IndividualResult(models.Model):
         return IndividualResult.objects.filter(athlete=athlete, event=event)
 
     @staticmethod
-    def find_fastest_by_athlete_and_event(athlete, event):
-        return IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time').first()
+    def find_fastest_by_athlete_and_event(athlete, event, analysis_group):
+        qs = IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time')
+        qs = qs.filter(Q(extra_analysis_time_by=analysis_group.creator) | Q(extra_analysis_time_by=None))
+        return qs.first()
 
 
 class RelayOrder(models.Model):

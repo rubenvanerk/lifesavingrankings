@@ -1,0 +1,20 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load widget_tweaks %}
+
+{% block head_title %}
+    Add result
+{% endblock %}
+{% block content %}
+
+    <h1>
+        Add {{ event.name }} result for {{ athlete.first_name }} {{ athlete.last_name }}
+    </h1>
+    <form action="" method="post" class="ui form narrow">{% csrf_token %}
+
+        {{ form }}
+
+        <button type="submit" class="ui input button">
+            Add result
+        </button>
+    </form>
+{% endblock %}

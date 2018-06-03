@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Min, Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -15,12 +15,12 @@ class FrontPageRecords(ListView):
         qs = super(FrontPageRecords, self).get_queryset().filter(event__type=1)
         athletes = Athlete.objects.all
 
-        men = qs.filter(athlete__gender=1)
+        men = qs.filter(athlete__gender=1, extra_analysis_time_by=None)
         men = men.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
                          'athlete__slug')
         men = men.annotate(time=Min('time')).order_by('event_id', 'time')
 
-        women = qs.filter(athlete__gender=2)
+        women = qs.filter(athlete__gender=2, extra_analysis_time_by=None)
         women = women.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
                              'athlete__slug')
         women = women.annotate(time=Min('time')).order_by('event_id', 'time')
@@ -34,7 +34,7 @@ class FrontPageRecords(ListView):
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
         context['home'] = True
-        context['last_added_competition'] = Competition.objects.order_by('-date').first()
+        context['last_added_competition'] = Competition.objects.filter(slug__isnull=False).order_by('-date').first()
         return context
 
     template_name = 'rankings/front_page_records.html'
@@ -118,6 +118,7 @@ class CompetitionListView(ListView):
 
     def get_queryset(self):
         qs = super(CompetitionListView, self).get_queryset()
+        qs = qs.filter(slug__isnull=False)
         if not self.request.user.is_superuser:
             return qs.filter(is_concept=False)
         return qs
@@ -133,9 +134,11 @@ class EventOverview(TemplateView):
         limit = 3
         for event in events:
             context['events'][event.name] = {}
-            results_men = IndividualResult.objects.filter(event=event, athlete__gender=1).order_by('time').all()
+            results_men = IndividualResult.objects.filter(event=event, athlete__gender=1,
+                                                          extra_analysis_time_by=None).order_by('time').all()
             context['events'][event.name]['men'] = best_result_per_athlete_v2(results_men, limit)
-            results_women = IndividualResult.objects.filter(event=event, athlete__gender=2).order_by('time').all()
+            results_women = IndividualResult.objects.filter(event=event, athlete__gender=2,
+                                                            extra_analysis_time_by=None).order_by('time').all()
             context['events'][event.name]['women'] = best_result_per_athlete_v2(results_women, limit)
         return context
 
@@ -178,12 +181,12 @@ class PersonalBests(ListView):
         result = {}
         athlete = self.get_athlete()
 
-        qs = IndividualResult.find_by_athlete(athlete).filter(event__type=1)
+        qs = IndividualResult.find_by_athlete(athlete).filter(event__type=1).filter(extra_analysis_time_by=None)
         qs = qs.values('event__name', 'event_id')
         qs = qs.annotate(time=Min('time'))
         result['individual'] = qs.order_by('event_id')
 
-        qs = IndividualResult.find_by_athlete(athlete).filter(event__type=2)
+        qs = IndividualResult.find_by_athlete(athlete).filter(event__type=2).filter(extra_analysis_time_by=None)
         qs = qs.values('event__name', 'event_id')
         qs = qs.annotate(time=Min('time'))
         result['relay'] = qs.order_by('event_id')
@@ -252,6 +255,11 @@ class EventByAthlete(ListView):
 
         qs = qs.filter(athlete=athlete)
         qs = qs.filter(event=event)
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
+        else:
+            qs = qs.filter(extra_analysis_time_by=None)
         qs = qs.values('time', 'competition__date', 'competition__name', 'competition__slug')
         qs = qs.order_by('time')
         return qs
@@ -263,6 +271,45 @@ class EventByAthlete(ListView):
         return context
 
     template_name = 'rankings/event_by_athlete.html'
+
+
+@login_required
+def add_result(request, athlete_slug, event_slug):
+    athlete = Athlete.objects.filter(slug=athlete_slug).first()
+    event = Event.find_by_name(event_slug)
+    if athlete is None or event is False:
+        raise Http404
+
+    if request.method == 'POST':
+        form = AddResultForm(request.POST)
+
+        if form.is_valid():
+            time = form['time'].value()
+            date = form['date'].value()
+
+            competition = Competition()
+            competition.date = date
+            competition.is_concept = False
+            competition.slug = None
+            competition.location = 'Database'
+            competition.type_of_timekeeping = 0
+            competition.save()
+
+            result = IndividualResult()
+            result.time = time
+            result.athlete = athlete
+            result.competition = competition
+            result.event = event
+            result.extra_analysis_time_by = request.user
+            result.save()
+
+            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event_slug)))
+        else:
+            return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete, 'event': event})
+    else:
+        form = AddResultForm
+
+        return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete, 'event': event})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -307,6 +354,7 @@ class BestByEvent(ListView):
 
     def get_queryset(self):
         qs = super(BestByEvent, self).get_queryset()
+        qs = qs.filter(extra_analysis_time_by=None)
 
         event = self.get_event()
 
