@@ -17,6 +17,8 @@
         "profile_name": null,
         "project_name": "rankings",
         "runtime": "python3.6",
-        "s3_bucket": "zappa-fupn019p5"
+        "s3_bucket": "zappa-fupn019p5",
+        "cors": true,
+        "binary_support": false
     }
 }

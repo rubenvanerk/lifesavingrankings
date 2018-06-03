@@ -111,6 +111,7 @@ class Competition(models.Model):
     date = models.DateField()
     location = models.CharField(max_length=30)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
+    is_concept = models.BooleanField(default=False)
 
     prepopulated_fields = {"slug": ("name",)}
 
@@ -119,6 +120,9 @@ class Competition(models.Model):
 
     def get_athlete_count(self):
         return IndividualResult.objects.filter(competition=self).values('athlete').distinct().count()
+
+    def get_absolute_url(self):
+        return reverse('competition-overview', args=[self.slug])
 
 
 class IndividualResult(models.Model):

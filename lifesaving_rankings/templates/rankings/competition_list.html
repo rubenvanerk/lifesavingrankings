@@ -11,6 +11,7 @@
         <tr>
             <th>Competition</th>
             <th>Date</th>
+            <th>Location</th>
             <th>Participants</th>
         </tr>
         </thead>
@@ -18,8 +19,14 @@
         {% for competition in object_list %}
             {% if competition.get_athlete_count > 0 %}
                 <tr>
-                    <td><a href="{% url 'competition-overview' competition.slug %}">{{ competition.name }}</a></td>
+                    <td>
+                        <a href="{% url 'competition-overview' competition.slug %}">
+                            {{ competition.name }}
+                        </a>
+                        {% if competition.is_concept %}[CONCEPT]{% endif %}
+                    </td>
                     <td>{{ competition.date }}</td>
+                    <td>{{ competition.location }}</td>
                     <td>{{ competition.get_athlete_count }}</td>
                 </tr>
             {% endif %}

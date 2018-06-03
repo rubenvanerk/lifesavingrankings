@@ -1,0 +1,11 @@
+{
+    "production": {
+        "aws_region": "eu-central-1",
+        "django_settings": "lifesaving_rankings.settings.production",
+        "profile_name": null,
+        "project_name": "lifesavingranki",
+        "runtime": "python3.6",
+        "s3_bucket": "rankings-production",
+        "domain": "www.lifesavingrankings.com"
+    }
+}

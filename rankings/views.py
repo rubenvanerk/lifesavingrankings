@@ -59,6 +59,7 @@ class CompetitionOverview(TemplateView):
         competition = Competition.objects.filter(slug=competition_slug).first()
         if competition is None:
             raise Http404
+
         event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
         events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
         context['events'] = {}
@@ -69,6 +70,20 @@ class CompetitionOverview(TemplateView):
             context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition, 2, limit)
         context['competition'] = competition
         return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+
+        competition = context['competition']
+        if 'publish' in self.request.GET and self.request.GET['publish'] == 'true' and self.request.user.is_superuser:
+            competition.is_concept = False
+            competition.save()
+            return redirect(competition)
+        if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
+            competition.delete()
+            return redirect('competition-list')
+
+        return self.render_to_response(context)
 
 
 class CompetitionEvent(TemplateView):
@@ -101,6 +116,12 @@ class CompetitionListView(ListView):
     model = Competition
     ordering = ['-date']
 
+    def get_queryset(self):
+        qs = super(CompetitionListView, self).get_queryset()
+        if not self.request.user.is_superuser:
+            return qs.filter(is_concept=False)
+        return qs
+
 
 class EventOverview(TemplateView):
     template_name = 'rankings/event_overview.html'
@@ -109,7 +130,7 @@ class EventOverview(TemplateView):
         context = super().get_context_data()
         events = Event.objects.filter(type__in=[1, 2]).all().order_by('pk')
         context['events'] = {}
-        limit = 10
+        limit = 3
         for event in events:
             context['events'][event.name] = {}
             results_men = IndividualResult.objects.filter(event=event, athlete__gender=1).order_by('time').all()

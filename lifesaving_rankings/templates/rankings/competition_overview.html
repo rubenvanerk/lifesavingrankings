@@ -9,12 +9,27 @@
 
     <h1 class="ui header">{{ competition.name }} - {{ competition.date }}</h1>
 
-     <a href="{% url 'competition-list' %}" class="button back">
+    <a href="{% url 'competition-list' %}" class="button back">
         <button class="ui left labeled icon button">
             <i class="left list icon"></i>
             All competitions
         </button>
     </a>
+
+    {% if competition.is_concept and request.user.is_superuser %}
+        <a href="{% url 'competition-overview' competition.slug %}?publish=true" class="button back">
+            <button class="ui left labeled icon button">
+                <i class="left eye icon"></i>
+                Publish
+            </button>
+        </a>
+        <a href="{% url 'competition-overview' competition.slug %}?delete=true" class="button back">
+            <button class="ui left labeled icon button">
+                <i class="left trash icon"></i>
+                Delete
+            </button>
+        </a>
+    {% endif %}
 
 
     {% for event, results_by_gender in events.items %}
