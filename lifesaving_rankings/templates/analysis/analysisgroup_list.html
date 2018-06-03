@@ -57,8 +57,8 @@
                             <button class="ui left attached button" data-tooltip="Individual analysis"><i
                                     class="user icon"></i></button>
                         </a>
-                        <a {% if group.relay_analysis_available %}href="{% url 'relay-analysis' group.id %}"{% endif %}>
-                            <button class="right attached ui button{% if not group.relay_analysis_available %} disabled{% endif %}"
+                        <a href="{% url 'relay-analysis' group.id %}">
+                            <button class="right attached ui button"
                                     data-tooltip="Relay analysis"><i class="users icon"></i></button>
                         </a>
                     </div>

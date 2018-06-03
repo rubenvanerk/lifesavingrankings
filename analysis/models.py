@@ -42,6 +42,7 @@ class AnalysisGroup(models.Model):
     creator = ForeignKey(User, on_delete=models.SET_NULL, null=True)
     public = models.BooleanField(default=False)
     athlete = models.ManyToManyField(Athlete)
+    simulation_in_progress = models.BooleanField(default=False)
 
     def get_group_teams_with_full_setup(self):
         num_events = Event.objects.filter(type=3).count()

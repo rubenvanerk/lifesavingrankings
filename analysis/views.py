@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Min, Q
 from django import forms
 from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
@@ -122,14 +123,24 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
 class RelayAnalysis(TemplateView):
     template_name = "analysis/relay_analysis.html"
 
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        analysis_group = context['analysis_group']
+        print(analysis_group.athlete.count)
+        if 'run_simulation' in self.request.GET \
+                and self.request.GET['run_simulation'] is '1' and analysis_group.athlete.count() <= 10:
+            create_combinations(analysis_group)
+            analysis_group.simulation_in_progress = True
+            analysis_group.save()
+            return redirect('relay-analysis', analysis_group.id)
+        return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         context = super(RelayAnalysis, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
         analysis_group = AnalysisGroup.objects.get(pk=group_id)
         if not analysis_group.public and analysis_group.creator != self.request.user:
             raise PermissionDenied
-        if 'run_simulation' in self.request.GET and self.request.GET['run_simulation'] is '1':
-            create_combinations(analysis_group)
         context['events'] = Event.objects.filter(type=3).order_by('pk').all()
         context['analysis_group'] = analysis_group
         context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
@@ -172,6 +183,9 @@ def create_fastest_setups(request):
         p.daemon = True
         p.start()
         sleep(1)
+    else:
+        analysis_group.simulation_in_progress = False
+        analysis_group.save()
 
     return HttpResponse()
 
