@@ -97,3 +97,6 @@ ENV/
 
 # Zappa
 le-account.key
+
+# libs
+lifesaving_rankings/static/libs/*
