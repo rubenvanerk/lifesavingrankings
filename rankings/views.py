@@ -59,6 +59,8 @@ class CompetitionOverview(TemplateView):
         competition = Competition.objects.filter(slug=competition_slug).first()
         if competition is None:
             raise Http404
+        if competition.is_concept and not self.request.user.is_superuser:
+            raise Http404
 
         event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
         events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
