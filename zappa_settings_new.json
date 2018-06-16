@@ -6,6 +6,7 @@
         "project_name": "lifesavingranki",
         "runtime": "python3.6",
         "s3_bucket": "rankings-production",
+        "certificate_arn": "arn:aws:acm:eu-central-1:815574608842:certificate/c463a0e9-8745-4c7c-b1ca-f623a54f1487",
         "domain": "www.lifesavingrankings.com"
     }
 }

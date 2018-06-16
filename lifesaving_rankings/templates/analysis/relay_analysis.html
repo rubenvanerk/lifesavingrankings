@@ -44,7 +44,7 @@
             <tr>
                 <td>
                     {% for athlete in group_team.athletes.all %}
-                        {{ athlete.first_name }} {{ athlete.last_name }}<br>
+                        {{ athlete.name }}<br>
                     {% endfor %}
                 </td>
                 {% for setup in group_team.get_ordered_setups %}
@@ -52,7 +52,7 @@
                         {% if setup.time %}
                             <strong>{{ setup.time|format_time }}</strong><br>
                             {% for athlete in setup.get_athletes_ordered_by_index %}
-                                {{ athlete.first_name }}<br>
+                                {{ athlete.name }}<br>
                             {% endfor %}
                         {% endif %}
                     </td>

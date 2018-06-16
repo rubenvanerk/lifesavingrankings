@@ -16,12 +16,12 @@ class FrontPageRecords(ListView):
         athletes = Athlete.objects.all
 
         men = qs.filter(athlete__gender=1, extra_analysis_time_by=None)
-        men = men.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
+        men = men.values('athlete__name', 'athlete__id', 'event__name', 'event__id',
                          'athlete__slug')
         men = men.annotate(time=Min('time')).order_by('event_id', 'time')
 
         women = qs.filter(athlete__gender=2, extra_analysis_time_by=None)
-        women = women.values('athlete__first_name', 'athlete__last_name', 'athlete__id', 'event__name', 'event__id',
+        women = women.values('athlete__name', 'athlete__id', 'event__name', 'event__id',
                              'athlete__slug')
         women = women.annotate(time=Min('time')).order_by('event_id', 'time')
 
@@ -366,8 +366,7 @@ class BestByEvent(ListView):
         qs = qs.filter(athlete__gender=gender)
 
         qs = qs.values('athlete_id',
-                       'athlete__first_name',
-                       'athlete__last_name',
+                       'athlete__name',
                        'athlete__year_of_birth',
                        'time',
                        'competition__date',

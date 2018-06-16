@@ -8,7 +8,7 @@
     <div class="ui vertical menu">
         {% for athlete in object_list %}
             <a href="{% url 'athlete-overview' athlete.slug %}" class="item">
-                {{ athlete.first_name }} {{ athlete.last_name }}
+                {{ athlete.name }}
             </a>
         {% endfor %}
     </div>

@@ -29,7 +29,7 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>
-                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.first_name }} {{ result.athlete.last_name }}</a>
+                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a>
                                 </td>
                                 <td>
                                     <a href="{% url 'competition-overview' result.competition.slug %}">{{ result.competition.name }}</a>

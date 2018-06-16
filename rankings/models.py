@@ -17,8 +17,9 @@ class Athlete(models.Model):
         (FEMALE, 'Female')
     )
 
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=20, null=True)
+    last_name = models.CharField(max_length=30, null=True)
+    name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
     prepopulated_fields = {"slug": ("first_name", "last_name")}
 

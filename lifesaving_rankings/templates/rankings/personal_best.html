@@ -3,13 +3,11 @@
 {% load to_url_filter %}
 {% load gender_to_text_filter %}
 
-{% block head_title %}{{ athlete.first_name }}
-    {{ athlete.last_name }}{% endblock %}
-{% block meta_description %}Find out every personal best of {{ athlete.first_name }}
-    {{ athlete.last_name }} for each Lifesaving pool event.{% endblock %}
+{% block head_title %}{{ athlete.name }}{% endblock %}
+{% block meta_description %}Find out every personal best of {{ athlete.name }} for each Lifesaving pool event.{% endblock %}
 
 {% block content %}
-    <h1>{{ athlete.first_name }} {{ athlete.last_name }}</h1>
+    <h1>{{ athlete.name }}</h1>
     {% for event_type, times in object_list.items %}
         {% if times %}
         <table class="ui celled table">
