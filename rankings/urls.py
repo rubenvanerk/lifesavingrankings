@@ -12,7 +12,7 @@ urlpatterns = [
         name='athlete-event-redirect'
     ),
     url(
-        regex=r'^athlete/add-time/(?P<athlete_slug>[a-z0-9\-]+)/(?P<event_slug>[a-z0-9\-()]+)$',
+        regex=r'^athlete/add-time/(?P<athlete_slug>[a-z0-9\-]+)/',
         view=add_result,
         name='athlete-add-time'
     ),

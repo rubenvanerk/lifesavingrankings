@@ -51,7 +51,7 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>
-                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.first_name }} {{ result.athlete.last_name }}</a>
+                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a>
                                 </td>
                                 <td>{{ result.time|format_time }}</td>
                             </tr>

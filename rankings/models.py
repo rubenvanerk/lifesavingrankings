@@ -21,33 +21,13 @@ class Athlete(models.Model):
     last_name = models.CharField(max_length=30, null=True)
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
-    prepopulated_fields = {"slug": ("first_name", "last_name")}
 
-    year_of_birth = models.IntegerField()
+    year_of_birth = models.IntegerField(null=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
 
     def __str__(self):
-        name_str = self.first_name + " " + self.last_name
+        name_str = self.name
         return name_str
-
-    def to_url(self):
-        url = self.first_name + self.last_name
-        url = url.replace(" ", "")
-        url = url.lower()
-        return url
-
-    @staticmethod
-    def find_by_name(name):
-        athlete = Athlete.objects.raw(
-            "SELECT * FROM rankings_athlete "
-            "WHERE POSITION(LOWER(REPLACE(first_name, ' ', '')) in %s) != 0 "
-            "AND POSITION(LOWER(REPLACE(last_name, ' ', '')) in %s) != 0 "
-            "LIMIT 1",
-            [name, name]
-        )
-        for result in athlete:
-            return result
-        return False
 
     def get_absolute_url(self):
         return reverse('athlete-overview', args=[self.slug])

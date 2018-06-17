@@ -10,7 +10,8 @@
         Add {{ event.name }} result for {{ athlete.name }}
     </h1>
     <p>Results added by you are <strong>only</strong> visible in analysis groups created by you.</p>
-    <form action="" method="post" class="ui form narrow">{% csrf_token %}
+    <form action="" method="post" class="ui form narrow">
+        {% csrf_token %}
 
         {{ form }}
 

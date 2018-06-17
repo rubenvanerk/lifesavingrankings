@@ -1,24 +1,20 @@
 {
-    "dev": {
-        "aws_region": "eu-central-1",
-        "django_settings": "lifesaving_rankings.settings.production",
-        "profile_name": null,
-        "project_name": "rankings",
-        "runtime": "python3.6",
-        "s3_bucket": "zappa-tzjq522h5",
-        "certificate_arn": "arn:aws:acm:us-east-1:364424267346:certificate/db5f404b-54b0-4c04-be4b-9a4bb4bd5ca6",
-        "domain": "www.lifesavingrankings.nl",
-        "cors": true,
-        "binary_support": false
-    },
     "production": {
         "aws_region": "eu-central-1",
         "django_settings": "lifesaving_rankings.settings.production",
         "profile_name": null,
-        "project_name": "rankings",
+        "project_name": "lifesavingranki",
         "runtime": "python3.6",
-        "s3_bucket": "zappa-fupn019p5",
-        "cors": true,
-        "binary_support": false
+        "s3_bucket": "rankings-production",
+        "certificate_arn": "arn:aws:acm:eu-central-1:815574608842:certificate/c463a0e9-8745-4c7c-b1ca-f623a54f1487",
+        "domain": "www.lifesavingrankings.com"
+    },
+    "dev": {
+        "aws_region": "eu-central-1",
+        "django_settings": "lifesaving_rankings.settings.dev",
+        "profile_name": null,
+        "project_name": "lifesavingranki",
+        "runtime": "python3.6",
+        "s3_bucket": "rankings-production"
     }
 }

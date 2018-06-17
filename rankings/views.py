@@ -276,10 +276,9 @@ class EventByAthlete(ListView):
 
 
 @login_required
-def add_result(request, athlete_slug, event_slug):
+def add_result(request, athlete_slug):
     athlete = Athlete.objects.filter(slug=athlete_slug).first()
-    event = Event.find_by_name(event_slug)
-    if athlete is None or event is False:
+    if athlete is None:
         raise Http404
 
     if request.method == 'POST':
@@ -288,6 +287,8 @@ def add_result(request, athlete_slug, event_slug):
         if form.is_valid():
             time = form['time'].value()
             date = form['date'].value()
+            event_id = form['event'].value()
+            event = Event.objects.get(pk=event_id)
 
             competition = Competition()
             competition.date = date
@@ -305,13 +306,13 @@ def add_result(request, athlete_slug, event_slug):
             result.extra_analysis_time_by = request.user
             result.save()
 
-            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event_slug)))
+            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event.generate_slug())))
         else:
-            return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete, 'event': event})
+            return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
     else:
         form = AddResultForm
 
-        return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete, 'event': event})
+        return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -401,7 +402,7 @@ class Search(ListView):
                 | (Q(first_name__icontains=parts[0]) | Q(last_name__icontains=parts[len(parts) - 1]))
             )
         else:
-            qs = qs.filter((Q(first_name__icontains=query) | Q(last_name__icontains=query)))
+            qs = qs.filter(name__icontains=query)
 
         return qs
 

@@ -2,13 +2,13 @@
 {% load datetime_filter %}
 {% load to_url_filter %}
 
-{% block head_title %}{{ athlete.first_name }} {{ athlete.last_name }}: {{ event.name }}{% endblock %}
-{% block meta_description %}All the times of {{ athlete.first_name }} {{ athlete.last_name }} on the {{ event.name }},
+{% block head_title %}{{ athlete.name }}: {{ event.name }}{% endblock %}
+{% block meta_description %}All the times of {{ athlete.name }} on the {{ event.name }},
     collected on Lifesaving Rankings{% endblock %}
 
 {% block content %}
     <h1>
-        {{ athlete.first_name }} {{ athlete.last_name }} - {{ event.name }}
+        {{ athlete.name }} - {{ event.name }}
     </h1>
 
     <a href="{% url 'athlete-overview' slug=athlete.slug %}" class="back button">
@@ -17,15 +17,6 @@
             Back
         </button>
     </a>
-
-    {% if user.is_authenticated %}
-        <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug event_slug=event.name|to_url %}" class="back button">
-            <button class="ui left labeled icon button back">
-                <i class="left plus icon"></i>
-                Add extra time
-            </button>
-        </a>
-    {% endif %}
 
     <table class="ui celled table" id="eventByAthlete">
         <thead>
