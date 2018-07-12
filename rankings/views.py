@@ -392,7 +392,7 @@ class Search(ListView):
     def get_queryset(self):
         qs = super(Search, self).get_queryset()
 
-        query = self.request.GET.get('athlete')
+        query = self.request.GET.get('athlete').strip()
 
         parts = query.split(' ')
 
