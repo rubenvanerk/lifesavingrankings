@@ -159,7 +159,7 @@ def create_combinations(analysis_group):
 
     params = {'current_group_team': first_group_team.id, 'last_group_team': last_group_team.id,
               'analysis_group': analysis_group.id}
-    url = 'https://www.lifesavingrankings.nl/analysis/analyse/create-fastest-setups/'
+    url = 'https://www.lifesavingrankings.com/analysis/analyse/create-fastest-setups/'
     p = Process(target=async_request, args=(url, params))
     p.daemon = True
     p.start()
@@ -183,7 +183,7 @@ def create_fastest_setups(request):
     if last_group_team.id is not current_group_team.id:
         params = {'current_group_team': current_group_team.id + 1, 'last_group_team': last_group_team.id,
                   'analysis_group': analysis_group.id}
-        url = 'https://www.lifesavingrankings.nl/analysis/analyse/create-fastest-setups/'
+        url = 'https://www.lifesavingrankings.com/analysis/analyse/create-fastest-setups/'
         p = Process(target=async_request, args=(url, params))
         p.daemon = True
         p.start()
