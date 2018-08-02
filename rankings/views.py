@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Min, Q
 from django.shortcuts import render, redirect
@@ -8,46 +10,28 @@ from django.http import Http404, HttpResponseRedirect
 from .forms import *
 
 
-class FrontPageRecords(ListView):
-    model = IndividualResult
-
-    def get_queryset(self):
-        qs = super(FrontPageRecords, self).get_queryset().filter(event__type=1)
-        athletes = Athlete.objects.all
-
-        men = qs.filter(athlete__gender=1, extra_analysis_time_by=None)
-        men = men.values('athlete__name', 'athlete__id', 'event__name', 'event__id',
-                         'athlete__slug')
-        men = men.annotate(time=Min('time')).order_by('event_id', 'time')
-
-        women = qs.filter(athlete__gender=2, extra_analysis_time_by=None)
-        women = women.values('athlete__name', 'athlete__id', 'event__name', 'event__id',
-                             'athlete__slug')
-        women = women.annotate(time=Min('time')).order_by('event_id', 'time')
-
-        result = {'genders': {'men': best_result_per_event(men), 'women': best_result_per_event(women)}, 'times': qs,
-                  'athletes': athletes}
-        return result
+class FrontPageRecords(TemplateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
         context['home'] = True
-        context['last_added_competition'] = Competition.objects.filter(slug__isnull=False).order_by('-date').first()
+        context['last_added_competition'] = Competition.objects.filter(slug__isnull=False).filter(
+            is_concept=False).order_by('-date').first()
+
+        top_results = {'genders': {'men': [], 'women': []}}
+        for gender in top_results['genders']:
+            for event in Event.objects.filter(type=1).all():
+                top_result = next(
+                    iter(event.get_top_by_competition_and_gender(competition=None, gender=gender, limit=1)), None)
+                top_results['genders'][gender].append(top_result)
+
+        context['top_results'] = top_results
+
         return context
 
     template_name = 'rankings/front_page_records.html'
-
-
-def best_result_per_event(qs):
-    checked_events = []
-    final_list = []
-    for result in qs:
-        if result.get('event__id') not in checked_events:
-            checked_events.append(result.get('event__id'))
-            final_list.append(result)
-    return final_list
 
 
 class CompetitionOverview(TemplateView):

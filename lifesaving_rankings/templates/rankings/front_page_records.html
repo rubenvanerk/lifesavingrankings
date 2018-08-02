@@ -15,7 +15,8 @@
 
     <div class="ui stackable two column grid">
 
-        {% for gender, results in object_list.genders.items %}
+
+        {% for gender, results in top_results.genders.items%}
             <div class="column">
                 <h2 class="ui header">{{ gender|capfirst }}</h2>
                 <table class="ui celled table">
@@ -31,12 +32,12 @@
                     {% for top_result in results %}
                         <tr>
                             <td>
-                                <a href="{% url 'best-by-event' event_name=top_result.event__name|to_url gender=gender %}">
-                                    {{ top_result.event__name }}</a>
+                                <a href="{% url 'best-by-event' event_name=top_result.event.name|to_url gender=gender %}">
+                                    {{ top_result.event.name }}</a>
                             </td>
                             <td>
-                                <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
-                                    {{ top_result.athlete__name }}
+                                <a href="{% url 'athlete-overview' top_result.athlete.slug %}">
+                                    {{ top_result.athlete.name }}
                                 </a>
                             </td>
 
@@ -46,7 +47,7 @@
 
                     </tbody>
                 </table>
-            </div>  <!-- End men-->
+            </div>
         {% endfor %}
 
 
@@ -60,5 +61,6 @@
         </div>
     </div>
 
-    Last added competition: <a href="{% url 'competition-overview' last_added_competition.slug %}">{{ last_added_competition.name }}</a><br>
+    Last added competition:
+    <a href="{% url 'competition-overview' last_added_competition.slug %}">{{ last_added_competition.name }}</a><br>
 {% endblock %}

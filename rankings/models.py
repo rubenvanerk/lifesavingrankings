@@ -76,7 +76,16 @@ class Event(models.Model):
         return True
 
     def get_top_by_competition_and_gender(self, competition, gender, limit):
-        return IndividualResult.objects.filter(event=self, competition=competition, athlete__gender=gender).order_by('time').all()[:limit]
+        if not gender.isdigit():
+            if gender is 'men':
+                gender = 1
+            else:
+                gender = 2
+        query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender).order_by('time')
+        if competition is not None:
+            query_set.filter(competition=competition)
+
+        return query_set.all()[:limit]
 
 
 class Competition(models.Model):
