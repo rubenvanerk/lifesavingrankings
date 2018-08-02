@@ -1,9 +1,19 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
-{% load to_url_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter %}
 
 {% block head_title %}{{ competition.name }}{% endblock %}
 {% block meta_description %}Overview for all results of {{ competion.name }} on Lifesaving Rankings{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Competitions" "competition-list" %}
+    {% breadcrumb competition.name "competition-overview" competition.slug %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
 
 {% block content %}
 

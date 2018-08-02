@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load widget_tweaks %}
+{% load widget_tweaks django_bootstrap_breadcrumbs %}
 
 {% block head_title %}
     {% if new_group %}
@@ -8,6 +8,23 @@
         Edit group
     {% endif %}
 {% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Analysis" "public-group-list" %}
+    {% if new_group %}
+        {% breadcrumb "Create" "group-create" %}
+    {% else %}
+        {% with label="Edit"|add:" '"|add:analysisgroup.name|add:"'" %}
+            {% breadcrumb label "group-edit" analysisgroup.id %}
+        {% endwith %}
+    {% endif %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+    <br>
+    <br>
+{% endblock %}
+
 {% block content %}
     <div class="row">
 

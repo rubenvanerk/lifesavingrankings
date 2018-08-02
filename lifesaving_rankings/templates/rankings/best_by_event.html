@@ -1,40 +1,55 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs %}
 {% load year_of_birth_filter %}
 {% load to_url_filter %}
 {% block head_title %}{{ event.name }}{% endblock %}
 {% block meta_description %}Find out who has the fastest time for {{ event.name }} on Lifesaving Rankings{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Events" "event-overview" %}
+    {% with event_name=event.name|add:" "|add:gender %}
+        {% breadcrumb event_name "best-by-event" event.name|to_url gender %}
+    {% endwith %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
 {% block content %}
-    <h1>{{ event.name }} top results</h1>
-        <table class="ui celled table" id="bestByEvent">
-            <thead>
+    <h1>{{ event.name }} {{ gender }} top results</h1>
+    <table class="ui celled table" id="bestByEvent">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Athlete</th>
+            <th>YoB</th>
+            <th>Time</th>
+            <th>Date</th>
+            <th>Competition</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for top_result in object_list %}
             <tr>
-                <th>#</th>
-                <th>Athlete</th>
-                <th>YoB</th>
-                <th>Time</th>
-                <th>Date</th>
-                <th>Competition</th>
+                <td>
+                    {{ forloop.counter }}
+                </td>
+                <td>
+                    <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
+                        {{ top_result.athlete__name }}
+                    </a>
+                </td>
+                <td>{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
+                <td>{{ top_result.time|format_time }}</td>
+                <td>{{ top_result.competition__date }}</td>
+                <td>
+                    <a href="{% url 'competition-overview' top_result.competition__slug %}">{{ top_result.competition__name }}</a>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            {% for top_result in object_list %}
-                <tr>
-                    <td>
-                        {{ forloop.counter }}
-                    </td>
-                    <td>
-                        <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
-                            {{ top_result.athlete__name }}
-                        </a>
-                    </td>
-                    <td>{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
-                    <td>{{ top_result.time|format_time }}</td>
-                    <td>{{ top_result.competition__date }}</td>
-                    <td><a href="{% url 'competition-overview' top_result.competition__slug %}">{{ top_result.competition__name }}</a></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}

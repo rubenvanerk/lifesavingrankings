@@ -1,11 +1,24 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs %}
 {% load to_url_filter %}
 {% load id_to_athlete_name %}
 {% load id_to_slug %}
 {% load analysis_filters %}
 {% load widget_tweaks %}
 {% block head_title %}Individual analysis{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Analysis" "public-group-list" %}
+    {% with page_name=analysis_group.name|add:" "|add:"individual analysis" %}
+        {% breadcrumb page_name "individual-analysis" analysis_group.id %}
+    {% endwith %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+    <br>
+    <br>
+{% endblock %}
+
 {% block content %}
 
     <div class="ui stackable grid">

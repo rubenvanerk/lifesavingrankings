@@ -1,7 +1,18 @@
 {% extends "lifesaving_rankings/base.html" %}
 
+{% load django_bootstrap_breadcrumbs %}
+
 {% block head_title %}Competitions{% endblock %}
 {% block meta_description %}All competitions available on Lifesaving Rankings{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Competitions" "competition-list" %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
 
 {% block content %}
     <h1 class="ui header">Competitions</h1>

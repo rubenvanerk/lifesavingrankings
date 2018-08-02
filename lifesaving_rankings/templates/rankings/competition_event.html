@@ -1,10 +1,24 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
-{% load to_url_filter %}
-{% load gender_to_text_filter %}
-
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter %}
 {% block head_title %}{{ competition.name }} {{ event.name }} {{ gender|gender_to_text }}{% endblock %}
-{% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on {{ competition.name }}{% endblock %}
+{% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on
+    {{ competition.name }}{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Competitions" "competition-list" %}
+    {% breadcrumb competition.name "competition-overview" competition.slug %}
+    {% with gender_name=gender|gender_to_text %}
+        {% with label=event.name|add:" "|add:gender_name %}
+            {% breadcrumb label "competition-event" competition.slug event.name|to_url gender|gender_to_text %}
+        {% endwith %}
+    {% endwith %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
 
 {% block content %}
     <h1 class="ui header">{{ competition.name }}</h1>
@@ -29,9 +43,9 @@
         <tbody>
         {% for result in results %}
             <tr>
-            <td>{{ forloop.counter }}</td>
-                <td><a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name}}</a></td>
-            <td>{{ result.time|format_time }}</td>
+                <td>{{ forloop.counter }}</td>
+                <td><a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a></td>
+                <td>{{ result.time|format_time }}</td>
             </tr>
         {% endfor %}
         </tbody>

@@ -1,10 +1,18 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
-{% load to_url_filter %}
+{% load datetime_filter to_url_filter django_bootstrap_breadcrumbs %}
 
 {% block head_title %}Events{% endblock %}
 {% block meta_description %}All events available on Lifesaving Rankings{% endblock %}
 
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Events" "event-overview" %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
 
 {% block content %}
     <h1 class="ui header">Events</h1>

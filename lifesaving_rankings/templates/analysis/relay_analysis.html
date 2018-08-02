@@ -1,7 +1,20 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs %}
 
 {% block head_title %}Relay analysis{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Analysis" "public-group-list" %}
+    {% with page_name=analysis_group.name|add:" "|add:"relay analysis" %}
+        {% breadcrumb page_name "relay-analysis" analysis_group.id %}
+    {% endwith %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+    <br>
+    <br>
+{% endblock %}
+
 
 {% block content %}
 

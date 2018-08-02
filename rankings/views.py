@@ -365,6 +365,7 @@ class BestByEvent(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['event'] = self.get_event()
+        context['gender'] = self.kwargs.get('gender')
         return context
 
     template_name = 'rankings/best_by_event.html'

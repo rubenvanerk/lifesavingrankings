@@ -1,6 +1,4 @@
-{% load staticfiles i18n %}
-{% load account %}
-{% load active_menu_filter %}
+{% load staticfiles i18n account active_menu_filter %}
 
 {% load static %}
 <!DOCTYPE html>
@@ -151,7 +149,7 @@
 
 
     <div class="pusher">
-        
+
         {# hacky margins to align content with menu bar #}
         <div class="ui grid no-margin">
             <div class="column computer only main-desktop-margin"></div>
@@ -169,6 +167,10 @@
         {% endif %}
 
         <div id="content" class="ui container">
+
+            {% block breadcrumbs %}
+
+            {% endblock %}
 
             {% if messages %}
                 {% for message in messages %}

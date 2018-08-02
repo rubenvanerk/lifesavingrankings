@@ -1,10 +1,18 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter %}
-{% load to_url_filter %}
-{% load gender_to_text_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter %}
 
 {% block head_title %}{{ athlete.name }}{% endblock %}
 {% block meta_description %}Find out every personal best of {{ athlete.name }} for each Lifesaving pool event.{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb athlete.name "athlete-overview" athlete.slug %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
 
 {% block content %}
     <h1>{{ athlete.name }}</h1>

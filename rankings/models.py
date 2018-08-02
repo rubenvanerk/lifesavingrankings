@@ -76,7 +76,7 @@ class Event(models.Model):
         return True
 
     def get_top_by_competition_and_gender(self, competition, gender, limit):
-        if not gender.isdigit():
+        if type(gender) is not int:
             if gender is 'men':
                 gender = 1
             else:
