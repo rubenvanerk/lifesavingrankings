@@ -52,8 +52,10 @@ class CompetitionOverview(TemplateView):
         limit = 10
         for event in events:
             context['events'][event.name] = {}
-            context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition, 1, limit)
-            context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition, 2, limit)
+            context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition=competition,
+                                                                                           gender=1, limit=limit)
+            context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition=competition,
+                                                                                             gender=2, limit=limit)
         context['competition'] = competition
         return context
 

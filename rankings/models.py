@@ -81,11 +81,11 @@ class Event(models.Model):
                 gender = 1
             else:
                 gender = 2
-        query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender).order_by('time')
+        query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender)
         if competition is not None:
-            query_set.filter(competition=competition)
+            query_set = query_set.filter(competition=competition)
 
-        return query_set.all()[:limit]
+        return query_set.order_by('time')[:limit]
 
 
 class Competition(models.Model):
@@ -97,10 +97,10 @@ class Competition(models.Model):
         (ELECTRONIC, 'Electronic'),
         (BY_HAND, 'By hand')
     )
-    name = models.CharField(max_length=60, unique=True, null=True)
+    name = models.CharField(max_length=100, unique=True, null=True)
     slug = models.SlugField(null=True)
     date = models.DateField()
-    location = models.CharField(max_length=30)
+    location = models.CharField(max_length=100)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
     is_concept = models.BooleanField(default=False)
 
