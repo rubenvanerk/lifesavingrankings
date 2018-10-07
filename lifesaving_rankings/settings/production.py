@@ -17,7 +17,8 @@ AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
 # STATIC_URL = 'https://rankings-production-static.s3.eu-central-1.amazonaws.com/javascript/main.js/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = ''
+EMAIL_HOST = env('SMTP_HOST')
+EMAIL_HOST_USER = env('SMTP_USER')
+EMAIL_HOST_PASSWORD = env('SMTP_PASSWORD')
+EMAIL_PORT = env('SMTP_PORT')
+EMAIL_USE_TLS = True

@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from rankings.views import athlete_redirect_athlete_id_to_slug, athlete_redirect_event_id_to_slug, \
-    redirect_event_id_to_slug, add_result
+    redirect_event_id_to_slug, add_result, report_duplicate, request_competition
 from . import views
 
 urlpatterns = [
@@ -57,6 +57,11 @@ urlpatterns = [
         name='search'
     ),
     url(
+        regex=r'^competitions/request',
+        view=request_competition,
+        name='request-competition'
+    ),
+    url(
         regex=r'^competitions',
         view=views.CompetitionListView.as_view(),
         name='competition-list'
@@ -71,4 +76,8 @@ urlpatterns = [
         view=views.CompetitionOverview.as_view(),
         name='competition-overview'
     ),
+    url(
+        regex=r'^report-duplicate',
+        view=report_duplicate
+    )
 ]

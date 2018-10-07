@@ -5,6 +5,11 @@
 {% block content %}
     <h1>Search results for: {{ query }}</h1>
 
+    <button class="ui left labeled icon button" id="report-duplicate-athlete" onclick="reportDuplicateAthlete(this, '{{ query }}')">
+        <i class="exclamation circle icon"></i>
+        Report duplicate athletes in this search
+    </button>
+
     <div class="ui vertical menu">
         {% for athlete in object_list %}
             <a href="{% url 'athlete-overview' athlete.slug %}" class="item">

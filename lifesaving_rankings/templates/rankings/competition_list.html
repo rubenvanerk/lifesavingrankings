@@ -17,6 +17,13 @@
 {% block content %}
     <h1 class="ui header">Competitions</h1>
 
+    <a href="{% url 'request-competition' %}">
+        <button class="ui left labeled icon button">
+            <i class="plus icon"></i>
+            Request a competition
+        </button>
+    </a>
+
     <table class="ui celled table">
         <thead>
         <tr>

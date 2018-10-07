@@ -51,4 +51,11 @@
         </table>
         {% endif %}
     {% endfor %}
+
+    <a href="{% url 'request-competition' %}">
+        <button class="ui left labeled icon button">
+            <i class="plus icon"></i>
+            Request a competition
+        </button>
+    </a>
 {% endblock %}

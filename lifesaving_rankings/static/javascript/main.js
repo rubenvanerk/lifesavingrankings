@@ -20,6 +20,19 @@ var colorPercentages = function () {
 
 };
 
+var reportDuplicateAthlete = function (button, query) {
+    button = $(button);
+    button.addClass('disabled');
+
+    $.ajax(
+        {
+            url: "/rankings/report-duplicate?query=" + query
+        }
+    );
+
+    button.html('<i class="check icon"></i> Thanks!');
+};
+
 $(document).ready(function () {
     $(document).ready(function () {
         $('#eventByAthlete').DataTable({

@@ -1,12 +1,13 @@
 from pprint import pprint
 
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.mail import send_mail
 from django.db.models import Min, Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, TemplateView
 from .models import *
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from .forms import *
 
 
@@ -301,6 +302,40 @@ def add_result(request, athlete_slug):
         return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
 
 
+def request_competition(request):
+    if request.method == 'POST':
+        form = RequestCompetitionForm(request.POST)
+
+        if form.is_valid():
+            competition_name = form['competition_name'].value()
+            competition_date = form['competition_date'].value()
+            your_email = form['your_email'].value()
+            link_to_results = form['link_to_results'].value()
+            location = form['location'].value()
+
+            body = "Competition name: " + competition_name + "\n" \
+                   "Competition date: " + competition_date + "\n" \
+                   "Link to results: " + link_to_results + "\n" \
+                   "Location: " + location + "\n" \
+                   "Request email: " + your_email
+
+            send_mail(
+                'Lifesaving Rankings competition request',
+                body,
+                'noreply@lifesavingrankings.com',
+                ['ruben@lifesavingrankings.com'],
+                fail_silently=False,
+            )
+
+            return render(request, 'rankings/request_competition.html', {'form': form, 'form_sent': True})
+        else:
+            return render(request, 'rankings/request_competition.html', {'form': form})
+    else:
+        form = RequestCompetitionForm
+
+        return render(request, 'rankings/request_competition.html', {'form': form})
+
+
 @user_passes_test(lambda u: u.is_superuser)
 def merge_athletes(request):
     if request.method == 'POST':
@@ -418,3 +453,15 @@ def gender_name_to_int(gender):
         return 2
     else:
         raise Http404
+
+
+def report_duplicate(request):
+    query = request.GET.get('query', '')
+    send_mail(
+        'Lifesaving Rankings duplicate athlete reported',
+        'https://www.lifesavingrankings.com/rankings/search?athlete=' + query,
+        'noreply@lifesavingrankings.com',
+        ['ruben@lifesavingrankings.com'],
+        fail_silently=False,
+    )
+    return HttpResponse('')
