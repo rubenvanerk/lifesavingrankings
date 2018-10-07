@@ -2,7 +2,8 @@
 {% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter %}
 
 {% block head_title %}{{ athlete.name }}{% endblock %}
-{% block meta_description %}Find out every personal best of {{ athlete.name }} for each Lifesaving pool event.{% endblock %}
+{% block meta_description %}Find out every personal best of {{ athlete.name }} for each Lifesaving pool
+    event.{% endblock %}
 
 {% block breadcrumbs %}
 
@@ -26,29 +27,44 @@
         </a>
     {% endif %}
 
-    {% for event_type, times in object_list.items %}
+    {% for event_type, times in personal_bests.items %}
         {% if times %}
-        <table class="ui celled table">
+            <table class="ui celled table">
                 <thead>
                 <tr>
                     <th>{{ event_type|capfirst }}</th>
                     <th>PB</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Competition</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for personal_best in times %}
                     <tr>
                         <td>
-                            <a href="{% url 'best-by-event' event_name=personal_best.event__name|to_url gender=athlete.gender|gender_to_text %}">
-                                {{ personal_best.event__name }}</a>
+                            <a href="{% url 'best-by-event' event_name=personal_best.event.name|to_url gender=athlete.gender|gender_to_text %}">
+                                {{ personal_best.event.name }}</a>
                         </td>
                         <td>
-                            <a href="{% url 'athlete-event' slug=athlete.slug event_name=personal_best.event__name|to_url %}">
-                                {{ personal_best.time|format_time }}</a></td>
+                            <a href="{% url 'athlete-event' slug=athlete.slug event_name=personal_best.event.name|to_url %}">
+                                {{ personal_best.time|format_time }}</a>
+                        </td>
+                        <td>
+                            {{ personal_best.competition.date }}
+                        </td>
+                        <td>
+                            {{ personal_best.competition.location }}
+                        </td>
+                        <td>
+                            <a href="{% url 'competition-overview' competition_slug=personal_best.competition.slug %}">
+                                {{ personal_best.competition.name }}
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
         {% endif %}
     {% endfor %}
 

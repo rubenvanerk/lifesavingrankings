@@ -1,10 +1,8 @@
-from pprint import pprint
+import operator
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
-from django.db.models import Min, Q
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.views.generic import ListView, TemplateView
 from .models import *
 from django.http import Http404, HttpResponseRedirect, HttpResponse
@@ -123,39 +121,22 @@ class EventOverview(TemplateView):
         limit = 3
         for event in events:
             context['events'][event.name] = {}
+
             results_men = IndividualResult.objects.filter(event=event, athlete__gender=1,
-                                                          extra_analysis_time_by=None).order_by('time').all()
-            context['events'][event.name]['men'] = best_result_per_athlete_v2(results_men, limit)
+                                                          extra_analysis_time_by=None).order_by('athlete',
+                                                                                                'time').distinct(
+                'athlete')
+            results_men = IndividualResult.objects.filter(id__in=results_men).order_by('time')[:limit]
+            context['events'][event.name]['men'] = results_men
+
             results_women = IndividualResult.objects.filter(event=event, athlete__gender=2,
-                                                            extra_analysis_time_by=None).order_by('time').all()
-            context['events'][event.name]['women'] = best_result_per_athlete_v2(results_women, limit)
+                                                            extra_analysis_time_by=None).distinct('athlete')
+            results_women = sorted(results_women, key=operator.attrgetter('time'))[:limit]
+            context['events'][event.name]['women'] = results_women
         return context
 
 
-def best_result_per_athlete_v2(results, limit):
-    checked_athletes = []
-    final_list = []
-    for result in results:
-        if result.athlete not in checked_athletes:
-            checked_athletes.append(result.athlete)
-            final_list.append(result)
-        if len(final_list) == limit:
-            return final_list
-    return final_list
-
-
-def best_result_per_athlete(qs):
-    checked_athletes = []
-    final_list = []
-    for result in qs:
-        if result.get('athlete_id') not in checked_athletes:
-            checked_athletes.append(result.get('athlete_id'))
-            final_list.append(result)
-    return final_list
-
-
-class PersonalBests(ListView):
-    model = IndividualResult
+class PersonalBests(TemplateView):
     athlete = None
 
     def get_athlete(self):
@@ -166,54 +147,27 @@ class PersonalBests(ListView):
                 raise Http404
         return self.athlete
 
-    def get_queryset(self):
-        result = {}
-        athlete = self.get_athlete()
-
-        qs = IndividualResult.find_by_athlete(athlete).filter(event__type=1).filter(extra_analysis_time_by=None)
-        qs = qs.values('event__name', 'event_id')
-        qs = qs.annotate(time=Min('time'))
-        result['individual'] = qs.order_by('event_id')
-
-        qs = IndividualResult.find_by_athlete(athlete).filter(event__type=2).filter(extra_analysis_time_by=None)
-        qs = qs.values('event__name', 'event_id')
-        qs = qs.annotate(time=Min('time'))
-        result['relay'] = qs.order_by('event_id')
-
-        return result
-
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        athlete = self.get_athlete()
+
+        context['personal_bests'] = {}
+
+        qs = IndividualResult.find_by_athlete(athlete) \
+            .filter(event__type=1, extra_analysis_time_by=None) \
+            .order_by('event', 'time').distinct('event')
+        context['personal_bests']['individual'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
+
+        qs = IndividualResult.find_by_athlete(athlete) \
+            .filter(event__type=2, extra_analysis_time_by=None) \
+            .order_by('event', 'time').distinct('event')
+        context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
+
         context['athlete'] = self.get_athlete()
         return context
 
     template_name = 'rankings/personal_best.html'
-
-
-def athlete_redirect_athlete_id_to_slug(request, athlete_id):
-    athlete = Athlete.objects.filter(pk=athlete_id).first()
-    if athlete is None:
-        raise Http404
-    return redirect(athlete, permanent=True)
-
-
-def athlete_redirect_event_id_to_slug(request, slug, event_id):
-    event = Event.objects.filter(pk=event_id).first()
-    if event is None:
-        raise Http404
-    athlete = Athlete.objects.filter(slug=slug).first()
-    if athlete is None:
-        athlete = Athlete.objects.filter(pk=slug).first()
-        if athlete is None:
-            raise Http404
-    return redirect(reverse('athlete-event', args=[athlete.slug, event.generate_slug()]), permanent=True)
-
-
-def redirect_event_id_to_slug(request, event_id, gender):
-    event = Event.objects.filter(pk=event_id).first()
-    if event is None:
-        raise Http404
-    return redirect(reverse('best-by-event', args=[event.generate_slug(), gender]), permanent=True)
 
 
 class EventByAthlete(ListView):
@@ -242,14 +196,12 @@ class EventByAthlete(ListView):
         athlete = self.get_athlete()
         event = self.get_event()
 
-        qs = qs.filter(athlete=athlete)
-        qs = qs.filter(event=event)
+        qs = qs.filter(athlete=athlete, event=event)
         if self.request.user.is_authenticated:
             user = self.request.user
             qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
         else:
             qs = qs.filter(extra_analysis_time_by=None)
-        qs = qs.values('time', 'competition__date', 'competition__name', 'competition__slug')
         qs = qs.order_by('time')
         return qs
 
@@ -314,10 +266,10 @@ def request_competition(request):
             location = form['location'].value()
 
             body = "Competition name: " + competition_name + "\n" \
-                   "Competition date: " + competition_date + "\n" \
-                   "Link to results: " + link_to_results + "\n" \
-                   "Location: " + location + "\n" \
-                   "Request email: " + your_email
+                                                             "Competition date: " + competition_date + "\n" \
+                                                                                                       "Link to results: " + link_to_results + "\n" \
+                                                                                                                                               "Location: " + location + "\n" \
+                                                                                                                                                                         "Request email: " + your_email
 
             send_mail(
                 'Lifesaving Rankings competition request',
@@ -381,23 +333,15 @@ class BestByEvent(ListView):
         qs = qs.filter(extra_analysis_time_by=None)
 
         event = self.get_event()
-
-        qs = qs.filter(event=event.id).order_by('time')
-
         gender = gender_name_to_int(self.kwargs.get('gender'))
-        qs = qs.filter(athlete__gender=gender)
 
-        qs = qs.values('athlete_id',
-                       'athlete__name',
-                       'athlete__year_of_birth',
-                       'time',
-                       'competition__date',
-                       'competition__name',
-                       'competition__slug',
-                       'event__name',
-                       'athlete__slug')
+        qs = qs.filter(event=event.id, athlete__gender=gender).order_by('time')
 
-        return best_result_per_athlete(qs)
+        best_result_per_athlete = {}
+        for result in qs:
+            best_result_per_athlete.setdefault(result.athlete.id, result)
+
+        return best_result_per_athlete
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
@@ -411,48 +355,28 @@ class BestByEvent(ListView):
 class Search(ListView):
     model = Athlete
 
-    def get_queryset(self):
-        qs = super(Search, self).get_queryset()
+    def get_context_data(self, **kwargs):
+        context = super(Search, self).get_context_data(**kwargs)
+
+        athletes = super(Search, self).get_queryset()
 
         query = self.request.GET.get('athlete').strip()
 
         parts = query.split(' ')
 
         if query and len(parts) > 1:
-            qs = qs.filter(
+            athletes = athletes.filter(
                 (Q(first_name__icontains=query) | Q(last_name__icontains=query))
                 | (Q(first_name__icontains=parts[0]) | Q(last_name__icontains=parts[len(parts) - 1]))
             )
         else:
-            qs = qs.filter(name__icontains=query)
+            athletes = athletes.filter(name__icontains=query)
 
-        return qs
-
-    def get_context_data(self, **kwargs):
-        context = super(Search, self).get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('athlete')
+        context['search_results'] = athletes
+        context['query'] = query
         return context
 
     template_name = 'rankings/search.html'
-
-
-def best_result_per_athlete(qs):
-    checked_athletes = []
-    final_list = []
-    for result in qs:
-        if result.get('athlete_id') not in checked_athletes:
-            checked_athletes.append(result.get('athlete_id'))
-            final_list.append(result)
-    return final_list
-
-
-def gender_name_to_int(gender):
-    if gender == 'men':
-        return 1
-    elif gender == 'women':
-        return 2
-    else:
-        raise Http404
 
 
 def report_duplicate(request):
@@ -465,3 +389,42 @@ def report_duplicate(request):
         fail_silently=False,
     )
     return HttpResponse('')
+
+
+# Helper functions
+
+def gender_name_to_int(gender):
+    if gender == 'men':
+        return 1
+    elif gender == 'women':
+        return 2
+    else:
+        raise Http404
+
+
+# Redirects from old url format
+
+def athlete_redirect_athlete_id_to_slug(request, athlete_id):
+    athlete = Athlete.objects.filter(pk=athlete_id).first()
+    if athlete is None:
+        raise Http404
+    return redirect(athlete, permanent=True)
+
+
+def athlete_redirect_event_id_to_slug(request, slug, event_id):
+    event = Event.objects.filter(pk=event_id).first()
+    if event is None:
+        raise Http404
+    athlete = Athlete.objects.filter(slug=slug).first()
+    if athlete is None:
+        athlete = Athlete.objects.filter(pk=slug).first()
+        if athlete is None:
+            raise Http404
+    return redirect(reverse('athlete-event', args=[athlete.slug, event.generate_slug()]), permanent=True)
+
+
+def redirect_event_id_to_slug(request, event_id, gender):
+    event = Event.objects.filter(pk=event_id).first()
+    if event is None:
+        raise Http404
+    return redirect(reverse('best-by-event', args=[event.generate_slug(), gender]), permanent=True)

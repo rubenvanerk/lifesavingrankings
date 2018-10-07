@@ -11,7 +11,7 @@
     </button>
 
     <div class="ui vertical menu">
-        {% for athlete in object_list %}
+        {% for athlete in search_results %}
             <a href="{% url 'athlete-overview' athlete.slug %}" class="item">
                 {{ athlete.name }}
             </a>

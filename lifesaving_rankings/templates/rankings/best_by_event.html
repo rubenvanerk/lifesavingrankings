@@ -31,21 +31,21 @@
         </tr>
         </thead>
         <tbody>
-        {% for top_result in object_list %}
+        {% for athlete_id, result in object_list.items %}
             <tr>
                 <td>
                     {{ forloop.counter }}
                 </td>
                 <td>
-                    <a href="{% url 'athlete-overview' top_result.athlete__slug %}">
-                        {{ top_result.athlete__name }}
+                    <a href="{% url 'athlete-overview' result.athlete.slug %}">
+                        {{ result.athlete.name }}
                     </a>
                 </td>
-                <td>{{ top_result.athlete__year_of_birth|format_year_of_birth }}</td>
-                <td>{{ top_result.time|format_time }}</td>
-                <td>{{ top_result.competition__date }}</td>
+                <td>{{ result.athlete.year_of_birth|format_year_of_birth }}</td>
+                <td>{{ result.time|format_time }}</td>
+                <td>{{ result.competition__date }}</td>
                 <td>
-                    <a href="{% url 'competition-overview' top_result.competition__slug %}">{{ top_result.competition__name }}</a>
+                    <a href="{% url 'competition-overview' result.competition.slug %}">{{ result.competition.name }}</a>
                 </td>
             </tr>
         {% endfor %}

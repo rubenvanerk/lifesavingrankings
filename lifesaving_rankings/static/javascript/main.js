@@ -34,11 +34,8 @@ var reportDuplicateAthlete = function (button, query) {
 };
 
 $(document).ready(function () {
-    $(document).ready(function () {
-        $('#eventByAthlete').DataTable({
-            'order': [2, 'asc'],
-            'searching': false
-        });
+    $('#eventByAthlete').DataTable({
+        'order': [1, 'asc']
     });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
