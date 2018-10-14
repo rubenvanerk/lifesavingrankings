@@ -337,9 +337,19 @@ class BestByEvent(ListView):
 
         qs = qs.filter(event=event.id, athlete__gender=gender).order_by('time')
 
+        qs = qs.values('athlete_id',
+                       'athlete__name',
+                       'athlete__year_of_birth',
+                       'time',
+                       'competition__date',
+                       'competition__name',
+                       'competition__slug',
+                       'event__name',
+                       'athlete__slug')
+
         best_result_per_athlete = {}
         for result in qs:
-            best_result_per_athlete.setdefault(result.athlete.id, result)
+            best_result_per_athlete.setdefault(result['athlete_id'], result)
 
         return best_result_per_athlete
 
