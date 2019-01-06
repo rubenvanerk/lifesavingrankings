@@ -13,41 +13,48 @@
 
 {% block content %}
 
-    <div class="ui stackable two column grid">
+    <div class="ui">
 
 
-        {% for gender, results in top_results.genders.items%}
-            <div class="column">
-                <h2 class="ui header">{{ gender|capfirst }}</h2>
-                <table class="ui celled table">
-                    <thead>
+        {% for gender, results in top_results.genders.items %}
+            <h2 class="ui header">{{ gender|capfirst }}</h2>
+            <table class="ui celled table">
+                <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Athlete</th>
+                    <th>Date</th>
+                    <th>Competition</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for top_result in results %}
                     <tr>
-                        <th>Event</th>
-                        <th>Athlete</th>
-                        <th>Time</th>
+                        <td>
+                            <a href="{% url 'best-by-event' event_name=top_result.event.name|to_url gender=gender %}">
+                                {{ top_result.event.name }}</a>
+                        </td>
+                        <td>
+                            <a href="{% url 'athlete-overview' top_result.athlete.slug %}">
+                                {{ top_result.athlete.name }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ top_result.competition.date }}
+                        </td>
+                        <td>
+                            <a href="{% url 'competition-overview' top_result.competition.slug %}">
+                                {{ top_result.competition.name }}
+                            </a>
+                        </td>
+                        <td>{{ top_result.time|format_time }}</td>
                     </tr>
-                    </thead>
-                    <tbody>
+                {% endfor %}
 
-                    {% for top_result in results %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'best-by-event' event_name=top_result.event.name|to_url gender=gender %}">
-                                    {{ top_result.event.name }}</a>
-                            </td>
-                            <td>
-                                <a href="{% url 'athlete-overview' top_result.athlete.slug %}">
-                                    {{ top_result.athlete.name }}
-                                </a>
-                            </td>
-
-                            <td>{{ top_result.time|format_time }}</td>
-                        </tr>
-                    {% endfor %}
-
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         {% endfor %}
 
 

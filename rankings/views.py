@@ -19,7 +19,7 @@ class FrontPageRecords(TemplateView):
         context['last_added_competition'] = Competition.objects.filter(slug__isnull=False).filter(
             is_concept=False).order_by('-date').first()
 
-        top_results = {'genders': {'men': [], 'women': []}}
+        top_results = {'genders': {'women': [], 'men': []}}
         for gender in top_results['genders']:
             for event in Event.objects.filter(type=1).all():
                 top_result = next(
@@ -381,6 +381,10 @@ class Search(ListView):
             )
         else:
             athletes = athletes.filter(name__icontains=query)
+
+        print(athletes)
+
+        athletes.order_by('name', 'first_name', 'last_name')
 
         context['search_results'] = athletes
         context['query'] = query
