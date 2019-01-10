@@ -23,9 +23,9 @@
                 <tr>
                     <th>Event</th>
                     <th>Athlete</th>
+                    <th>Time</th>
                     <th>Date</th>
                     <th>Competition</th>
-                    <th>Time</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,6 +41,7 @@
                                 {{ top_result.athlete.name }}
                             </a>
                         </td>
+                        <td>{{ top_result.time|format_time }}</td>
                         <td>
                             {{ top_result.competition.date }}
                         </td>
@@ -49,7 +50,6 @@
                                 {{ top_result.competition.name }}
                             </a>
                         </td>
-                        <td>{{ top_result.time|format_time }}</td>
                     </tr>
                 {% endfor %}
 
