@@ -372,6 +372,11 @@ class Search(ListView):
 
         query = self.request.GET.get('athlete').strip()
 
+        if not query:
+            context['search_results'] = {}
+            context['query'] = query
+            return context
+
         parts = query.split(' ')
 
         if query and len(parts) > 1:
@@ -381,8 +386,6 @@ class Search(ListView):
             )
         else:
             athletes = athletes.filter(name__icontains=query)
-
-        print(athletes)
 
         athletes.order_by('name', 'first_name', 'last_name')
 

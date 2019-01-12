@@ -128,7 +128,8 @@
                     <input type="text"
                            placeholder="Search athletes"
                            name="athlete"
-                           {% if query %}value="{{ query }}"{% endif %}>
+                           {% if query %}value="{{ query }}"{% endif %}
+                           required>
                     <button class="ghost-button" type="submit"><i class="inverted search link icon"></i>
                     </button>
                 </div>
@@ -162,6 +163,20 @@
                 <div class="ui container">
                     <div class="name">
                         <h1><span class="de-emphasis">Lifesaving</span> Rankings</h1>
+                        <br>
+                        <form action="{% url 'search' %}" role="search" class="ui mobile only grid">
+                            <div class="ui action input">
+                                <input type="text"
+                                       placeholder="Search athletes"
+                                       name="athlete"
+                                       {% if query %}value="{{ query }}"{% endif %}
+                                       required>
+                                <button class="ui icon button">
+                                    <i class="search icon"></i>
+                                </button>
+                            </div>
+
+                        </form>
                     </div>
                 </div>
             </div>
