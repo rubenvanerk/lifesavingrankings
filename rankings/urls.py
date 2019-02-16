@@ -52,6 +52,16 @@ urlpatterns = [
         name='merge-athletes'
     ),
     url(
+        regex=r'^list-empty-athletes',
+        view=views.DeleteEmptyAthletes.as_view(),
+        name='list-empty-athletes'
+    ),
+    url(
+        regex=r'^delete-empty-athletes',
+        view=views.delete_empty_athletes,
+        name='delete-empty-athletes'
+    ),
+    url(
         regex=r'^search',
         view=views.Search.as_view(),
         name='search'

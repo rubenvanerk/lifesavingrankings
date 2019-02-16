@@ -2,6 +2,7 @@ import operator
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
+from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, TemplateView
 from .models import *
@@ -394,6 +395,34 @@ class Search(ListView):
         return context
 
     template_name = 'rankings/search.html'
+
+
+class DeleteEmptyAthletes(ListView):
+    model = Athlete
+    template_name = 'rankings/list_empty_athletes.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DeleteEmptyAthletes, self).get_context_data(**kwargs)
+
+        athletes = Athlete.objects.annotate(
+            result_count=Count('individualresult')
+        ).filter(result_count=0)
+
+        context['athletes'] = athletes
+        return context
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_empty_athletes(request):
+    athletes = Athlete.objects.annotate(
+        result_count=Count('individualresult')
+    ).filter(result_count=0)
+
+    deleted_count = str(len(athletes))
+
+    athletes.delete()
+
+    return HttpResponse(deleted_count + ' athletes deleted')
 
 
 def report_duplicate(request):

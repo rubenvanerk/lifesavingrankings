@@ -1,0 +1,13 @@
+{% extends "lifesaving_rankings/base.html" %}
+
+{% block head_title %}Search{% endblock %}
+
+{% block content %}
+    Number of athletes to be deleted: {{ athletes|length }}
+    <ul>
+        {% for athlete in athletes %}
+            <li><a href="{% url 'athlete-overview' athlete.slug %}">{{ athlete.name }}</a> </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'delete-empty-athletes'%}" class="ui button">Delete</a>
+{% endblock %}
