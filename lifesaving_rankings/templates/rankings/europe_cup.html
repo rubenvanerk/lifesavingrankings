@@ -1,0 +1,30 @@
+{% extends "lifesaving_rankings/base.html" %}
+
+{% block content %}
+    <h1>Europe Cup 2018 Results</h1>
+    Based on competitions: OrangeCup 2018 and Italian Open Championships 2018
+
+    {% for gender, events in scores.items %}
+        {% for event_name, scores in events.items %}
+            <h2>{{ event_name }} {% if gender == 1 %}men{% else %}women{% endif %}</h2>
+            <table class="ui celled table europe-cup">
+                <thead>
+                <tr>
+                    <th>Athlete</th>
+                    <th>Points</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for athlete_id, score in scores.items %}
+                    <tr>
+                        <td>{{ score.model.name }}</td>
+                        <td>{{ score.points }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    {% endfor %}
+
+{% endblock %}

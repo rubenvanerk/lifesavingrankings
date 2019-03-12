@@ -39,6 +39,13 @@ $(document).ready(function () {
     });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
+    $('.europe-cup').each(
+        function () {
+            $(this).DataTable({
+                "order": [[1, "desc"]]
+            });
+        }
+    );
 
 
     $('.popup').popup();

@@ -89,5 +89,10 @@ urlpatterns = [
     url(
         regex=r'^report-duplicate',
         view=report_duplicate
-    )
+    ),
+    url(
+        regex=r'^europe-cup',
+        view=views.EuropeCup.as_view(),
+        name='europe-cup'
+    ),
 ]

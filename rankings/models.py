@@ -103,6 +103,7 @@ class Competition(models.Model):
     location = models.CharField(max_length=100)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
     is_concept = models.BooleanField(default=False)
+    is_europe_cup_competition = models.BooleanField(default=False)
 
     prepopulated_fields = {"slug": ("name",)}
 

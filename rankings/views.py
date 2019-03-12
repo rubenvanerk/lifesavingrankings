@@ -474,3 +474,34 @@ def redirect_event_id_to_slug(request, event_id, gender):
     if event is None:
         raise Http404
     return redirect(reverse('best-by-event', args=[event.generate_slug(), gender]), permanent=True)
+
+
+class EuropeCup(TemplateView):
+    template_name = 'rankings/europe_cup.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+
+        competitions = Competition.objects.filter(is_europe_cup_competition=True)
+
+        points = [20, 18, 16, 14, 13, 12, 11, 10, 8, 7, 6, 5, 4, 3, 2, 1]
+
+        events = Event.objects.filter(type=Event.INDIVIDUAL)
+        genders = [1, 2]
+        scores = {1: {}, 2: {}}
+        for competition in competitions:
+            print(competition.name)
+            for event in events:
+                for gender in genders:
+                    if event.name not in scores[gender]:
+                        scores[gender][event.name] = {}
+                    results = IndividualResult.objects.filter(competition=competition, athlete__gender=gender, event=event).order_by('time')[:16]
+                    placing = 0
+                    for result in results:
+                        if result.athlete_id in scores[gender][event.name]:
+                            scores[gender][event.name][result.athlete_id]['points'] += points[placing]
+                        else:
+                            scores[gender][event.name][result.athlete_id] = {'points': points[placing], 'model': result.athlete}
+                        placing += 1
+        context['scores'] = scores
+        return context
