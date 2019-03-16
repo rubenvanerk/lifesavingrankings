@@ -1,11 +1,18 @@
 
-footer {
+footer.ui.grid {
     bottom: 0;
     position: absolute;
     width: 100%;
     padding: 1em;
     background-color: #1b1c1d;
     color: rgba(255,255,255,.9);
+    line-height: 20px;
+    min-height: 70px;
+    margin: 0;
+}
+
+footer .item:not(:last-child) {
+    border-right: 1px solid rgba(34,36,38,.15);
 }
 
 #content {
@@ -121,4 +128,9 @@ form.filter button.ui.button {
 
 form.ui.form input {
     margin-bottom: 10px !important;
+}
+
+.big.facebook.icon {
+    color: white;
+    font-size: 40px;
 }
