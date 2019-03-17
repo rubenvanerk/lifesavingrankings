@@ -147,3 +147,7 @@ form.ui.form input {
 .athlete .details i {
     margin: 0;
 }
+
+.ui.vertical.menu.search-results {
+    width: 25rem;
+}

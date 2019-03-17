@@ -12,10 +12,11 @@
             Report duplicate athletes in this search
         </button>
 
-        <div class="ui vertical menu">
+        <div class="ui vertical menu search-results">
             {% for athlete in search_results %}
                 <a href="{% url 'athlete-overview' athlete.slug %}" class="item">
-                    {{ athlete.name }}
+                    {{ athlete.name }} {% if athlete.year_of_birth is not None%}('{% if athlete.year_of_birth < 10 %}0{% endif %}{{ athlete.year_of_birth }}){% endif %}{% if athlete.gender == 1 %}
+                    <i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>{% endif %}
                 </a>
             {% endfor %}
         </div>
