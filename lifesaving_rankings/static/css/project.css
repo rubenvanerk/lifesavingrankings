@@ -134,3 +134,16 @@ form.ui.form input {
     color: white;
     font-size: 40px;
 }
+
+.athlete .name {
+    float: left;
+    margin-right: 10px;
+}
+
+.athlete .details {
+    margin-top: 5px;
+}
+
+.athlete .details i {
+    margin: 0;
+}

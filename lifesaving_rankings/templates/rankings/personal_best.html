@@ -16,16 +16,11 @@
 
 
 {% block content %}
-    <h1>{{ athlete.name }}</h1>
+    <div class="athlete">
+        <h1 class="name">{{ athlete.name }}</h1>
+        <span class="details">({% if athlete.year_of_birth %} '{% if athlete.year_of_birth < 10 %}0{% endif %}{{ athlete.year_of_birth }}{% endif %} {% if athlete.gender == 1 %}<i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>{% endif %})</span>
+    </div>
 
-    {% if user.is_authenticated %}
-        <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
-            <button class="ui left labeled icon button back">
-                <i class="left plus icon"></i>
-                Add extra time
-            </button>
-        </a>
-    {% endif %}
 
     {% for event_type, times in personal_bests.items %}
         {% if times %}
@@ -68,6 +63,14 @@
         {% endif %}
     {% endfor %}
 
+    {% if user.is_authenticated %}
+        <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
+            <button class="ui left labeled icon button back">
+                <i class="left plus icon"></i>
+                Add extra time
+            </button>
+        </a>
+    {% endif %}
     <a href="{% url 'request-competition' %}">
         <button class="ui left labeled icon button">
             <i class="plus icon"></i>
