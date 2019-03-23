@@ -1,4 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
+{% load year_of_birth_filter %}
 
 {% block head_title %}Search{% endblock %}
 
@@ -15,7 +16,7 @@
         <div class="ui vertical menu search-results">
             {% for athlete in search_results %}
                 <a href="{% url 'athlete-overview' athlete.slug %}" class="item">
-                    {{ athlete.name }} {% if athlete.year_of_birth is not None%}('{% if athlete.year_of_birth < 10 %}0{% endif %}{{ athlete.year_of_birth }}){% endif %}{% if athlete.gender == 1 %}
+                    {{ athlete.name }} {% if athlete.year_of_birth is not None %}({{ athlete.year_of_birth|format_year_of_birth }}){% endif %}{% if athlete.gender == 1 %}
                     <i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>{% endif %}
                 </a>
             {% endfor %}

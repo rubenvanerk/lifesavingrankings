@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter year_of_birth_filter %}
 
 {% block head_title %}{{ athlete.name }}{% endblock %}
 {% block meta_description %}Find out every personal best of {{ athlete.name }} for each Lifesaving pool
@@ -19,7 +19,7 @@
     <div class="athlete">
         <h1 class="name">{{ athlete.name }}</h1>
         <span class="details">
-            ({% if athlete.year_of_birth is not None %} '{% if athlete.year_of_birth < 10 %}0{% endif %}{{ athlete.year_of_birth }}{% endif %} {% if athlete.gender == 1 %}<i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>{% endif %})
+            ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth|format_year_of_birth  }}{% endif %} {% if athlete.gender == 1 %}<i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>{% endif %})
         </span>
     </div>
 

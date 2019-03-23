@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter year_of_birth_filter %}
 
 {% block head_title %}{{ competition.name }}{% endblock %}
 {% block meta_description %}
@@ -55,6 +55,7 @@
                         <tr>
                             <th>#</th>
                             <th>Athlete</th>
+                            <th>YoB</th>
                             <th>Time</th>
                         </tr>
                         </thead>
@@ -65,6 +66,7 @@
                                 <td>
                                     <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a>
                                 </td>
+                                <td>{{ result.athlete.year_of_birth|format_year_of_birth }}</td>
                                 <td>{{ result.time|format_time }}</td>
                             </tr>
                         {% endfor %}
