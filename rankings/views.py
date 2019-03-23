@@ -381,12 +381,10 @@ class Search(ListView):
         parts = query.split(' ')
 
         if query and len(parts) > 1:
-            athletes = athletes.filter(
-                (Q(first_name__icontains=query) | Q(last_name__icontains=query))
-                | (Q(first_name__icontains=parts[0]) | Q(last_name__icontains=parts[len(parts) - 1]))
-            )
+            for part in parts:
+                athletes = athletes.filter(name__unaccent__icontains=part)
         else:
-            athletes = athletes.filter(name__icontains=query)
+            athletes = athletes.filter(name__unaccent__icontains=query)
 
         athletes.order_by('name', 'first_name', 'last_name')
 
