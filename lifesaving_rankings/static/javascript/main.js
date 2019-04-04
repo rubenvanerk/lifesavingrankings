@@ -39,6 +39,7 @@ $(document).ready(function () {
     });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
+    $('.init-datatable').DataTable();
 
 
     $('.popup').popup();

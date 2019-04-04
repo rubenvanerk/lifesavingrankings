@@ -165,7 +165,7 @@ class PersonalBests(TemplateView):
             .order_by('event', 'time').distinct('event')
         context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
 
-        context['athlete'] = self.get_athlete()
+        context['athlete'] = athlete
         return context
 
     template_name = 'rankings/personal_best.html'

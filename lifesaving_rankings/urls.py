@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+
+from lifesaving_rankings.views import ultimate_lifesaver
 from rankings import views
 from django.conf import settings
 
@@ -30,6 +32,7 @@ urlpatterns = [
         name='profile'),
     url(r'^rankings/', include('rankings.urls')),
     url(r'^analysis/', include('analysis.urls')),
+    url(r'^ultimate-lifesaver/', ultimate_lifesaver),
     url(r'^admin/', admin.site.urls)
 ]
 
