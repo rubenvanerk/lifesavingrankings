@@ -19,5 +19,5 @@ class RequestCompetitionForm(forms.Form):
     link_to_results = forms.CharField(label='Link to results', required=False)
     competition_date = forms.CharField(label='Competition date', required=False)
     location = forms.CharField(label='Location', required=False)
-    your_email = forms.CharField(label='Your email (for additional questions and updates)', required=False)
+    your_email = forms.CharField(label='Your email (for additional questions and updates)', required=True)
 

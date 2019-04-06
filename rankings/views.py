@@ -2,7 +2,7 @@ import operator
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
-from django.db.models import Count
+from django.db.models import Count, Min
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, TemplateView
 from .models import *
@@ -66,6 +66,8 @@ class CompetitionOverview(TemplateView):
         if 'publish' in self.request.GET and self.request.GET['publish'] == 'true' and self.request.user.is_superuser:
             competition.is_concept = False
             competition.save()
+            for result in competition.individualresult_set.all():
+                result.calculate_points()
             return redirect(competition)
         if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
             competition.delete()
@@ -336,7 +338,7 @@ class BestByEvent(ListView):
         event = self.get_event()
         gender = gender_name_to_int(self.kwargs.get('gender'))
 
-        qs = qs.filter(event=event.id, athlete__gender=gender).order_by('time')
+        qs = qs.filter(event=event.id, athlete__gender=gender).values('athlete').annotate(pb=Min('time')).order_by('time')
 
         qs = qs.values('athlete_id',
                        'athlete__name',
@@ -346,7 +348,8 @@ class BestByEvent(ListView):
                        'competition__name',
                        'competition__slug',
                        'event__name',
-                       'athlete__slug')
+                       'athlete__slug',
+                       'points')
 
         best_result_per_athlete = {}
         for result in qs:
@@ -421,6 +424,14 @@ def delete_empty_athletes(request):
     athletes.delete()
 
     return HttpResponse(deleted_count + ' athletes deleted')
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def calculate_points(request):
+    for result in IndividualResult.objects.filter(event__type=1, points=0):
+        result.calculate_points()
+
+    return HttpResponse('points calculated')
 
 
 def report_duplicate(request):

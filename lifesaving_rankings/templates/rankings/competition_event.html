@@ -39,6 +39,7 @@
             <th>Athlete</th>
             <th>YoB</th>
             <th>Time</th>
+            <th>Points</th>
         </tr>
         </thead>
         <tbody>
@@ -48,6 +49,7 @@
                 <td><a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a></td>
                 <td>{{ result.athlete.year_of_birth|format_year_of_birth }}</td>
                 <td>{{ result.time|format_time }}</td>
+                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>

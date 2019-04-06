@@ -30,6 +30,7 @@
                             <th>Athlete</th>
                             <th>Competition</th>
                             <th>Time</th>
+                            <th>Points</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -43,6 +44,7 @@
                                     <a href="{% url 'competition-overview' result.competition.slug %}">{{ result.competition.name }}</a>
                                 </td>
                                 <td>{{ result.time|format_time }}</td>
+                                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

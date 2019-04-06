@@ -62,6 +62,11 @@ urlpatterns = [
         name='delete-empty-athletes'
     ),
     url(
+        regex=r'^calculate-points',
+        view=views.calculate_points,
+        name='calculate_points'
+    ),
+    url(
         regex=r'^search',
         view=views.Search.as_view(),
         name='search'

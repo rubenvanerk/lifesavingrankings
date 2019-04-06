@@ -19,6 +19,7 @@
 
 {% block content %}
     <h1>{{ event.name }} {{ gender }} top results</h1>
+
     <table class="ui celled table" id="bestByEvent">
         <thead>
         <tr>
@@ -26,6 +27,7 @@
             <th>Athlete</th>
             <th>YoB</th>
             <th>Time</th>
+            <th>Points</th>
             <th>Date</th>
             <th>Competition</th>
         </tr>
@@ -43,6 +45,7 @@
                 </td>
                 <td>{{ result.athlete__year_of_birth|format_year_of_birth }}</td>
                 <td>{{ result.time|format_time }}</td>
+                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
                 <td>{{ result.competition__date }}</td>
                 <td>
                     <a href="{% url 'competition-overview' result.competition__slug %}">{{ result.competition__name }}</a>

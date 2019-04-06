@@ -2,9 +2,10 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey, Q
+from django.db.models import ForeignKey, Q, Max
 from django.urls import reverse
 from django.utils.text import slugify
+from rankings.functions import calculate_points
 
 
 class Athlete(models.Model):
@@ -32,6 +33,15 @@ class Athlete(models.Model):
     def get_absolute_url(self):
         return reverse('athlete-overview', args=[self.slug])
 
+    def get_total_points(self):
+        events = Event.objects.filter(use_points_in_athlete_total=True)
+        total_points = 0
+        for event in events:
+            result = IndividualResult.objects.filter(event=event, athlete=self).aggregate(Max('points'))
+            if result['points__max'] is not None:
+                total_points += result['points__max']
+        return round(total_points, 2)
+
 
 class Event(models.Model):
     UNKNOWN = 0
@@ -46,6 +56,7 @@ class Event(models.Model):
     )
     name = models.CharField(max_length=60)
     type = models.IntegerField(default=UNKNOWN, choices=TYPES)
+    use_points_in_athlete_total = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -121,8 +132,14 @@ class IndividualResult(models.Model):
     event = ForeignKey(Event, on_delete=models.CASCADE)
     competition = ForeignKey(Competition, on_delete=models.CASCADE)
     time = models.DurationField()
+    points = models.FloatField(default=0)
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None)
+
+    def calculate_points(self):
+        record = EventRecord.objects.filter(gender=self.athlete.gender, event=self.event).first()
+        self.points = calculate_points(record.time.total_seconds() * 100, self.time.total_seconds() * 100)
+        self.save()
 
     @staticmethod
     def find_by_athlete(athlete):
@@ -137,6 +154,24 @@ class IndividualResult(models.Model):
         qs = IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time')
         qs = qs.filter(Q(extra_analysis_time_by=analysis_group.creator) | Q(extra_analysis_time_by=None))
         return qs.first()
+
+
+class EventRecord(models.Model):
+    def __str__(self):
+        return self.event.name + " " + self.get_gender_display()
+
+    UNKNOWN = 0
+    MALE = 1
+    FEMALE = 2
+    GENDER_CHOICES = (
+        (UNKNOWN, 'Unknown'),
+        (MALE, 'Male'),
+        (FEMALE, 'Female')
+    )
+
+    gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
+    event = ForeignKey(Event, on_delete=models.CASCADE)
+    time = models.DurationField()
 
 
 class RelayOrder(models.Model):
