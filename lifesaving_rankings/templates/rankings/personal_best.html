@@ -17,11 +17,39 @@
 
 {% block content %}
     <div class="athlete">
-        <h1 class="name">{{ athlete.name }}</h1>
+        <h1 class="name">
+            {% if athlete.nationality %}
+            <i class="{{ athlete.nationality.flag_code }} flag"
+            title="{{ athlete.nationality.name }}"></i>
+        {% endif %}
+            {{ athlete.name }}
+        </h1>
         <span class="details">
-            ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth|format_year_of_birth  }}{% endif %} {% if athlete.gender == 1 %}<i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>{% endif %})
+            ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth|format_year_of_birth }}{% endif %}
+            {% if athlete.gender == 1 %}<i class="mars icon"></i>{% elif athlete.gender == 2 %}
+                <i class="venus icon"></i>{% endif %})
         </span>
-    </div><br><br>
+    </div>
+
+    {% if request.user.is_staff %}
+        <br><br>
+        <form action="" method="post" class="ui form">{% csrf_token %}
+            <div class="ui fluid search selection dropdown left floated" style="width: 200px;">
+                <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">
+                <i class="dropdown icon"></i>
+                <div class="default text">Select Country</div>
+                <div class="menu">
+                    {% for nationality in nationalities %}
+                        <div class="item" data-value="{{ nationality.pk }}"><i
+                                class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="ui green button right floated" style="margin-top: -37px;">Save</button>
+        </form>
+    {% endif %}
+
+    <br><br>
     <div>
         Total points: {{ athlete.get_total_points }}
     </div>

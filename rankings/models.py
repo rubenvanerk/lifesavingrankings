@@ -8,6 +8,14 @@ from django.utils.text import slugify
 from rankings.functions import calculate_points
 
 
+class Nationality(models.Model):
+    name = models.CharField(max_length=100, unique=True, null=True)
+    flag_code = models.CharField(max_length=10, unique=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Athlete(models.Model):
     UNKNOWN = 0
     MALE = 1
@@ -25,6 +33,7 @@ class Athlete(models.Model):
 
     year_of_birth = models.IntegerField(null=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
+    nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, default=None, null=True)
 
     def __str__(self):
         name_str = self.name
@@ -41,6 +50,11 @@ class Athlete(models.Model):
             if result['points__max'] is not None:
                 total_points += result['points__max']
         return round(total_points, 2)
+
+    def get_competitions(self):
+        results = IndividualResult.objects.filter(athlete=self).values('competition')
+        competitions = Competition.objects.filter(pk__in=results).order_by('date')
+        return competitions
 
 
 class Event(models.Model):
@@ -125,6 +139,9 @@ class Competition(models.Model):
 
     def get_absolute_url(self):
         return reverse('competition-overview', args=[self.slug])
+
+    def get_athletes(self):
+        return Athlete.objects.filter(pk__in=IndividualResult.objects.filter(competition=self).values('athlete').distinct())
 
 
 class IndividualResult(models.Model):

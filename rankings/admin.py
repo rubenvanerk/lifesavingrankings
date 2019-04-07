@@ -9,5 +9,6 @@ admin.site.register(Event)
 admin.site.register(RelayOrder)
 admin.site.register(Athlete)
 admin.site.register(EventRecord)
+admin.site.register(Nationality)
 
 

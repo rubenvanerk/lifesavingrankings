@@ -21,6 +21,24 @@
 
     <h1 class="ui header">{{ competition.name }} - {{ competition.date }}</h1>
 
+    {% if request.user.is_staff %}
+        <form action="" method="post" class="ui form">{% csrf_token %}
+            <div class="ui fluid search selection dropdown left floated" style="width: 200px;">
+                <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">
+                <i class="dropdown icon"></i>
+                <div class="default text">Select Country</div>
+                <div class="menu">
+                    {% for nationality in nationalities %}
+                        <div class="item" data-value="{{ nationality.pk }}"><i
+                                class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="ui green button right floated" style="margin-top: -37px;">Save</button>
+        </form>
+        <br>
+    {% endif %}
+
     <a href="{% url 'competition-list' %}" class="button back">
         <button class="ui left labeled icon button">
             <i class="left list icon"></i>
@@ -65,7 +83,13 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>
-                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a>
+                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">
+                                        {% if result.athlete.nationality %}
+                                            <i class="{{ result.athlete.nationality.flag_code }} flag"
+                                               title="{{ result.athlete.nationality.name }}"></i>
+                                        {% endif %}
+                                        {{ result.athlete.name }}
+                                    </a>
                                 </td>
                                 <td>{{ result.athlete.year_of_birth|format_year_of_birth }}</td>
                                 <td>{{ result.time|format_time }}</td>

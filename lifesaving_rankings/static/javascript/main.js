@@ -66,9 +66,14 @@ $(document).ready(function () {
     //initialize mobile menu
     $('.ui.sidebar').sidebar('attach events', '#mobile_item');
 
-    $('.ui.checkbox')
-        .checkbox()
-    ;
+    $('.ui.checkbox').checkbox();
+
+    $('.ui.dropdown').dropdown({
+        fullTextSearch: true
+    });
+    $('.ui.dropdown .default.text').select();
+
+    $('#labeledAthletes').progress();
 
     $('#content').fadeIn()
 });

@@ -67,6 +67,11 @@ urlpatterns = [
         name='calculate_points'
     ),
     url(
+        regex=r'^label-athlete/(?P<pk>[0-9]+)$',
+        view=views.label_nationality,
+        name='label_athlete'
+    ),
+    url(
         regex=r'^search',
         view=views.Search.as_view(),
         name='search'

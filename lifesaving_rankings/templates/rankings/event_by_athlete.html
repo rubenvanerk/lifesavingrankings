@@ -46,25 +46,25 @@
         </tr>
         </thead>
         <tbody>
-        {% for times in object_list %}
+        {% for time in object_list %}
             <tr>
                 <td>
-                    {% if times.competition.name %}
-                        <a href="{% url 'competition-overview' times.competition.slug %}">{{ times.competition.name }}</a>
+                    {% if time.competition.name %}
+                        <a href="{% url 'competition-overview' time.competition.slug %}">{{ time.competition.name }}</a>
                     {% endif %}
                 </td>
                 <td>
-                    {{ times.time|format_time }}
+                    {{ time.time|format_time }}
                     {% if forloop.first %}<sup><i class="disabled small icon star outline"></i></sup>{% endif %}
                 </td>
                 <td>
-                    {{ times.competition.location }}
+                    {{ time.competition.location }}
                 </td>
                 <td>
-                    <span hidden>{{ times.competition.date|date:"Y-m-d" }}</span>
-                    {{ times.competition.date }}
+                    <span hidden>{{ time.competition.date|date:"Y-m-d" }}</span>
+                    {{ time.competition.date }}
                 </td>
-                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
+                <td>{% if time.points > 0 %}{{ time.points }}{% else %} - {% endif %}</td>
             </tr>
         {% endfor %}
         </tbody>

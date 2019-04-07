@@ -38,6 +38,10 @@
                         </td>
                         <td>
                             <a href="{% url 'athlete-overview' top_result.athlete.slug %}">
+                                {% if top_result.athlete.nationality %}
+                                    <i class="{{ top_result.athlete.nationality.flag_code }} flag"
+                                       title="{{ top_result.athlete.nationality.name }}"></i>
+                                {% endif %}
                                 {{ top_result.athlete.name }}
                             </a>
                         </td>

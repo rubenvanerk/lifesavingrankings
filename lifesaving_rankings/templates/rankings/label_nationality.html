@@ -1,0 +1,54 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load year_of_birth_filter %}
+
+{% block content %}
+
+    <div class="ui two column centered stackable grid">
+
+        <div class="column">
+
+            <div class="ui indicating progress" id="labeledAthletes" data-percent="{{ progress }}">
+                <div class="bar">
+                    <div class="progress"></div>
+                </div>
+                <div class="label">Labeled {{ labeled_athletes }} of {{ athlete_count }} athletes. {{ queue|length }} in queue.</div>
+            </div>
+
+            <br>
+
+            <form action="" method="post" class="ui form">{% csrf_token %}
+
+                <h1>{{ athlete.name }}</h1>
+                Gender: {{ athlete.get_gender_display }}<br>
+                Year of birth: {{ athlete.year_of_birth|format_year_of_birth }}<br><br>
+
+                Participated in:
+                <ul>
+                    {% for competition in athlete.get_competitions %}
+                        <li>{{ competition.date }} | <a href="{% url 'competition-overview' competition.slug %}"
+                                                        target="_blank">{{ competition.name }}</a></li>
+                    {% endfor %}
+                </ul>
+
+                <div class="ui fluid search selection dropdown">
+                    <input type="hidden" name="country" required autofocus="autofocus">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Select Country</div>
+                    <div class="menu">
+                        {% for nationality in nationalities %}
+                            <div class="item" data-value="{{ nationality.pk }}"><i
+                                    class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <br>
+                <br>
+                <a href="{% url 'label_athlete' next_athlete.pk %}">
+                    <button type="button" class="ui button">Skip</button>
+                </a>
+                <button type="submit" class="ui green button right floated">Save</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

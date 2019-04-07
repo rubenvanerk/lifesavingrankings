@@ -1,4 +1,5 @@
 import operator
+import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
@@ -37,6 +38,20 @@ class FrontPageRecords(TemplateView):
 class CompetitionOverview(TemplateView):
     template_name = 'rankings/competition_overview.html'
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise Http404
+        competition_slug = self.kwargs.get('competition_slug')
+        competition = Competition.objects.filter(slug=competition_slug).first()
+        nationality = Nationality.objects.get(pk=request.POST['country'])
+
+        for athlete in competition.get_athletes():
+            if not athlete.nationality:
+                athlete.nationality = nationality
+                athlete.save()
+
+        return HttpResponseRedirect(reverse('competition-overview', args=[competition.slug]))
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         competition_slug = self.kwargs.get('competition_slug')
@@ -57,6 +72,7 @@ class CompetitionOverview(TemplateView):
             context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition=competition,
                                                                                              gender=2, limit=limit)
         context['competition'] = competition
+        context['nationalities'] = Nationality.objects.all()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -150,6 +166,15 @@ class PersonalBests(TemplateView):
                 raise Http404
         return self.athlete
 
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        nationality = Nationality.objects.get(pk=request.POST['country'])
+        athlete = self.get_athlete()
+        athlete.nationality = nationality
+        athlete.save()
+        context['athlete'] = athlete
+        return super(TemplateView, self).render_to_response(context)
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -168,6 +193,7 @@ class PersonalBests(TemplateView):
         context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
 
         context['athlete'] = athlete
+        context['nationalities'] = Nationality.objects.all()
         return context
 
     template_name = 'rankings/personal_best.html'
@@ -338,7 +364,8 @@ class BestByEvent(ListView):
         event = self.get_event()
         gender = gender_name_to_int(self.kwargs.get('gender'))
 
-        qs = qs.filter(event=event.id, athlete__gender=gender).values('athlete').annotate(pb=Min('time')).order_by('time')
+        qs = qs.filter(event=event.id, athlete__gender=gender).values('athlete').annotate(pb=Min('time')).order_by(
+            'time')
 
         qs = qs.values('athlete_id',
                        'athlete__name',
@@ -349,7 +376,9 @@ class BestByEvent(ListView):
                        'competition__slug',
                        'event__name',
                        'athlete__slug',
-                       'points')
+                       'points',
+                       'athlete__nationality__flag_code',
+                       'athlete__nationality__name')
 
         best_result_per_athlete = {}
         for result in qs:
@@ -411,6 +440,30 @@ class DeleteEmptyAthletes(ListView):
 
         context['athletes'] = athletes
         return context
+
+
+@user_passes_test(lambda u: u.is_staff)
+def label_nationality(request, pk):
+    athlete = Athlete.objects.filter(pk=pk).first()
+    queue = Athlete.objects.filter(nationality=None).annotate(num_results=Count('individualresult')).filter(
+        num_results__gt=12).all()
+    next_athlete = random.choice(queue)
+    if not athlete:
+        return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))
+
+    if request.method == 'POST':
+        nationality = Nationality.objects.get(pk=request.POST['country'])
+        athlete.nationality = nationality
+        athlete.save()
+        return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))
+
+    athlete_count = Athlete.objects.count()
+    labeled_athletes = Athlete.objects.filter(~Q(nationality=None)).count()
+    progress = labeled_athletes / athlete_count * 100
+
+    return render(request, 'rankings/label_nationality.html',
+                  {'athlete': athlete, 'nationalities': Nationality.objects.all(), 'athlete_count': athlete_count,
+                   'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete, 'queue': queue})
 
 
 @user_passes_test(lambda u: u.is_superuser)

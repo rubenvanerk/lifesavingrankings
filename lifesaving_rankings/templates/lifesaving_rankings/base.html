@@ -65,6 +65,9 @@
             {% if request.user.is_superuser %}
                 <a href="{% url 'merge-athletes' %}" class="item {% active 'merge-athletes' %}">Merge</a>
             {% endif %}
+            {% if request.user.is_staff %}
+                <a href="{% url 'label_athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
+            {% endif %}
 
 
             <div class="right menu">
@@ -119,6 +122,9 @@
 
         {% if request.user.is_superuser %}
             <a href="{% url 'merge-athletes' %}" class="item {% active 'merge-athletes' %}">Merge</a>
+        {% endif %}
+        {% if request.user.is_staff %}
+            <a href="{% url 'label_athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
         {% endif %}
 
 
@@ -206,7 +212,8 @@
 
         <footer id="footer" class="ui inverted center aligned grid">
             <span class="item">
-                <a href="https://www.facebook.com/LifesavingRankings/" target="_blank"><i class="big facebook link icon"></i></a>
+                <a href="https://www.facebook.com/LifesavingRankings/" target="_blank"><i
+                        class="big facebook link icon"></i></a>
             </span>
             <span class="item">
                 Created by <a href="https://www.rubenvanerk.nl">Ruben van Erk</a><br>

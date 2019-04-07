@@ -38,7 +38,13 @@
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>
-                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">{{ result.athlete.name }}</a>
+                                    <a href="{% url 'athlete-overview' result.athlete.slug %}">
+                                        {% if result.athlete.nationality %}
+                                            <i class="{{ result.athlete.nationality.flag_code }} flag"
+                                               title="{{ result.athlete.nationality.name }}"></i>
+                                        {% endif %}
+                                        {{ result.athlete.name }}
+                                    </a>
                                 </td>
                                 <td>
                                     <a href="{% url 'competition-overview' result.competition.slug %}">{{ result.competition.name }}</a>
