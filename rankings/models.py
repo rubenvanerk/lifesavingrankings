@@ -134,6 +134,7 @@ class Competition(models.Model):
     location = models.CharField(max_length=100)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
     is_concept = models.BooleanField(default=False)
+    imported_on = models.DateTimeField(auto_now_add=True, null=True)
 
     prepopulated_fields = {"slug": ("name",)}
 
