@@ -157,6 +157,7 @@ class IndividualResult(models.Model):
     competition = ForeignKey(Competition, on_delete=models.CASCADE)
     time = models.DurationField()
     points = models.FloatField(default=0)
+    original_line = models.CharField(max_length=200, null=True, default=None)
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None)
 
