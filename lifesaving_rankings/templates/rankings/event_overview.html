@@ -39,10 +39,10 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>
                                     <a href="{% url 'athlete-overview' result.athlete.slug %}">
-                                        {% if result.athlete.nationality %}
-                                            <i class="{{ result.athlete.nationality.flag_code }} flag"
+                                        {% for nationality in result.athlete.nationalities.all %}
+                                            <i class="{{ nationality.flag_code }} flag"
                                                title="{{ result.athlete.nationality.name }}"></i>
-                                        {% endif %}
+                                        {% endfor %}
                                         {{ result.athlete.name }}
                                     </a>
                                 </td>

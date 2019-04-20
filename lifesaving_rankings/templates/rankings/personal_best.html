@@ -18,10 +18,9 @@
 {% block content %}
     <div class="athlete">
         <h1 class="name">
-            {% if athlete.nationality %}
-            <i class="{{ athlete.nationality.flag_code }} flag"
-            title="{{ athlete.nationality.name }}"></i>
-        {% endif %}
+            {% for nationality in athlete.nationalities.all %}
+                <i class="{{ nationality.flag_code }} flag" title="{{ result.athlete.nationality.name }}"></i>
+            {% endfor %}
             {{ athlete.name }}
         </h1>
         <span class="details">
@@ -35,7 +34,10 @@
         <br><br>
         Total competitions: {{ athlete.count_competitions }}<br>
         Total results: {{ athlete.count_results }}<br>
-        {% if request.user.is_superuser %}<a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/" target="_blank">EDIT</a><br>{% endif %}
+        {% if request.user.is_superuser %}
+            <a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/"
+               target="_blank">EDIT</a><br>
+        {% endif %}
         <form action="" method="post" class="ui form">{% csrf_token %}
             <div class="ui fluid search selection dropdown left floated" style="width: 200px;">
                 <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">

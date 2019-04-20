@@ -46,9 +46,8 @@ class CompetitionOverview(TemplateView):
         nationality = Nationality.objects.get(pk=request.POST['country'])
 
         for athlete in competition.get_athletes():
-            if not athlete.nationality:
-                athlete.nationality = nationality
-                athlete.save()
+            athlete.nationalities.add(nationality)
+            athlete.save()
 
         return HttpResponseRedirect(reverse('competition-overview', args=[competition.slug]))
 
@@ -72,7 +71,7 @@ class CompetitionOverview(TemplateView):
             context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition=competition,
                                                                                              gender=2, limit=limit)
         context['competition'] = competition
-        context['nationalities'] = Nationality.objects.all()
+        context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
         return context
 
     def get(self, request, *args, **kwargs):
@@ -170,7 +169,7 @@ class PersonalBests(TemplateView):
         context = self.get_context_data()
         nationality = Nationality.objects.get(pk=request.POST['country'])
         athlete = self.get_athlete()
-        athlete.nationality = nationality
+        athlete.nationalities.add(nationality)
         athlete.save()
         context['athlete'] = athlete
         return super(TemplateView, self).render_to_response(context)
@@ -193,7 +192,7 @@ class PersonalBests(TemplateView):
         context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
 
         context['athlete'] = athlete
-        context['nationalities'] = Nationality.objects.all()
+        context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
         return context
 
     template_name = 'rankings/personal_best.html'
@@ -377,8 +376,8 @@ class BestByEvent(ListView):
                        'event__name',
                        'athlete__slug',
                        'points',
-                       'athlete__nationality__flag_code',
-                       'athlete__nationality__name')
+                       'athlete__nationalities__flag_code',
+                       'athlete__nationalities__name')
 
         best_result_per_athlete = {}
         for result in qs:
@@ -445,7 +444,7 @@ class DeleteEmptyAthletes(ListView):
 @user_passes_test(lambda u: u.is_staff)
 def label_nationality(request, pk):
     athlete = Athlete.objects.filter(pk=pk).first()
-    queue = Athlete.objects.filter(nationality=None).annotate(num_results=Count('individualresult')).filter(
+    queue = Athlete.objects.filter(nationalities=None).annotate(num_results=Count('individualresult')).filter(
         num_results__gt=7).all()
     next_athlete = random.choice(queue)
     if not athlete:
@@ -453,16 +452,16 @@ def label_nationality(request, pk):
 
     if request.method == 'POST':
         nationality = Nationality.objects.get(pk=request.POST['country'])
-        athlete.nationality = nationality
+        athlete.nationalities.add(nationality)
         athlete.save()
         return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))
 
     athlete_count = Athlete.objects.count()
-    labeled_athletes = Athlete.objects.filter(~Q(nationality=None)).count()
+    labeled_athletes = Athlete.objects.filter(~Q(nationalities=None)).count()
     progress = labeled_athletes / athlete_count * 100
 
     return render(request, 'rankings/label_nationality.html',
-                  {'athlete': athlete, 'nationalities': Nationality.objects.all(), 'athlete_count': athlete_count,
+                  {'athlete': athlete, 'nationalities': Nationality.objects.filter(is_parent_country=False), 'athlete_count': athlete_count,
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete, 'queue': queue})
 
 

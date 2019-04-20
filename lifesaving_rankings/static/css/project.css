@@ -151,3 +151,7 @@ form.ui.form input {
 .ui.vertical.menu.search-results {
     width: 23rem;
 }
+
+#content i.flag {
+    margin: 0;
+}

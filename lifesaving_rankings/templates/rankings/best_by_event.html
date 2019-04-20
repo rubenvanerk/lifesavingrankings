@@ -40,9 +40,9 @@
                 </td>
                 <td>
                     <a href="{% url 'athlete-overview' result.athlete__slug %}">
-                        {% if result.athlete__nationality__flag_code %}
-                            <i class="{{ result.athlete__nationality__flag_code }} flag"
-                            title="{{ result.athlete__nationality__name }}"></i>
+                        {% if result.athlete__nationalities__flag_code %}
+                            <i class="{{ result.athlete__nationalities__flag_code }} flag"
+                               title="{{ result.athlete__nationalities__name }}"></i>
                         {% endif %}
                         {{ result.athlete__name }}
                     </a>

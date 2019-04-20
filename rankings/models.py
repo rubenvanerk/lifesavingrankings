@@ -11,6 +11,8 @@ from rankings.functions import calculate_points
 class Nationality(models.Model):
     name = models.CharField(max_length=100, unique=True, null=True)
     flag_code = models.CharField(max_length=10, unique=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.SET_NULL)
+    is_parent_country = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -33,7 +35,7 @@ class Athlete(models.Model):
 
     year_of_birth = models.IntegerField(null=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-    nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, default=None, null=True)
+    nationalities = models.ManyToManyField(Nationality, related_name='nationalities')
 
     def __str__(self):
         name_str = self.name
@@ -148,7 +150,8 @@ class Competition(models.Model):
         return reverse('competition-overview', args=[self.slug])
 
     def get_athletes(self):
-        return Athlete.objects.filter(pk__in=IndividualResult.objects.filter(competition=self).values('athlete').distinct())
+        return Athlete.objects.filter(
+            pk__in=IndividualResult.objects.filter(competition=self).values('athlete').distinct())
 
 
 class IndividualResult(models.Model):
