@@ -446,7 +446,7 @@ class DeleteEmptyAthletes(ListView):
 def label_nationality(request, pk):
     athlete = Athlete.objects.filter(pk=pk).first()
     queue = Athlete.objects.filter(nationality=None).annotate(num_results=Count('individualresult')).filter(
-        num_results__gt=12).all()
+        num_results__gt=7).all()
     next_athlete = random.choice(queue)
     if not athlete:
         return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))

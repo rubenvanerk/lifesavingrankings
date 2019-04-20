@@ -56,6 +56,12 @@ class Athlete(models.Model):
         competitions = Competition.objects.filter(pk__in=results).order_by('date')
         return competitions
 
+    def count_results(self):
+        return IndividualResult.objects.filter(athlete=self).count()
+
+    def count_competitions(self):
+        return IndividualResult.objects.filter(athlete=self).values_list('competition', flat=True).distinct().count()
+
 
 class Event(models.Model):
     UNKNOWN = 0
