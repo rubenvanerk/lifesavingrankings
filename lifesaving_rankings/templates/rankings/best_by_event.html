@@ -1,6 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
 {% load datetime_filter django_bootstrap_breadcrumbs %}
-{% load year_of_birth_filter %}
 {% load to_url_filter %}
 {% block head_title %}{{ event.name }}{% endblock %}
 {% block meta_description %}Find out who has the fastest time for {{ event.name }} on Lifesaving Rankings{% endblock %}
@@ -47,7 +46,7 @@
                         {{ result.athlete__name }}
                     </a>
                 </td>
-                <td>{{ result.athlete__year_of_birth|format_year_of_birth }}</td>
+                <td>{{ result.athlete__year_of_birth }}</td>
                 <td>{{ result.time|format_time }}</td>
                 <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
                 <td>{{ result.competition__date }}</td>

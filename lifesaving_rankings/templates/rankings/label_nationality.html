@@ -1,5 +1,4 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load year_of_birth_filter %}
 
 {% block content %}
 
@@ -20,7 +19,7 @@
 
                 <h1>{{ athlete.name }}</h1>
                 Gender: {{ athlete.get_gender_display }}<br>
-                Year of birth: {{ athlete.year_of_birth|format_year_of_birth }}<br><br>
+                Year of birth: {{ athlete.year_of_birth }}<br><br>
 
                 Participated in:
                 <ul>
