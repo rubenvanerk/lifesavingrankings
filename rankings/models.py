@@ -10,7 +10,7 @@ from rankings.functions import calculate_points
 
 class Nationality(models.Model):
     name = models.CharField(max_length=100, unique=True, null=True)
-    flag_code = models.CharField(max_length=10, unique=True, null=True)
+    flag_code = models.CharField(max_length=10, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.SET_NULL)
     is_parent_country = models.BooleanField(default=False)
 
