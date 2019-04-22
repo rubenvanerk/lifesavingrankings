@@ -21,8 +21,8 @@
 
     <form action="" method="get" name="filter" autocomplete="off">
         <div class="ui segment filters stackable grid">
-
             <div class="three wide column">
+                <p><label>Nationality</label></p>
                 <div class="ui fluid search selection dropdown nationalities">
                     <input type="hidden" name="nationality"
                            {% if filter.nationality %}value="{{ filter.nationality.pk }}" {% endif %}>
@@ -48,6 +48,7 @@
             </div>
 
             <div class="four wide column">
+                <p><label>Year of birth</label></p>
                 <select class="ui search dropdown year-of-birth" name="yob_start" data-value="{{ filter.yob_start }}">
                     {% if not filter.yob_start %}
                         <option value="">
@@ -78,7 +79,7 @@
             </div>
 
             <div class="seven wide column">
-
+                <p><label>Competition date</label></p>
                 <div class="ui calendar" id="rangestart">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
