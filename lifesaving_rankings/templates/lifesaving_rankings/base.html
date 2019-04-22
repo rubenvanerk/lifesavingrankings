@@ -34,7 +34,8 @@
 
     {% block css %}
 
-        <link rel="stylesheet" href="{% static 'libs/semantic-ui/semantic.min.css' %}">
+{#        <link rel="stylesheet" href="{% static 'libs/semantic-ui/semantic.min.css' %}">#}
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.css">
 
         <!-- Your stuff: Third-party CSS libraries go here -->
         <link rel="stylesheet" type="text/css"
@@ -273,7 +274,8 @@
                 integrity="sha256-YhmtrYJDSZgZFL8jDCR8VNOV/iigJPZYNCk8L9J72Hk=" crossorigin="anonymous"></script>
 
 
-        <script src="{% static 'libs/semantic-ui/semantic.min.js' %}"></script>
+{#        <script src="{% static 'libs/semantic-ui/semantic.min.js' %}"></script>#}
+        <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js"></script>
         <!-- place project specific Javascript in this file -->
         <script src="{% static 'javascript/main.js' %}"></script>
 

@@ -68,10 +68,25 @@ $(document).ready(function () {
 
     $('.ui.checkbox').checkbox();
 
-    $('.ui.dropdown').dropdown({
+    $('.ui.dropdown.nationalities').dropdown({
         fullTextSearch: true
     });
     $('.ui.dropdown .default.text').select();
+
+    $('.ui.dropdown.year-of-birth').dropdown({
+        fullTextSearch: false
+    });
+
+    $('#rangestart').calendar({
+        type: 'date',
+        endCalendar: $('#rangeend'),
+        startMode: 'year'
+    });
+    $('#rangeend').calendar({
+        type: 'date',
+        startCalendar: $('#rangestart'),
+        startMode: 'year'
+    });
 
     $('#labeledAthletes').progress();
 

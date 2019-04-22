@@ -17,6 +17,12 @@ class Nationality(models.Model):
     def __str__(self):
         return self.name
 
+    def get_children_pks(self):
+        nationality_pks = [self.pk]
+        for child in self.children.all():
+            nationality_pks += child.get_children_pks()
+        return nationality_pks
+
 
 class Athlete(models.Model):
     UNKNOWN = 0

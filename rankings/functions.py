@@ -13,3 +13,9 @@ def calculate_points(record, seconds):
         points = round(100.0 * points) / 100.0
 
     return points
+
+
+def mk_int(s):
+    if s is None:
+        return 0
+    return int('0' + s)

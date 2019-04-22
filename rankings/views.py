@@ -1,3 +1,4 @@
+import datetime
 import operator
 import random
 
@@ -6,6 +7,8 @@ from django.core.mail import send_mail
 from django.db.models import Count, Min
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, TemplateView
+
+from rankings.functions import mk_int
 from .models import *
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from .forms import *
@@ -363,8 +366,27 @@ class BestByEvent(ListView):
         event = self.get_event()
         gender = gender_name_to_int(self.kwargs.get('gender'))
 
-        qs = qs.filter(event=event.id, athlete__gender=gender).values('athlete').annotate(pb=Min('time')).order_by(
-            'time')
+        yob_start = mk_int(self.request.GET.get('yob_start'))
+        yob_end = mk_int(self.request.GET.get('yob_end'))
+
+        qs = qs.filter(event=event.id, athlete__gender=gender)
+        if yob_start:
+            qs = qs.filter(athlete__year_of_birth__gte=yob_start)
+        if yob_end:
+            qs = qs.filter(athlete__year_of_birth__lte=yob_end)
+
+        if self.request.GET.get('nationality') or 0 > 0:
+            nationality = Nationality.objects.filter(pk=self.request.GET.get('nationality').strip()).first()
+            qs = qs.filter(athlete__nationalities__in=nationality.get_children_pks())
+
+        if self.request.GET.get('rangestart'):
+            date_range_start = datetime.datetime.strptime(self.request.GET.get('rangestart'), '%B %d, %Y').date()
+            qs = qs.filter(competition__date__gte=date_range_start)
+        if self.request.GET.get('rangeend'):
+            date_range_end = datetime.datetime.strptime(self.request.GET.get('rangeend'), '%B %d, %Y').date()
+            qs = qs.filter(competition__date__lte=date_range_end)
+
+        qs = qs.values('athlete').annotate(pb=Min('time')).order_by('time')
 
         qs = qs.values('athlete_id',
                        'athlete__name',
@@ -387,6 +409,22 @@ class BestByEvent(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
+
+        context['filter'] = {}
+        context['filter']['nationalities'] = Nationality.objects.all()
+
+        if self.request.GET.get('nationality') or 0 > 0:
+            context['filter']['nationality'] = Nationality.objects.filter(pk=self.request.GET.get('nationality').strip()).first()
+
+        lowest_year_of_birth = Athlete.objects.aggregate(Min('year_of_birth'))['year_of_birth__min']
+        highest_year_of_birth = Athlete.objects.aggregate(Max('year_of_birth'))['year_of_birth__max']
+        context['filter']['year_of_birth_range'] = range(lowest_year_of_birth, highest_year_of_birth)
+        context['filter']['yob_start'] = self.request.GET.get('yob_start')
+        context['filter']['yob_end'] = self.request.GET.get('yob_end')
+
+        context['filter']['date_range_start'] = self.request.GET.get('rangestart')
+        context['filter']['date_range_end'] = self.request.GET.get('rangeend')
+
         context['event'] = self.get_event()
         context['gender'] = self.kwargs.get('gender')
         return context

@@ -19,6 +19,89 @@
 {% block content %}
     <h1>{{ event.name }} {{ gender }} top results</h1>
 
+    <form action="" method="get" name="filter" autocomplete="off">
+        <div class="ui segment filters stackable grid">
+
+            <div class="three wide column">
+                <div class="ui fluid search selection dropdown nationalities">
+                    <input type="hidden" name="nationality"
+                           {% if filter.nationality %}value="{{ filter.nationality.pk }}" {% endif %}>
+                    <i class="dropdown icon"></i>
+                    <div class="{% if not filter.nationality %}default{% endif %} text">
+                        {% if filter.nationality %}<i class="{{ filter.nationality.flag_code }} flag"></i>
+                            {{ filter.nationality.name }}
+                        {% else %}Select Country
+                        {% endif %}
+                    </div>
+                    <div class="menu">
+                        {% if filter.nationality %}
+                            <div class="item" data-value="0">Clear</div>
+                        {% endif %}
+                        {% for nationality in filter.nationalities %}
+
+                            <div class="item" data-value="{{ nationality.pk }}">
+                                <i class="{{ nationality.flag_code }} flag"></i> {{ nationality.name }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="four wide column">
+                <select class="ui search dropdown year-of-birth" name="yob_start" data-value="{{ filter.yob_start }}">
+                    {% if not filter.yob_start %}
+                        <option value="">
+                            YoB start
+                        </option>
+                    {% else %}
+                        <option value="{{ filter.yob_start }}">{{ filter.yob_start }}</option>
+                        <option value="0">Clear</option>
+                    {% endif %}
+                    {% for year in filter.year_of_birth_range reversed %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+                —
+                <select class="ui search dropdown year-of-birth" name="yob_end" data-value="{{ filter.yob_end }}">
+                    {% if not filter.yob_end %}
+                        <option value="">
+                            YoB end
+                        </option>
+                    {% else %}
+                        <option value="{{ filter.yob_end }}">{{ filter.yob_end }}</option>
+                        <option value="0">Clear</option>
+                    {% endif %}
+                    {% for year in filter.year_of_birth_range reversed %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="seven wide column">
+
+                <div class="ui calendar" id="rangestart">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input type="text" placeholder="Start" name="rangestart"
+                               {% if filter.date_range_start %}value="{{ filter.date_range_start }}" {% endif %}>
+                    </div>
+                </div>
+                <div class="ui calendar" id="rangeend">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input type="text" placeholder="End" name="rangeend"
+                               {% if filter.date_range_end %}value="{{ filter.date_range_end }}" {% endif %}>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="two wide column">
+                <button class="ui labeled icon button green" type="submit"><i class="filter icon"></i>Filter</button>
+            </div>
+        </div>
+    </form>
+
     <table class="ui celled table" id="bestByEvent">
         <thead>
         <tr>

@@ -155,3 +155,19 @@ form.ui.form input {
 #content i.flag {
     margin: 0;
 }
+
+.ui.dropdown.year-of-birth {
+    min-width: inherit;
+}
+
+.ui.calendar .ui.input {
+    width: 13em;
+    float: left;
+}
+
+@media screen and (max-width: 1200px) {
+    .ui.calendar .ui.input:last-of-type {
+        margin-top: 10px;
+    }
+}
+
