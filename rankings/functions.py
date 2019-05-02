@@ -19,3 +19,10 @@ def mk_int(s):
     if s is None:
         return 0
     return int('0' + s)
+
+
+def try_parse_int(s, val=None):
+    try:
+        return int(s)
+    except (ValueError, TypeError):
+        return val

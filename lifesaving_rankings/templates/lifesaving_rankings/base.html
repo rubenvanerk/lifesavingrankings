@@ -34,8 +34,9 @@
 
     {% block css %}
 
-{#        <link rel="stylesheet" href="{% static 'libs/semantic-ui/semantic.min.css' %}">#}
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.css">
+        {#        <link rel="stylesheet" href="{% static 'libs/semantic-ui/semantic.min.css' %}">#}
+        <link rel="stylesheet" type="text/css"
+              href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.css">
 
         <!-- Your stuff: Third-party CSS libraries go here -->
         <link rel="stylesheet" type="text/css"
@@ -48,25 +49,27 @@
 
     {% endblock %}
 
-    <!-- Matomo -->
-    <script type="text/javascript">
-        var _paq = _paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function () {
-            var u = "//piwik.rubenvanerk.nl/";
-            _paq.push(['setTrackerUrl', u + 'piwik.php']);
-            _paq.push(['setSiteId', '2']);
-            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-            g.type = 'text/javascript';
-            g.async = true;
-            g.defer = true;
-            g.src = u + 'piwik.js';
-            s.parentNode.insertBefore(g, s);
-        })();
-    </script>
-    <!-- End Matomo Code -->
+    {% if not request.user.is_staff %}
+        <!-- Matomo -->
+        <script type="text/javascript">
+            var _paq = _paq || [];
+            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function () {
+                var u = "//piwik.rubenvanerk.nl/";
+                _paq.push(['setTrackerUrl', u + 'piwik.php']);
+                _paq.push(['setSiteId', '2']);
+                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+                g.type = 'text/javascript';
+                g.async = true;
+                g.defer = true;
+                g.src = u + 'piwik.js';
+                s.parentNode.insertBefore(g, s);
+            })();
+        </script>
+        <!-- End Matomo Code -->
+    {% endif %}
 
 </head>
 
@@ -81,13 +84,10 @@
             <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
             <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
 
-            {% if request.user.is_superuser %}
-                <a href="{% url 'merge-athletes' %}" class="item {% active 'merge-athletes' %}">Merge</a>
-            {% endif %}
             {% if request.user.is_staff %}
+                <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
                 <a href="{% url 'label_athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
             {% endif %}
-
 
             <div class="right menu">
 
@@ -139,13 +139,10 @@
         <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
         <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
 
-        {% if request.user.is_superuser %}
-            <a href="{% url 'merge-athletes' %}" class="item {% active 'merge-athletes' %}">Merge</a>
-        {% endif %}
         {% if request.user.is_staff %}
+            <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
             <a href="{% url 'label_athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
         {% endif %}
-
 
         <div class="item">
             <form action="{% url 'search' %}" role="search">
@@ -274,7 +271,7 @@
                 integrity="sha256-YhmtrYJDSZgZFL8jDCR8VNOV/iigJPZYNCk8L9J72Hk=" crossorigin="anonymous"></script>
 
 
-{#        <script src="{% static 'libs/semantic-ui/semantic.min.js' %}"></script>#}
+        {#        <script src="{% static 'libs/semantic-ui/semantic.min.js' %}"></script>#}
         <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js"></script>
         <!-- place project specific Javascript in this file -->
         <script src="{% static 'javascript/main.js' %}"></script>

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey, Q, Max
+from django.db.models import ForeignKey, Q, Max, Min
 from django.urls import reverse
 from django.utils.text import slugify
 from rankings.functions import calculate_points
@@ -34,14 +34,14 @@ class Athlete(models.Model):
         (FEMALE, 'Female')
     )
 
-    first_name = models.CharField(max_length=20, null=True)
-    last_name = models.CharField(max_length=30, null=True)
+    first_name = models.CharField(max_length=20, null=True, default=None)
+    last_name = models.CharField(max_length=30, null=True, default=None)
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
 
     year_of_birth = models.IntegerField(null=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-    nationalities = models.ManyToManyField(Nationality, related_name='nationalities')
+    nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None)
 
     def __str__(self):
         name_str = self.name
@@ -58,6 +58,15 @@ class Athlete(models.Model):
             if result['points__max'] is not None:
                 total_points += result['points__max']
         return round(total_points, 2)
+
+    def get_personal_bests(self):
+        events = Event.objects.filter(use_points_in_athlete_total=True)
+        personal_bests = []
+        for event in events:
+            personal_best = IndividualResult.objects.filter(event=event, athlete=self).order_by('time').first()
+            if personal_best:
+                personal_bests.append(personal_best)
+        return personal_bests
 
     def get_competitions(self):
         results = IndividualResult.objects.filter(athlete=self).values('competition')
@@ -212,3 +221,7 @@ class RelayOrder(models.Model):
     event = ForeignKey(Event, on_delete=models.CASCADE, related_name='relay')
     segment = ForeignKey(Event, on_delete=models.CASCADE, related_name='segment')
     index = models.IntegerField()
+
+
+class MergeRequest(models.Model):
+    athletes = models.ManyToManyField(Athlete)

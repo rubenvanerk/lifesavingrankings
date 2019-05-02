@@ -175,3 +175,12 @@ form.ui.form input {
     }
 }
 
+.merge.cards .card.selected, .merge.cards .card.selected:hover {
+    border: 1px solid green !important;
+}
+
+.merge.cards .card:not(.selected), .merge.cards .card:not(.selected):hover  {
+    border: 1px solid red !important;
+}
+
+

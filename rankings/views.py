@@ -6,9 +6,11 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
 from django.db.models import Count, Min
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, TemplateView
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, TemplateView, DeleteView, DetailView
 
-from rankings.functions import mk_int
+from rankings.functions import mk_int, try_parse_int
 from .models import *
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from .forms import *
@@ -319,34 +321,6 @@ def request_competition(request):
         return render(request, 'rankings/request_competition.html', {'form': form})
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def merge_athletes(request):
-    if request.method == 'POST':
-
-        form = MergeAthletesForm(request.POST)
-
-        if form.is_valid():
-            first_athlete = form['first_athlete'].value()
-            second_athlete = form['second_athlete'].value()
-
-            first_athlete_object = Athlete.objects.filter(slug=first_athlete).first()
-            second_athlete_object = Athlete.objects.filter(slug=second_athlete).first()
-
-            individual_results = IndividualResult.objects.filter(athlete=second_athlete_object)
-            for result in individual_results:
-                result.athlete = first_athlete_object
-                result.save()
-
-            second_athlete_object.delete()
-
-            return HttpResponseRedirect(reverse('athlete-overview', args=[first_athlete]))
-
-    else:
-        form = MergeAthletesForm
-
-        return render(request, 'rankings/merge_athletes.html', {'form': form})
-
-
 class BestByEvent(ListView):
     model = IndividualResult
     event = None
@@ -414,7 +388,8 @@ class BestByEvent(ListView):
         context['filter']['nationalities'] = Nationality.objects.all()
 
         if self.request.GET.get('nationality') or 0 > 0:
-            context['filter']['nationality'] = Nationality.objects.filter(pk=self.request.GET.get('nationality').strip()).first()
+            context['filter']['nationality'] = Nationality.objects.filter(
+                pk=self.request.GET.get('nationality').strip()).first()
 
         lowest_year_of_birth = Athlete.objects.aggregate(Min('year_of_birth'))['year_of_birth__min']
         highest_year_of_birth = Athlete.objects.aggregate(Max('year_of_birth'))['year_of_birth__max']
@@ -455,11 +430,38 @@ class Search(ListView):
         else:
             athletes = athletes.filter(name__unaccent__icontains=query)
 
-        athletes.order_by('name', 'first_name', 'last_name')
+        athletes.order_by('name')
+
+        reported = try_parse_int(self.request.GET.get('reported'))
+        message = ''
+        success = False
+        if reported is 0:
+            success = False
+            message = 'Select at least 2 athletes to report'
+        elif reported is 1:
+            message = 'Duplicate athletes reported. Thanks!'
+            success = True
+        context['message'] = message
+        context['success'] = success
 
         context['search_results'] = athletes
         context['query'] = query
         return context
+
+    def post(self, request, *args, **kwargs):
+        athletes = Athlete.objects.filter(pk__in=request.POST.getlist('duplicates'))
+        if athletes.count() < 2:
+            return HttpResponseRedirect(
+                reverse('search') + '?athlete=' + self.request.GET.get('athlete').strip() + '&reported=0')
+        merge_request = MergeRequest.objects.create()
+        for athlete in athletes:
+            merge_request.athletes.add(athlete)
+        merge_request.save()
+        if request.user.is_staff:
+            return HttpResponseRedirect(reverse('merge-request-detail', kwargs={'pk': merge_request.pk}))
+        else:
+            return HttpResponseRedirect(
+                reverse('search') + '?athlete=' + self.request.GET.get('athlete').strip() + '&reported=1')
 
     template_name = 'rankings/search.html'
 
@@ -499,8 +501,10 @@ def label_nationality(request, pk):
     progress = labeled_athletes / athlete_count * 100
 
     return render(request, 'rankings/label_nationality.html',
-                  {'athlete': athlete, 'nationalities': Nationality.objects.filter(is_parent_country=False), 'athlete_count': athlete_count,
-                   'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete, 'queue': queue})
+                  {'athlete': athlete, 'nationalities': Nationality.objects.filter(is_parent_country=False),
+                   'athlete_count': athlete_count,
+                   'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
+                   'queue': queue})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -573,3 +577,47 @@ def redirect_event_id_to_slug(request, event_id, gender):
     if event is None:
         raise Http404
     return redirect(reverse('best-by-event', args=[event.generate_slug(), gender]), permanent=True)
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class MergeRequestListView(ListView):
+    model = MergeRequest
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class MergeRequestDeleteView(DeleteView):
+    model = MergeRequest
+    success_url = reverse_lazy('merge-request-list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class MergeRequestDetailView(DetailView):
+    model = MergeRequest
+
+    def post(self, request, *args, **kwargs):
+        merge_request = super().get_object()
+        if not request.POST['main-athlete']:
+            return HttpResponseRedirect(reverse('merge-request-detail', kwargs={'pk': merge_request.pk}))
+        main_athlete = Athlete.objects.get(pk=request.POST['main-athlete'])
+        for athlete in merge_request.athletes.all():
+            if athlete == main_athlete:
+                continue
+
+            for result in athlete.individualresult_set.all():
+                result.athlete = main_athlete
+                result.save()
+
+            for nationality in athlete.nationalities.all():
+                main_athlete.nationalities.add(nationality)
+
+            if not main_athlete.year_of_birth and athlete.year_of_birth:
+                main_athlete.year_of_birth = athlete.year_of_birth
+
+            if not main_athlete.gender and athlete.gender:
+                main_athlete.gender = athlete.gender
+
+            main_athlete.save()
+            athlete.delete()
+        merge_request.delete()
+
+        return HttpResponseRedirect(reverse('merge-request-list'))

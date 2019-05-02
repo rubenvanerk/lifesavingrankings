@@ -20,17 +20,11 @@ var colorPercentages = function () {
 
 };
 
-var reportDuplicateAthlete = function (button, query) {
-    button = $(button);
-    button.addClass('disabled');
-
-    $.ajax(
-        {
-            url: "/rankings/report-duplicate?query=" + query
-        }
-    );
-
-    button.html('<i class="check icon"></i> Thanks!');
+var selectAsMain = function(card) {
+    $card = $(card);
+    $('.merge.cards .card').removeClass('selected');
+    $card.addClass('selected');
+    $('#main-athlete-input').val($card.data('athlete-pk'));
 };
 
 $(document).ready(function () {

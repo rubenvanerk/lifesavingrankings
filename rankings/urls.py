@@ -1,6 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
+from django.urls import path
+
 from rankings.views import athlete_redirect_athlete_id_to_slug, athlete_redirect_event_id_to_slug, \
     redirect_event_id_to_slug, add_result, report_duplicate, request_competition
 from . import views
@@ -45,11 +47,6 @@ urlpatterns = [
         regex=r'^top/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
         view=views.BestByEvent.as_view(),
         name='best-by-event'
-    ),
-    url(
-        regex=r'^merge-athletes',
-        view=views.merge_athletes,
-        name='merge-athletes'
     ),
     url(
         regex=r'^list-empty-athletes',
@@ -99,5 +96,13 @@ urlpatterns = [
     url(
         regex=r'^report-duplicate',
         view=report_duplicate
-    )
+    ),
+    url(
+        regex=r'^merge-request/list/',
+        view=views.MergeRequestListView.as_view(),
+        name='merge-request-list'
+    ),
+    path('merge-request/delete/<pk>', views.MergeRequestDeleteView.as_view(), name='merge-request-delete'),
+    path('merge-request/delete/<pk>', views.MergeRequestDeleteView.as_view(), name='merge-request-delete'),
+    path('merge-request/detail/<pk>', views.MergeRequestDetailView.as_view(), name='merge-request-detail'),
 ]
