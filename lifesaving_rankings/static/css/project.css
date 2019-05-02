@@ -165,6 +165,10 @@ form.ui.form input {
     float: left;
 }
 
+.ui.fluid.search.selection.dropdown.left.floated.nationalities {
+    width: 15em !important;
+}
+
 @media screen and (max-width: 1200px) {
     .ui.calendar .ui.input:last-of-type {
         margin-top: 10px;

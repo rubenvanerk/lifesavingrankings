@@ -39,7 +39,7 @@
                target="_blank">EDIT</a><br>
         {% endif %}
         <form action="" method="post" class="ui form">{% csrf_token %}
-            <div class="ui fluid search selection dropdown left floated" style="width: 200px;">
+            <div class="ui fluid search selection dropdown left floated nationalities" style="width: 200px;">
                 <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">
                 <i class="dropdown icon"></i>
                 <div class="default text">Select Country</div>
