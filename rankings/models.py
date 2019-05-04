@@ -168,6 +168,11 @@ class Competition(models.Model):
         return Athlete.objects.filter(
             pk__in=IndividualResult.objects.filter(competition=self).values('athlete').distinct())
 
+    def is_fully_labeled(self):
+        return Athlete.objects.filter(nationalities=None,
+                                      pk__in=IndividualResult.objects.filter(competition=self).values(
+                                          'athlete').distinct()).count() < 1
+
 
 class IndividualResult(models.Model):
     athlete = ForeignKey(Athlete, on_delete=models.CASCADE)

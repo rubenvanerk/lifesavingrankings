@@ -31,6 +31,8 @@
             <th>Date</th>
             <th>Location</th>
             <th>Participants</th>
+            {% if request.user.is_staff %}
+                <th>Fully labeled</th>{% endif %}
         </tr>
         </thead>
         <tbody>
@@ -46,6 +48,9 @@
                     <td>{{ competition.date }}</td>
                     <td>{{ competition.location }}</td>
                     <td>{{ competition.get_athlete_count }}</td>
+                    {% if request.user.is_staff %}
+                        <td>{% if competition.is_fully_labeled %}<i class="green check icon"></i>{% else %}<i class="red times icon"></i>{% endif %}</td>
+                    {% endif %}
                 </tr>
             {% endif %}
         {% endfor %}
