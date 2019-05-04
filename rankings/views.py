@@ -174,7 +174,10 @@ class PersonalBests(TemplateView):
         context = self.get_context_data()
         nationality = Nationality.objects.get(pk=request.POST['country'])
         athlete = self.get_athlete()
-        athlete.nationalities.add(nationality)
+        if athlete.nationalities.filter(pk=nationality.pk).exists():
+            athlete.nationalities.remove(nationality)
+        else:
+            athlete.nationalities.add(nationality)
         athlete.save()
         context['athlete'] = athlete
         return super(TemplateView, self).render_to_response(context)
