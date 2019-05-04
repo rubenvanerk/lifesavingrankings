@@ -131,7 +131,8 @@ class Event(models.Model):
                 gender = 2
         query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender)
         if competition is not None:
-            query_set = query_set.filter(competition=competition)
+            max_round = IndividualResult.objects.filter(event=self, athlete__gender=gender).aggregate(Max('round'))['round__max']
+            query_set = query_set.filter(competition=competition, round=max_round)
 
         return query_set.order_by('time')[:limit]
 
@@ -181,6 +182,7 @@ class IndividualResult(models.Model):
     time = models.DurationField()
     points = models.FloatField(default=0)
     original_line = models.CharField(max_length=200, null=True, default=None)
+    round = models.IntegerField(default=0)
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None)
 

@@ -68,7 +68,7 @@ class CompetitionOverview(TemplateView):
         event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
         events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
         context['events'] = {}
-        limit = 10
+        limit = 8
         for event in events:
             context['events'][event.name] = {}
             context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition=competition,
@@ -112,12 +112,13 @@ class CompetitionEvent(TemplateView):
             raise Http404
 
         results = IndividualResult.objects.filter(competition=competition, event=event,
-                                                  athlete__gender=gender).order_by('time').all()
+                                                  athlete__gender=gender).order_by('-round', 'time').all()
         context['results'] = results
 
         context['competition'] = competition
         context['event'] = event
         context['gender'] = gender
+        context['separator'] = results.filter(round__gt=0).count()
 
         return context
 

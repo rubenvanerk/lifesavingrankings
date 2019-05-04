@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter i18n mathfilters %}
 {% block head_title %}{{ competition.name }} {{ event.name }} {{ gender|gender_to_text }}{% endblock %}
 {% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on
     {{ competition.name }}{% endblock %}
@@ -45,7 +45,13 @@
         <tbody>
         {% for result in results %}
             <tr>
-                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if forloop.counter > separator %}
+                        {{ forloop.counter|sub:separator }}
+                    {% else %}
+                        {{ forloop.counter }}
+                    {% endif %}
+                </td>
                 <td><a href="{% url 'athlete-overview' result.athlete.slug %}">
                     {% for nationality in result.athlete.nationalities.all %}
                         <i class="{{ nationality.flag_code }} flag"
@@ -57,6 +63,11 @@
                 <td>{{ result.time|format_time }}</td>
                 <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
             </tr>
+            {% if forloop.counter == separator %}
+                <tr>
+                    <td colspan="5">Series:</td>
+                </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

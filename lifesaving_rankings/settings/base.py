@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'storages',
-    'django_bootstrap_breadcrumbs'
+    'django_bootstrap_breadcrumbs',
+    'mathfilters'
 ]
 
 SITE_ID = 1
