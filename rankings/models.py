@@ -197,9 +197,9 @@ class IndividualResult(models.Model):
         return self.athlete.name + ' ' + self.event.name + ' ' + str(self.time)
 
     def calculate_points(self):
-        if self.disqualified:
-            return
         record = EventRecord.objects.filter(gender=self.athlete.gender, event=self.event).first()
+        if self.disqualified or not record:
+            return
         self.points = calculate_points(record.time.total_seconds() * 100, self.time.total_seconds() * 100)
         self.save()
 

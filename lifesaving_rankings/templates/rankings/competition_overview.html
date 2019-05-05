@@ -81,7 +81,19 @@
                         <tbody>
                         {% for result in results %}
                             <tr>
-                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if result.round > 0 and forloop.counter <= 3 %}
+                                        {% if forloop.counter == 1 %}
+                                            <div class="medal gold">{{ forloop.counter }}</div>
+                                        {% elif forloop.counter == 2 %}
+                                            <div class="medal silver">{{ forloop.counter }}</div>
+                                        {% elif forloop.counter == 3 %}
+                                            <div class="medal bronze">{{ forloop.counter }}</div>
+                                        {% endif %}
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{% url 'athlete-overview' result.athlete.slug %}">
                                         {% for nationality in result.athlete.nationalities.all %}

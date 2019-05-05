@@ -155,9 +155,11 @@ class EventOverview(TemplateView):
             context['events'][event.name]['men'] = results_men
 
             results_women = IndividualResult.objects.filter(event=event, athlete__gender=2,
-                                                            extra_analysis_time_by=None, disqualified=False).distinct(
+                                                            extra_analysis_time_by=None, disqualified=False).order_by(
+                'athlete',
+                'time').distinct(
                 'athlete')
-            results_women = sorted(results_women, key=operator.attrgetter('time'))[:limit]
+            results_women = IndividualResult.objects.filter(id__in=results_women).order_by('time')[:limit]
             context['events'][event.name]['women'] = results_women
         return context
 

@@ -49,7 +49,17 @@
                     {% if forloop.counter > separator %}
                         {{ forloop.counter|sub:separator }}
                     {% else %}
-                        {{ forloop.counter }}
+                        {% if result.round > 0 and forloop.counter <= 3 %}
+                            {% if forloop.counter == 1 %}
+                                <div class="medal gold">{{ forloop.counter }}</div>
+                            {% elif forloop.counter == 2 %}
+                                <div class="medal silver">{{ forloop.counter }}</div>
+                            {% elif forloop.counter == 3 %}
+                                <div class="medal bronze">{{ forloop.counter }}</div>
+                            {% endif %}
+                        {% else %}
+                            {{ forloop.counter }}
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td><a href="{% url 'athlete-overview' result.athlete.slug %}">
