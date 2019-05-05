@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey, Q, Max, Min
+from django.db.models import ForeignKey, Q, Max
 from django.urls import reverse
 from django.utils.text import slugify
 from rankings.functions import calculate_points
@@ -34,18 +34,17 @@ class Athlete(models.Model):
         (FEMALE, 'Female')
     )
 
-    first_name = models.CharField(max_length=20, null=True, default=None)
-    last_name = models.CharField(max_length=30, null=True, default=None)
+    first_name = models.CharField(max_length=20, null=True, default=None, blank=True)
+    last_name = models.CharField(max_length=30, null=True, default=None, blank=True)
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
 
-    year_of_birth = models.IntegerField(null=True)
+    year_of_birth = models.IntegerField(null=True, blank=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-    nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None)
+    nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None, blank=True)
 
     def __str__(self):
-        name_str = self.name
-        return name_str
+        return self.name
 
     def get_absolute_url(self):
         return reverse('athlete-overview', args=[self.slug])
@@ -131,8 +130,10 @@ class Event(models.Model):
                 gender = 2
         query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender)
         if competition is not None:
-            max_round = IndividualResult.objects.filter(event=self, athlete__gender=gender).aggregate(Max('round'))['round__max']
+            max_round = IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition).aggregate(Max('round'))['round__max']
             query_set = query_set.filter(competition=competition, round=max_round)
+        else:
+            query_set = query_set.filter(disqualified=False)
 
         return query_set.order_by('time')[:limit]
 
@@ -157,7 +158,9 @@ class Competition(models.Model):
     prepopulated_fields = {"slug": ("name",)}
 
     def __str__(self):
-        return self.name
+        if self.name:
+            return self.name
+        return 'unknown ' + str(self.pk)
 
     def get_athlete_count(self):
         return IndividualResult.objects.filter(competition=self).values('athlete').distinct().count()
@@ -183,13 +186,35 @@ class IndividualResult(models.Model):
     points = models.FloatField(default=0)
     original_line = models.CharField(max_length=200, null=True, default=None)
     round = models.IntegerField(default=0)
+    disqualified = models.BooleanField(default=False)
 
-    extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None)
+    extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None, blank=True)
+
+    class Meta:
+        ordering = ['time']
+
+    def __str__(self):
+        return self.athlete.name + ' ' + self.event.name + ' ' + str(self.time)
 
     def calculate_points(self):
+        if self.disqualified:
+            return
         record = EventRecord.objects.filter(gender=self.athlete.gender, event=self.event).first()
         self.points = calculate_points(record.time.total_seconds() * 100, self.time.total_seconds() * 100)
         self.save()
+
+    def get_time_display(self):
+        if self.disqualified:
+            return 'DQ'
+        hours, rem = divmod(self.time.seconds, 3600)
+        minutes, seconds = divmod(rem, 60)
+        tens = int(round(self.time.microseconds / 10000))
+        if tens < 10:
+            tens = str('0') + str(tens)
+        if seconds < 10:
+            seconds = str('0') + str(seconds)
+
+        return '{}:{}.{}'.format(minutes, seconds, tens)
 
     @staticmethod
     def find_by_athlete(athlete):

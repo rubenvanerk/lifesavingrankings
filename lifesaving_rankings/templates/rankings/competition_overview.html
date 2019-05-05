@@ -1,7 +1,7 @@
 {% extends "lifesaving_rankings/base.html" %}
 {% load datetime_filter django_bootstrap_breadcrumbs to_url_filter %}
 
-{% block head_title %}{{ competition.name }}{% endblock %}
+{% block head_title %}{{ competition.name }} results{% endblock %}
 {% block meta_description %}
     All the results for the Lifesaving pool competition {{ competition.name }} in {{ competition.location }}
 {% endblock %}
@@ -19,7 +19,7 @@
 
 {% block content %}
 
-    <h1 class="ui header">{{ competition.name }} - {{ competition.date }}</h1>
+    <h1 class="ui header">{{ competition.name }} results</h1>
 
     {% if request.user.is_superuser %}
         <form action="" method="post" class="ui form">{% csrf_token %}
@@ -92,7 +92,7 @@
                                     </a>
                                 </td>
                                 <td>{{ result.athlete.year_of_birth }}</td>
-                                <td>{{ result.time|format_time }}</td>
+                                <td>{{ result.get_time_display }}</td>
                                 <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
                             </tr>
                         {% endfor %}

@@ -147,14 +147,16 @@ class EventOverview(TemplateView):
             context['events'][event.name] = {}
 
             results_men = IndividualResult.objects.filter(event=event, athlete__gender=1,
-                                                          extra_analysis_time_by=None).order_by('athlete',
-                                                                                                'time').distinct(
+                                                          extra_analysis_time_by=None, disqualified=False).order_by(
+                'athlete',
+                'time').distinct(
                 'athlete')
             results_men = IndividualResult.objects.filter(id__in=results_men).order_by('time')[:limit]
             context['events'][event.name]['men'] = results_men
 
             results_women = IndividualResult.objects.filter(event=event, athlete__gender=2,
-                                                            extra_analysis_time_by=None).distinct('athlete')
+                                                            extra_analysis_time_by=None, disqualified=False).distinct(
+                'athlete')
             results_women = sorted(results_women, key=operator.attrgetter('time'))[:limit]
             context['events'][event.name]['women'] = results_women
         return context
@@ -191,12 +193,12 @@ class PersonalBests(TemplateView):
         context['personal_bests'] = {}
 
         qs = IndividualResult.find_by_athlete(athlete) \
-            .filter(event__type=1, extra_analysis_time_by=None) \
+            .filter(event__type=1, extra_analysis_time_by=None, disqualified=False) \
             .order_by('event', 'time').distinct('event')
         context['personal_bests']['individual'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
 
         qs = IndividualResult.find_by_athlete(athlete) \
-            .filter(event__type=2, extra_analysis_time_by=None) \
+            .filter(event__type=2, extra_analysis_time_by=None, disqualified=False) \
             .order_by('event', 'time').distinct('event')
         context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
 
@@ -233,7 +235,7 @@ class EventByAthlete(ListView):
         athlete = self.get_athlete()
         event = self.get_event()
 
-        qs = qs.filter(athlete=athlete, event=event)
+        qs = qs.filter(athlete=athlete, event=event, disqualified=False)
         if self.request.user.is_authenticated:
             user = self.request.user
             qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
@@ -347,7 +349,7 @@ class BestByEvent(ListView):
         yob_start = mk_int(self.request.GET.get('yob_start'))
         yob_end = mk_int(self.request.GET.get('yob_end'))
 
-        qs = qs.filter(event=event.id, athlete__gender=gender)
+        qs = qs.filter(event=event.id, athlete__gender=gender, disqualified=False)
         if yob_start:
             qs = qs.filter(athlete__year_of_birth__gte=yob_start)
         if yob_end:
