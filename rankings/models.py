@@ -147,13 +147,25 @@ class Competition(models.Model):
         (ELECTRONIC, 'Electronic'),
         (BY_HAND, 'By hand')
     )
+    SCHEDULED = 1
+    IMPORTED = 2
+    UNABLE_TO_IMPORT = 3
+    WANTED = 4
+    STATUS_OPTIONS = (
+        (SCHEDULED, 'Scheduled for import'),
+        (IMPORTED, 'Imported'),
+        (UNABLE_TO_IMPORT, 'Unable to import'),
+        (WANTED, 'Wanted')
+    )
     name = models.CharField(max_length=100, unique=True, null=True)
     slug = models.SlugField(null=True)
     date = models.DateField()
     location = models.CharField(max_length=100)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
     is_concept = models.BooleanField(default=False)
-    imported_on = models.DateTimeField(auto_now_add=True, null=True)
+    published_on = models.DateTimeField(null=True, blank=True)
+    status = models.IntegerField(default=IMPORTED, choices=STATUS_OPTIONS)
+    file_name = models.CharField(max_length=100, null=True, blank=True)
 
     prepopulated_fields = {"slug": ("name",)}
 
@@ -176,6 +188,9 @@ class Competition(models.Model):
         return Athlete.objects.filter(nationalities=None,
                                       pk__in=IndividualResult.objects.filter(competition=self).values(
                                           'athlete').distinct()).count() < 1
+
+    def is_imported(self):
+        return self.status == self.IMPORTED
 
 
 class IndividualResult(models.Model):

@@ -27,12 +27,44 @@ var selectAsMain = function(card) {
     $('#main-athlete-input').val($card.data('athlete-pk'));
 };
 
+/* Custom filtering function which will search data in column four between two values */
+$.fn.dataTable.ext.search.push(
+    function( settings, data, dataIndex ) {
+        if ( settings.nTable.id !== 'competitionList' ) {
+            return true;
+        }
+        var imported = $('#competition-filters input[name=imported]').is(':checked');
+        console.log(imported);
+        var wanted = $('#competition-filters input[name=wanted]').is(':checked');
+        var scheduled = $('#competition-filters input[name=scheduled]').is(':checked');
+        var unable = $('#competition-filters input[name=unable]').is(':checked');
+        var status = data[3];
+        if (imported && $.isNumeric(status) && status > 0) {
+            return true;
+        } else if (wanted && status.toString().indexOf('Wanted') !== -1) {
+            return true;
+        } else if (scheduled && status.toString().indexOf('Scheduled') !== -1) {
+            return true;
+        } else if (unable && status.toString().indexOf('Unable') !== -1) {
+            return true;
+        }
+        return false;
+    }
+);
+
 $(document).ready(function () {
     $('#eventByAthlete').DataTable({
         'order': [1, 'asc']
     });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
+    var competitionList = $('#competitionList').DataTable({
+        'order': [1, 'desc']
+    });
+    competitionList.draw();
+    $('#competition-filters input').change( function() {
+        competitionList.draw();
+    } );
     $('.init-datatable').DataTable();
 
 

@@ -103,3 +103,4 @@ lifesaving_rankings/static/libs/*
 
 # project specific
 aws.keys
+lifesaving_rankings/static/pdf/*
