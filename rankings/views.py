@@ -1,5 +1,4 @@
 import datetime
-import operator
 import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -347,11 +346,11 @@ class BestByEvent(ListView):
 
         event = self.get_event()
         gender = gender_name_to_int(self.kwargs.get('gender'))
+        qs = qs.filter(event=event.id, athlete__gender=gender, disqualified=False, extra_analysis_time_by=None)
 
         yob_start = mk_int(self.request.GET.get('yob_start'))
         yob_end = mk_int(self.request.GET.get('yob_end'))
 
-        qs = qs.filter(event=event.id, athlete__gender=gender, disqualified=False)
         if yob_start:
             qs = qs.filter(athlete__year_of_birth__gte=yob_start)
         if yob_end:

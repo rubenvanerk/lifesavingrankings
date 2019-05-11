@@ -20,7 +20,7 @@ var colorPercentages = function () {
 
 };
 
-var selectAsMain = function(card) {
+var selectAsMain = function (card) {
     $card = $(card);
     $('.merge.cards .card').removeClass('selected');
     $card.addClass('selected');
@@ -29,8 +29,8 @@ var selectAsMain = function(card) {
 
 /* Custom filtering function which will search data in column four between two values */
 $.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        if ( settings.nTable.id !== 'competitionList' ) {
+    function (settings, data, dataIndex) {
+        if (settings.nTable.id !== 'competitionList') {
             return true;
         }
         var imported = $('#competition-filters input[name=imported]').is(':checked');
@@ -41,7 +41,7 @@ $.fn.dataTable.ext.search.push(
         var status = data[3];
         if (imported && $.isNumeric(status) && status > 0) {
             return true;
-        } else if (wanted && status.toString().indexOf('Wanted') !== -1) {
+        } else if (wanted && (status.toString().indexOf('Wanted') !== -1 || status.toString().indexOf('Upcoming') !== -1)) {
             return true;
         } else if (scheduled && status.toString().indexOf('Scheduled') !== -1) {
             return true;
@@ -62,9 +62,9 @@ $(document).ready(function () {
         'order': [1, 'desc']
     });
     competitionList.draw();
-    $('#competition-filters input').change( function() {
+    $('#competition-filters input').change(function () {
         competitionList.draw();
-    } );
+    });
     $('.init-datatable').DataTable();
 
 

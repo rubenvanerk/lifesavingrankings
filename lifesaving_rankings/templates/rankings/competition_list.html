@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load static %}
+{% load static datetime_filter %}
 
 {% load django_bootstrap_breadcrumbs %}
 
@@ -31,7 +31,7 @@
             <label>Imported</label>
         </div>
         <div class="ui checkbox">
-            <input type="checkbox" name="wanted">
+            <input type="checkbox" name="wanted" checked>
             <label>Results wanted</label>
         </div>
         <div class="ui checkbox">
@@ -78,10 +78,11 @@
                 <td>
                     {% if competition.is_imported %}
                         {{ competition.get_athlete_count }}
+                    {% elif competition.date|in_future %}
+                        Upcoming
                     {% else %}
                         {{ competition.get_status_display }}
                     {% endif %}
-
                 </td>
                 <td>
                     {% if competition.file_name %}

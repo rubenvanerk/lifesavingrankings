@@ -3,6 +3,7 @@
 
 .. _datetime: https://docs.python.org/2/library/datetime.html
 """
+from datetime import date
 
 from django import template
 
@@ -20,3 +21,8 @@ def format_datetime(value):
         seconds = str('0') + str(seconds)
 
     return '{}:{}.{}'.format(minutes, seconds, tens)
+
+
+@register.filter
+def in_future(value):
+    return value > date.today()
