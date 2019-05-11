@@ -84,12 +84,15 @@ class CompetitionOverview(TemplateView):
         competition = context['competition']
         if 'publish' in self.request.GET and self.request.GET['publish'] == 'true' and self.request.user.is_superuser:
             competition.is_concept = False
+            competition.status = competition.IMPORTED
             competition.save()
             for result in competition.individualresult_set.all():
                 result.calculate_points()
             return redirect(competition)
         if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
-            competition.delete()
+            IndividualResult.objects.filter(competition=competition).delete()
+            competition.status = competition.SCHEDULED
+            competition.save()
             return redirect('competition-list')
 
         return self.render_to_response(context)
