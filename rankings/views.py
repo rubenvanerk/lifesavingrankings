@@ -203,6 +203,7 @@ class PersonalBests(TemplateView):
             .order_by('event', 'time').distinct('event')
         context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
 
+        context['all_results'] = IndividualResult.find_by_athlete(athlete)
         context['athlete'] = athlete
         context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
         return context
@@ -511,7 +512,7 @@ def label_nationality(request, pk):
                   {'athlete': athlete, 'nationalities': Nationality.objects.filter(is_parent_country=False),
                    'athlete_count': athlete_count,
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
-                   'queue': queue})
+                   'queue': queue, 'all_results': IndividualResult.objects.filter(athlete=athlete)})
 
 
 @user_passes_test(lambda u: u.is_superuser)

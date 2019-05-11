@@ -10,7 +10,9 @@
                 <div class="bar">
                     <div class="progress"></div>
                 </div>
-                <div class="label">Labeled {{ labeled_athletes }} of {{ athlete_count }} athletes. {{ queue|length }} in queue.</div>
+                <div class="label">Labeled {{ labeled_athletes }} of {{ athlete_count }} athletes. {{ queue|length }} in
+                    queue.
+                </div>
             </div>
 
             <br>
@@ -28,6 +30,15 @@
                                                         target="_blank">{{ competition.name }}</a></li>
                     {% endfor %}
                 </ul>
+
+                <p>
+                <h4>Original import lines:</h4>
+                {% for result in all_results %}
+                    {% if result.original_line %}
+                        {{ result.original_line }}<br>
+                    {% endif %}
+                {% endfor %}
+                </p>
 
                 <div class="ui fluid search selection dropdown nationalities">
                     <input type="hidden" name="country" required autofocus="autofocus">

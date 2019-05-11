@@ -59,8 +59,6 @@
         Total points: {{ athlete.get_total_points }}
     </div>
 
-
-
     {% for event_type, times in personal_bests.items %}
         {% if times %}
             <table class="ui celled table">
@@ -118,4 +116,15 @@
             Request a competition
         </button>
     </a>
+
+    {% if request.user.is_staff %}
+        <p>
+        <h4>Original import lines:</h4>
+        {% for result in all_results %}
+            {% if result.original_line %}
+                {{ result.original_line }}<br>
+            {% endif %}
+        {% endfor %}
+        </p>
+    {% endif %}
 {% endblock %}

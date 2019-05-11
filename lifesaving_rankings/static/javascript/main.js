@@ -59,7 +59,10 @@ $(document).ready(function () {
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
     var competitionList = $('#competitionList').DataTable({
-        'order': [1, 'desc']
+        'order': [1, 'desc'],
+        "columnDefs": [
+            {"type": "num", "targets": 3}
+        ]
     });
     competitionList.draw();
     $('#competition-filters input').change(function () {
