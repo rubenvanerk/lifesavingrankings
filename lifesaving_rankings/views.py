@@ -6,7 +6,7 @@ def error_404_view(request, exception):
     return render(request, 'lifesaving_rankings/error.html', data)
 
 
-def error_500_view(request, exception):
+def error_500_view(request):
     data = {"message": "Error 500: Server error"}
     return render(request, 'lifesaving_rankings/error.html', data)
 
