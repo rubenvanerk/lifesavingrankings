@@ -195,6 +195,10 @@ class Competition(models.Model):
     def is_imported(self):
         return self.status == self.IMPORTED
 
+    def get_unlabeled_athletes(self):
+        athlete_ids = IndividualResult.objects.filter(competition=self).values('athlete').distinct()
+        return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).all()
+
 
 class IndividualResult(models.Model):
     athlete = ForeignKey(Athlete, on_delete=models.CASCADE)

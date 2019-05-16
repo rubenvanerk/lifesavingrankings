@@ -53,7 +53,7 @@
             <th>Participants / Status</th>
             <th>Original file</th>
             {% if request.user.is_staff %}
-                <th>Fully labeled</th>
+                <th>Unlabeled</th>
             {% endif %}
         </tr>
         </thead>
@@ -61,7 +61,7 @@
         {% for competition in object_list %}
             <tr>
                 <td>
-                    {% if competition.is_imported or request.user.is_superuser%}
+                    {% if competition.is_imported or request.user.is_superuser %}
                         <a href="{% url 'competition-overview' competition.slug %}">
                             {{ competition.name }}
                         </a>
@@ -102,7 +102,7 @@
                         {% elif competition.is_fully_labeled %}
                             <i class="green check icon"></i>
                         {% else %}
-                            <i class="red times icon"></i>
+                            {{ competition.get_unlabeled_athletes|length }}
                         {% endif %}
                     </td>
                 {% endif %}

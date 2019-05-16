@@ -76,8 +76,7 @@ class CompetitionOverview(TemplateView):
                                                                                              gender=2, limit=limit)
         context['competition'] = competition
         context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
-        athlete_ids = IndividualResult.objects.filter(competition=competition).values('athlete').distinct()
-        context['unlabeled_athletes'] = Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).all()
+        context['unlabeled_athletes'] = competition.get_unlabeled_athletes()
         return context
 
     def get(self, request, *args, **kwargs):
