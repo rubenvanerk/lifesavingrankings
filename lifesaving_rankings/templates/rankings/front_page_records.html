@@ -72,6 +72,9 @@
         </div>
     </div>
 
-    Last published competition:
-    <a href="{% url 'competition-overview' last_published_competition.slug %}">{{ last_published_competition.name }}</a><br>
+    {% if last_published_competition %}
+        Last published competition:
+        <a href="{% url 'competition-overview' last_published_competition.slug %}">{{ last_published_competition.name }}</a>
+        <br>
+    {% endif %}
 {% endblock %}

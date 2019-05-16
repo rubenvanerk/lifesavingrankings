@@ -20,7 +20,6 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="ui stackable grid">
         <div class="ui twelve wide column">
             <h1 class="ui header">Individual Analysis: {{ analysis_group.name }}</h1>
@@ -70,17 +69,14 @@
                         {{ athlete_id|id_to_athlete_name }}
                     </a>
                 </td>
-                {% for results in qs %}
-                    {% if results %}
-                        {% for result in results %}
+                {% for result in qs %}
+                    {% if result %}
                             <td>
                                 <div class="analysis-time">
-                                    {{ result.pb|format_time }}<br>
+                                    {{ result.time|format_time }}
                                     <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
                                 </div>
-
                             </td>
-                        {% endfor %}
                     {% else %}
                         <td></td>
                     {% endif %}

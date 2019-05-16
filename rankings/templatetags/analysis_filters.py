@@ -17,8 +17,8 @@ def find_special_time_by_event(special_results, event):
 @register.filter(name='calculate_percentage')
 def calculate_percentage(result, special_results):
     for special_result in special_results:
-        if result['event_id'] == special_result.event.id:
-            personal_best = result['pb'].seconds + (result['pb'].microseconds / 1000000)
+        if result.event.pk == special_result.event.id:
+            personal_best = result.time.seconds + (result.time.microseconds / 1000000)
             special_result_time = special_result.time.seconds + (special_result.time.microseconds / 1000000)
             percentage = round(personal_best / special_result_time * 100, 1)
             return str(percentage) + '%'

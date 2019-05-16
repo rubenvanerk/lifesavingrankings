@@ -47,7 +47,7 @@ class IndividualAnalysis(TemplateView):
 
 
 def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None):
-    events = Event.objects.filter(type=1).order_by('id')
+    events = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
     if athletes is None:
         athletes = Athlete.objects.filter(gender=gender)
     results = {}
@@ -60,10 +60,8 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None)
                 qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
             if date is not None:
                 qs = qs.filter(competition__date__gte=date)
-            qs = qs.values('event__name',
-                           'event_id')
-            qs = qs.annotate(pb=Min('time'))
-            individual_results.append(qs)
+            qs = qs.order_by('time')
+            individual_results.append(qs.first())
         results[athlete.id] = individual_results
     return results
 
