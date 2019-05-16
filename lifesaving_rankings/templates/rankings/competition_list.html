@@ -61,7 +61,7 @@
         {% for competition in object_list %}
             <tr>
                 <td>
-                    {% if competition.is_imported %}
+                    {% if competition.is_imported or request.user.is_superuser%}
                         <a href="{% url 'competition-overview' competition.slug %}">
                             {{ competition.name }}
                         </a>

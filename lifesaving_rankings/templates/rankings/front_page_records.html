@@ -72,6 +72,6 @@
         </div>
     </div>
 
-    Last added competition:
-    <a href="{% url 'competition-overview' last_added_competition.slug %}">{{ last_added_competition.name }}</a><br>
+    Last published competition:
+    <a href="{% url 'competition-overview' last_published_competition.slug %}">{{ last_published_competition.name }}</a><br>
 {% endblock %}

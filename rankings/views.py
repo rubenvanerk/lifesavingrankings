@@ -3,7 +3,7 @@ import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
-from django.db.models import Count, Min
+from django.db.models import Count, Min, F
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -22,8 +22,8 @@ class FrontPageRecords(TemplateView):
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
         context['home'] = True
-        context['last_added_competition'] = Competition.objects.filter(slug__isnull=False).filter(
-            is_concept=False).order_by('-date').first()
+        context['last_published_competition'] = Competition.objects.filter(slug__isnull=False).filter(
+            ~Q(published_on=None)).order_by('-published_on').first()
 
         top_results = {'genders': {'women': [], 'men': []}}
         for gender in top_results['genders']:
@@ -76,6 +76,8 @@ class CompetitionOverview(TemplateView):
                                                                                              gender=2, limit=limit)
         context['competition'] = competition
         context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
+        athlete_ids = IndividualResult.objects.filter(competition=competition).values('athlete').distinct()
+        context['unlabeled_athletes'] = Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).all()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -85,6 +87,7 @@ class CompetitionOverview(TemplateView):
         if 'publish' in self.request.GET and self.request.GET['publish'] == 'true' and self.request.user.is_superuser:
             competition.is_concept = False
             competition.status = competition.IMPORTED
+            competition.published_on = datetime.datetime.now()
             competition.save()
             for result in competition.individualresult_set.all():
                 result.calculate_points()
@@ -496,7 +499,7 @@ class DeleteEmptyAthletes(ListView):
 def label_nationality(request, pk):
     athlete = Athlete.objects.filter(pk=pk).first()
     queue = Athlete.objects.filter(nationalities=None).annotate(num_results=Count('individualresult')).filter(
-        num_results__gt=7).all()
+        num_results__gt=3).all()
     next_athlete = random.choice(queue)
     if not athlete:
         return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))

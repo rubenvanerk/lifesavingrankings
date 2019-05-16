@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter static %}
 
 {% block head_title %}{{ competition.name }} results{% endblock %}
 {% block meta_description %}
@@ -39,28 +39,62 @@
         <br>
     {% endif %}
 
-    <a href="{% url 'competition-list' %}" class="button back">
-        <button class="ui left labeled icon button">
-            <i class="left list icon"></i>
-            All competitions
-        </button>
-    </a>
-
-    {% if competition.is_concept and request.user.is_superuser %}
-        <a href="{% url 'competition-overview' competition.slug %}?publish=true" class="button back">
-            <button class="ui left labeled icon button">
-                <i class="left eye icon"></i>
-                Publish
-            </button>
-        </a>
+    {% if request.user.is_superuser %}
+        {% if not competition.is_imported %}
+            <a href="{% url 'competition-overview' competition.slug %}?publish=true" class="button back">
+                <button class="ui left labeled icon button">
+                    <i class="left eye icon"></i>
+                    Publish
+                </button>
+            </a>
+        {% endif %}
         <a href="{% url 'competition-overview' competition.slug %}?delete=true" class="button back">
-            <button class="ui left labeled icon button">
+            <button class="ui left labeled icon red button">
                 <i class="left trash icon"></i>
                 Delete
             </button>
         </a>
     {% endif %}
 
+
+    <div class="ui stackable two column grid">
+        <div class="column">
+            <table class="ui definition compact table">
+                <tbody>
+                <tr>
+                    <td>Location</td>
+                    <td>{{ competition.location }}</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td>{{ competition.date }}</td>
+                </tr>
+                <tr>
+                    <td>Participants</td>
+                    <td>{{ competition.get_athlete_count }}</td>
+                </tr>
+                <tr>
+                    <td>Results</td>
+                    <td>{{ competition.get_result_count }}</td>
+                </tr>
+                <tr>
+                    <td>Original file</td>
+                    <td>
+                        {% if competition.file_name %}
+                            <a href="{% static 'pdfs/'|add:competition.file_name %}" target="_blank">
+                                <button class="ui compact icon tiny button">
+                                    <i class="file icon"></i>
+                                </button>
+                            </a>
+                        {% else %}
+                            <i class="minus icon"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     {% for event, results_by_gender in events.items %}
         <h2 class="ui header">{{ event }}</h2>
@@ -115,4 +149,19 @@
             {% endfor %}
         </div>
     {% endfor %}
+
+    {% if request.user.is_staff %}
+        <p>
+        <h3>Unlabeled athletes</h3>
+        {% if unlabeled_athletes %}
+        <ul>
+            {% for athlete in unlabeled_athletes %}
+                <li><a href="{% url 'athlete-overview' athlete.slug %}">{{ athlete.name }}</a></li>
+            {% endfor %}
+        </ul>
+            {% else %}
+                All athletes are labeled in this competition!
+            {% endif %}
+        </p>
+    {% endif %}
 {% endblock %}

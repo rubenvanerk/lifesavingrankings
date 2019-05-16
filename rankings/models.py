@@ -177,6 +177,9 @@ class Competition(models.Model):
     def get_athlete_count(self):
         return IndividualResult.objects.filter(competition=self).values('athlete').distinct().count()
 
+    def get_result_count(self):
+        return IndividualResult.objects.filter(competition=self).count()
+
     def get_absolute_url(self):
         return reverse('competition-overview', args=[self.slug])
 
@@ -202,6 +205,7 @@ class IndividualResult(models.Model):
     original_line = models.CharField(max_length=200, null=True, default=None)
     round = models.IntegerField(default=0)
     disqualified = models.BooleanField(default=False)
+    did_not_start = models.BooleanField(default=False)
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None, blank=True)
 
@@ -221,6 +225,8 @@ class IndividualResult(models.Model):
     def get_time_display(self):
         if self.disqualified:
             return 'DQ'
+        if self.did_not_start:
+            return 'DNS'
         hours, rem = divmod(self.time.seconds, 3600)
         minutes, seconds = divmod(rem, 60)
         tens = int(round(self.time.microseconds / 10000))

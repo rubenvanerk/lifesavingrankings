@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter i18n mathfilters %}
+{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter i18n mathfilters helpers %}
 {% block head_title %}{{ competition.name }} {{ event.name }} {{ gender|gender_to_text }}{% endblock %}
 {% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on
     {{ competition.name }}{% endblock %}
@@ -81,11 +81,13 @@
                 </td>
                 <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
             </tr>
-            {% if forloop.counter == separator %}
-                <tr>
-                    <td colspan="5">Series:</td>
-                </tr>
-            {% endif %}
+            {% with next_result=results|next_element:forloop.counter0 %}
+                {% if next_result.round is not result.round and not forloop.last %}
+                    <tr>
+                        <td colspan="5">{% if next_result.round is 0 %}Series:{% endif %}</td>
+                    </tr>
+                {% endif %}
+            {% endwith %}
         {% endfor %}
         </tbody>
     </table>

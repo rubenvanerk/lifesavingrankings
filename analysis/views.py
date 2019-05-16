@@ -27,7 +27,7 @@ class IndividualAnalysis(TemplateView):
         context = super(IndividualAnalysis, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
         group = AnalysisGroup.objects.get(pk=group_id)
-        if not group.public and group.creator != self.request.user:
+        if not group.public and group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
 
         date = None
@@ -74,7 +74,8 @@ class AnalysisGroupListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         qs = super(AnalysisGroupListView, self).get_queryset()
-        qs = qs.filter(creator=user).order_by('id')
+        if not self.request.user.is_superuser:
+            qs = qs.filter(creator=user).order_by('id')
         return qs
 
 
@@ -139,7 +140,7 @@ class RelayAnalysis(TemplateView):
         context = super(RelayAnalysis, self).get_context_data(**kwargs)
         group_id = self.kwargs.get('group_id')
         analysis_group = AnalysisGroup.objects.get(pk=group_id)
-        if not analysis_group.public and analysis_group.creator != self.request.user:
+        if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
         context['events'] = Event.objects.filter(type=3).order_by('pk').all()
         context['analysis_group'] = analysis_group
