@@ -49,7 +49,7 @@ class CompetitionOverview(TemplateView):
         competition = Competition.objects.filter(slug=competition_slug).first()
         nationality = Nationality.objects.get(pk=request.POST['country'])
 
-        for athlete in competition.get_athletes():
+        for athlete in competition.get_unlabeled_athletes():
             athlete.nationalities.add(nationality)
             athlete.save()
 

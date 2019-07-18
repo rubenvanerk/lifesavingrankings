@@ -52,6 +52,7 @@
             <th>Location</th>
             <th>Participants / Status</th>
             <th>Original file</th>
+            <th>Publish date</th>
             {% if request.user.is_staff %}
                 <th>Unlabeled</th>
             {% endif %}
@@ -94,6 +95,9 @@
                     {% else %}
                         <i class="minus icon"></i>
                     {% endif %}
+                </td>
+                <td>
+                    {{ competition.published_on }}
                 </td>
                 {% if request.user.is_staff %}
                     <td>

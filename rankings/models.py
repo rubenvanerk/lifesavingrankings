@@ -13,6 +13,7 @@ class Nationality(models.Model):
     flag_code = models.CharField(max_length=10, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.SET_NULL)
     is_parent_country = models.BooleanField(default=False)
+    lenex_code = models.CharField(max_length=3, unique=True, null=True)
 
     def __str__(self):
         return self.name
@@ -139,6 +140,8 @@ class Event(models.Model):
 
 
 class Competition(models.Model):
+    class Meta:
+        ordering = ['-published_on']
     UNKNOWN = 0
     ELECTRONIC = 1
     BY_HAND = 2
@@ -166,6 +169,7 @@ class Competition(models.Model):
     published_on = models.DateTimeField(null=True, blank=True)
     status = models.IntegerField(default=IMPORTED, choices=STATUS_OPTIONS)
     file_name = models.CharField(max_length=100, null=True, blank=True)
+    credit = models.CharField(max_length=100, null=True, blank=True)
 
     prepopulated_fields = {"slug": ("name",)}
 

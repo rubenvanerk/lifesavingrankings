@@ -91,6 +91,18 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% if competition.published_on %}
+                    <tr>
+                        <td>Published on</td>
+                        <td>{{ competition.published_on }}</td>
+                    </tr>
+                {% endif %}
+                {% if competition.credit %}
+                    <tr>
+                        <td>Thanks to:</td>
+                        <td>{{ competition.credit|safe }}</td>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
         </div>
@@ -154,14 +166,14 @@
         <p>
         <h3>Unlabeled athletes</h3>
         {% if unlabeled_athletes %}
-        <ul>
-            {% for athlete in unlabeled_athletes %}
-                <li><a href="{% url 'athlete-overview' athlete.slug %}">{{ athlete.name }}</a></li>
-            {% endfor %}
-        </ul>
-            {% else %}
-                All athletes are labeled in this competition!
-            {% endif %}
+            <ul>
+                {% for athlete in unlabeled_athletes %}
+                    <li><a href="{% url 'athlete-overview' athlete.slug %}">{{ athlete.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            All athletes are labeled in this competition!
+        {% endif %}
         </p>
     {% endif %}
 {% endblock %}
