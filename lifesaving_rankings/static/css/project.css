@@ -217,4 +217,9 @@ button.ui.button.request-a-competition {
     margin-bottom: 1.5em;
 }
 
+.ui.menu.top .item>img {
+    width: 27px;
+    height: auto;
+    margin-right: 5px;
+}
 

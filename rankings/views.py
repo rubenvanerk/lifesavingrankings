@@ -392,7 +392,7 @@ class BestByEvent(ListView):
         for result in qs:
             best_result_per_athlete.setdefault(result['athlete_id'], result)
 
-        return best_result_per_athlete
+        return list(best_result_per_athlete.values())[:1000]
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()

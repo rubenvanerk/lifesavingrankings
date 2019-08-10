@@ -79,7 +79,10 @@
     <div class="ui inverted top fixed menu grid">
         {# content menu bar mobile #}
         <div class="computer only row">
-            <div class="item"><a href="/">Lifesaving Rankings</a></div>
+            <a class="item" href="/">
+                <img src="{% static 'images/logoonly.png' %}" class="logo">
+                Lifesaving<br>Rankings
+            </a>
             <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
             <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
             <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
@@ -122,7 +125,10 @@
         <div class="tablet mobile only row">
             <div class="ui inverted massive top fixed menu">
 
-                <a href="/" class="item">Lifesaving Rankings</a>
+                <a href="/" class="item">
+                    <img src="{% static 'images/logoonly.png' %}" class="logo">
+                    Lifesaving Rankings
+                </a>
 
                 <div class="right menu">
                     <a id="mobile_item" class="item"><i class="bars icon"></i></a>
