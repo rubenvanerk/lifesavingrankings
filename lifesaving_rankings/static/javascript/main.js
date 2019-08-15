@@ -119,5 +119,6 @@ $(document).ready(function () {
 
     $('#labeledAthletes').progress();
 
-    $('#content').fadeIn()
+    // $('body').removeClass('loading');
+    // $('#content').fadeIn();
 });

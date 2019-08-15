@@ -223,3 +223,22 @@ button.ui.button.request-a-competition {
     margin-right: 5px;
 }
 
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading:after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    bottom: -15px;
+    left: -15px;
+    right: -15px;
+    background: rgba(218, 218, 218, 0.1) url("../images/loading.gif") no-repeat center;
+    z-index: 10;
+}
+
+
+
+
