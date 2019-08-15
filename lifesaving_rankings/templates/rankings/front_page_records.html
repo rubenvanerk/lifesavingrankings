@@ -72,9 +72,26 @@
         </div>
     </div>
 
-    {% if last_published_competition %}
-        Last published competition:
-        <a href="{% url 'competition-overview' last_published_competition.slug %}">{{ last_published_competition.name }}</a>
-        <br>
-    {% endif %}
+    <h4 class="ui header">Last imported competitions</h4>
+    <div class="ui relaxed divided list">
+        {% for competition in last_published_competitions %}
+            <div class="item">
+                <div class="content">
+                    <a href="{% url 'competition-overview' competition.slug %}"
+                       class="header">{{ competition.name }}</a>
+                    <div class="description">
+                        <strong>{{ competition.get_athlete_count }}</strong> participants, imported
+                        <strong>{{ competition.published_on|timesince }} ago</strong>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="item">
+            <div class="content">
+                <a href="{% url 'competition-list' %}" class="header">All competitions</a>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

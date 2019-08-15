@@ -97,7 +97,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ competition.published_on }}
+                    {{ competition.published_on|date:"M d, Y" }}
                 </td>
                 {% if request.user.is_staff %}
                     <td>
