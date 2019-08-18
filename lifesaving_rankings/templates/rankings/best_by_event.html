@@ -122,43 +122,45 @@
         </div>
     </form>
 
-    <table class="ui celled table" id="bestByEvent">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Athlete</th>
-            <th>YoB</th>
-            <th>Time</th>
-            <th>Points</th>
-            <th>Date</th>
-            <th>Competition</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for result in object_list %}
+    <div id="bestByEventWrapper">
+        <table class="ui celled table" id="bestByEvent">
+            <thead>
             <tr>
-                <td>
-                    {{ forloop.counter }}
-                </td>
-                <td>
-                    <a href="{% url 'athlete-overview' result.athlete__slug %}">
-                        {% if result.athlete__nationalities__flag_code %}
-                            <i class="{{ result.athlete__nationalities__flag_code }} flag"
-                               title="{{ result.athlete__nationalities__name }}"></i>
-                        {% endif %}
-                        {{ result.athlete__name }}
-                    </a>
-                </td>
-                <td>{{ result.athlete__year_of_birth }}</td>
-                <td>{{ result.time|format_time }}</td>
-                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
-                <td>{{ result.competition__date }}</td>
-                <td>
-                    <a href="{% url 'competition-overview' result.competition__slug %}">{{ result.competition__name }}</a>
-                </td>
+                <th>#</th>
+                <th>Athlete</th>
+                <th>YoB</th>
+                <th>Time</th>
+                <th>Points</th>
+                <th>Date</th>
+                <th>Competition</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for result in object_list %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        <a href="{% url 'athlete-overview' result.athlete__slug %}">
+                            {% if result.athlete__nationalities__flag_code %}
+                                <i class="{{ result.athlete__nationalities__flag_code }} flag"
+                                   title="{{ result.athlete__nationalities__name }}"></i>
+                            {% endif %}
+                            {{ result.athlete__name }}
+                        </a>
+                    </td>
+                    <td>{{ result.athlete__year_of_birth }}</td>
+                    <td>{{ result.time|format_time }}</td>
+                    <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
+                    <td>{{ result.competition__date }}</td>
+                    <td>
+                        <a href="{% url 'competition-overview' result.competition__slug %}">{{ result.competition__name }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

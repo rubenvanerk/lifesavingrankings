@@ -18,7 +18,7 @@ footer .item:not(:last-child) {
 #content {
     margin-left: auto;
     margin-right: auto;
-    padding-top: 5em;
+    padding-top: 2em;
     padding-bottom: 8em;
     display: none;
 }
@@ -217,7 +217,7 @@ button.ui.button.request-a-competition {
     margin-bottom: 1.5em;
 }
 
-.ui.menu.top .item>img {
+.ui.menu.top .item > img {
     width: 27px;
     height: auto;
     margin-right: 5px;
@@ -244,5 +244,9 @@ form.filter .styled.accordion {
     margin-bottom: 1em;
 }
 
-
-
+@media only screen and (max-width: 768px) {
+    #bestByEventWrapper .ui.grid .row .column {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
