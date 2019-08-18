@@ -19,7 +19,7 @@
     <div class="athlete">
         <h1 class="name">
             {% for nationality in athlete.nationalities.all %}
-                <i class="{{ nationality.flag_code }} flag" title="{{ result.athlete.nationality.name }}"></i>
+                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
             {% endfor %}
             {{ athlete.name }}
         </h1>

@@ -65,7 +65,7 @@
                 <td><a href="{% url 'athlete-overview' result.athlete.slug %}">
                     {% for nationality in result.athlete.nationalities.all %}
                         <i class="{{ nationality.flag_code }} flag"
-                           title="{{ result.athlete.nationality.name }}"></i>
+                           title="{{ nationality.name }}"></i>
                     {% endfor %}
                     {{ result.athlete.name }}
                 </a></td>
