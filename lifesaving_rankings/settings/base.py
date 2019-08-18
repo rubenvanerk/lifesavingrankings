@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'storages',
     'django_bootstrap_breadcrumbs',
-    'mathfilters'
+    'mathfilters',
+    'google_analytics'
 ]
 
 SITE_ID = 1
@@ -123,7 +124,6 @@ USE_TZ = True
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
 
-
-
-
-
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': 'UA-145909425-1',
+}

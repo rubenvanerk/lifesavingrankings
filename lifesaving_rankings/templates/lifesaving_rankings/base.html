@@ -1,4 +1,4 @@
-{% load staticfiles i18n account active_menu_filter %}
+{% load staticfiles i18n account active_menu_filter google_analytics_tags %}
 
 {% load static %}
 <!DOCTYPE html>
@@ -246,7 +246,11 @@
     </div>
 
 
-
+    {% if not request.user.is_staff %}
+        <div style="display:none">
+            <img src="{% google_analytics %}" width="0" height="0"/>
+        </div>
+    {% endif %}
 {% endblock %}
 
 

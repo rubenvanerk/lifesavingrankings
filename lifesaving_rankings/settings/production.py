@@ -22,3 +22,6 @@ EMAIL_HOST_USER = env('SMTP_USER')
 EMAIL_HOST_PASSWORD = env('SMTP_PASSWORD')
 EMAIL_PORT = env('SMTP_PORT')
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'ruben@lifesavingrankings.com'
+SERVER_EMAIL = 'ruben@lifesavingrankings.com'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[LifesavingRankings.com] '
