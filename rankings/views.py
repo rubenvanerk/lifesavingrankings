@@ -364,7 +364,8 @@ class BestByEvent(ListView):
 
         if self.request.GET.get('nationality') or 0 > 0:
             nationality = Nationality.objects.filter(pk=self.request.GET.get('nationality').strip()).first()
-            qs = qs.filter(athlete__nationalities__in=nationality.get_children_pks())
+            if nationality:
+                qs = qs.filter(athlete__nationalities__in=nationality.get_children_pks())
 
         if self.request.GET.get('rangestart'):
             date_range_start = datetime.datetime.strptime(self.request.GET.get('rangestart'), '%B %d, %Y').date()
@@ -412,6 +413,10 @@ class BestByEvent(ListView):
 
         context['filter']['date_range_start'] = self.request.GET.get('rangestart')
         context['filter']['date_range_end'] = self.request.GET.get('rangeend')
+
+        context['filter']['enabled'] = self.request.GET.get('yob_end') or self.request.GET.get(
+            'yob_start') or self.request.GET.get('rangestart') or self.request.GET.get(
+            'rangeend') or self.request.GET.get('nationality')
 
         context['event'] = self.get_event()
         context['gender'] = self.kwargs.get('gender')

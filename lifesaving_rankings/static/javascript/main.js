@@ -117,7 +117,19 @@ $(document).ready(function () {
         startMode: 'year'
     });
 
+    $('.ui.accordion')
+        .accordion()
+    ;
+
+
     $('#labeledAthletes').progress();
+
+    $('.ui.dropdown select').each(
+        function () {
+            console.log($(this));
+            $(this).dropdown('set selected', $(this).data('value'))
+        }
+    );
 
     $('body').removeClass('loading');
     $('#content').fadeIn();
