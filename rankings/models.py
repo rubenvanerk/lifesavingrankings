@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey, Q, Max
+from django.db.models import ForeignKey, Q, Max, Prefetch, Min
 from django.urls import reverse
 from django.utils.text import slugify
 from rankings.functions import calculate_points
@@ -68,10 +68,29 @@ class Athlete(models.Model):
                 personal_bests.append(personal_best)
         return personal_bests
 
-    def get_competitions(self):
-        results = IndividualResult.objects.filter(athlete=self).values('competition')
-        competitions = Competition.objects.filter(pk__in=results).order_by('date')
+    def get_competitions(self, year=None):
+        individual_results = IndividualResult.objects.filter(athlete=self)
+        if year is not None:
+            individual_results = individual_results.filter(competition__date__year=year)
+        competitions = individual_results.values('competition_id')
+        competitions = Competition.objects.order_by('-date').prefetch_related(
+            Prefetch('individual_results', queryset=individual_results, to_attr='athlete_results')
+        ).filter(pk__in=competitions)
         return competitions
+
+    def get_last_competition_date(self):
+        return IndividualResult.objects.filter(athlete=self).aggregate(Max('competition__date'))['competition__date__max']
+
+    def get_next_competition_year(self, current_year):
+        result = IndividualResult.objects.filter(athlete=self, competition__date__year__gt=current_year).order_by('competition__date').first()
+        if result is not None:
+            return result.competition.date.year
+        return None
+
+    def get_previous_competition_year(self, current_year):
+        result = IndividualResult.objects.filter(athlete=self, competition__date__year__lt=current_year).order_by('-competition__date').first()
+        if result is not None:
+            return result.competition.date.year
 
     def count_results(self):
         return IndividualResult.objects.filter(athlete=self).count()
@@ -131,7 +150,9 @@ class Event(models.Model):
                 gender = 2
         query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender)
         if competition is not None:
-            max_round = IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition).aggregate(Max('round'))['round__max']
+            max_round = \
+                IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition).aggregate(
+                    Max('round'))['round__max']
             query_set = query_set.filter(competition=competition, round=max_round)
         else:
             query_set = query_set.filter(disqualified=False)
@@ -142,6 +163,7 @@ class Event(models.Model):
 class Competition(models.Model):
     class Meta:
         ordering = ['-published_on']
+
     UNKNOWN = 0
     ELECTRONIC = 1
     BY_HAND = 2
@@ -207,7 +229,9 @@ class Competition(models.Model):
 class IndividualResult(models.Model):
     athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
     event = ForeignKey(Event, on_delete=models.CASCADE)
-    competition = ForeignKey(Competition, on_delete=models.CASCADE)
+    competition = ForeignKey(Competition, on_delete=models.CASCADE,
+                             related_name='individual_results',
+                             related_query_name='individual_results')
     time = models.DurationField()
     points = models.FloatField(default=0)
     original_line = models.CharField(max_length=200, null=True, default=None)
@@ -258,6 +282,16 @@ class IndividualResult(models.Model):
         qs = IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time')
         qs = qs.filter(Q(extra_analysis_time_by=analysis_group.creator) | Q(extra_analysis_time_by=None))
         return qs.first()
+
+    def difference_with_previous_best(self):
+        previous_best = IndividualResult.objects.filter(athlete=self.athlete,
+                                                        competition__date__lt=self.competition.date,
+                                                        disqualified=False,
+                                                        did_not_start=False,
+                                                        event=self.event).aggregate(Min('time'))
+        if previous_best['time__min'] is not None:
+            return self.time - previous_best['time__min']
+        return None
 
 
 class EventRecord(models.Model):

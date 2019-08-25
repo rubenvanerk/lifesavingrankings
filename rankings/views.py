@@ -3,7 +3,7 @@ import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
-from django.db.models import Count, Min, F
+from django.db.models import Count, Min, F, Prefetch
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -258,6 +258,33 @@ class EventByAthlete(ListView):
         return context
 
     template_name = 'rankings/event_by_athlete.html'
+
+
+class AthleteTimeline(TemplateView):
+    athlete = None
+    template_name = 'rankings/athlete_timeline.html'
+
+    def get_athlete(self):
+        if self.athlete is not Athlete:
+            self.athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
+            if not self.athlete:
+                raise Http404
+        return self.athlete
+
+    def get_year(self):
+        year = mk_int(self.request.GET.get('year'))
+        if not year:
+            year = self.get_athlete().get_last_competition_date().year
+        return year
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['athlete'] = athlete = self.get_athlete()
+        context['current_year'] = year = self.get_year()
+        context['competitions'] = athlete.get_competitions(year)
+        context['previous_year'] = athlete.get_previous_competition_year(year)
+        context['next_year'] = athlete.get_next_competition_year(year)
+        return context
 
 
 @login_required

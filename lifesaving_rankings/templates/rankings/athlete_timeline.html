@@ -1,0 +1,116 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs mathfilters %}
+{% load to_url_filter %}
+
+{% block head_title %}{{ athlete.name }}: Timeline {{ current_year }}{% endblock %}
+{% block meta_description %}Competition timeline of {{ athlete.name }},
+    collected on Lifesaving Rankings{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb athlete.name "athlete-overview" athlete.slug %}
+    {% breadcrumb "Timeline" "athlete-timeline" athlete.slug %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {{ athlete.name }} timeline {{ current_year }}
+    </h1>
+
+    <a href="{% url 'athlete-overview' slug=athlete.slug %}" class="back button">
+        <button class="ui left labeled icon button back">
+            <i class="left arrow icon"></i>
+            Back
+        </button>
+    </a>
+
+    <br>
+
+    {% if next_year %}
+        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|add:1 }}" class="back button">
+            <button class="ui left labeled icon button back">
+                <i class="left arrow icon"></i>
+                {{ current_year|add:1 }}
+            </button>
+        </a>
+    {% endif %}
+
+    {% if previous_year %}
+        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|sub:1 }}" class="right floated back button">
+            <button class="ui right labeled icon button back">
+                {{ current_year|sub:1 }}
+                <i class="right arrow icon"></i>
+            </button>
+        </a>
+    {% endif %}
+
+    {% if competitions %}
+    <div class="ui items">
+        {% for competition in competitions %}
+            <div class="item">
+                <div class="content">
+                    <a class="header">{{ competition.name }}</a>
+                    <div class="meta">
+                        {{ competition.date }}, {{ competition.location }}</div>
+                    <div class="description">
+                        <table class="ui celled table">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Time</th>
+                                <th>Compared to previous PR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in competition.athlete_results %}
+                                <tr>
+                                    <td>{{ result.event.name }}</td>
+                                    <td>{{ result.time|format_time }}</td>
+                                    {% with result.difference_with_previous_best as change %}
+                                        <td {% if change is not None %}class="{% if change.total_seconds < 0 %}positive{% else %}negative{% endif %}"{% endif %}>
+                                            {% if change is not None %}
+                                                {% if change.total_seconds >= 0 %}+ {% endif %}{{ change|format_time }}
+                                            {% else %}
+                                                New time
+                                            {% endif %}
+                                        </td>
+                                    {% endwith %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p>
+            There are no results in year {{ current_year }} for {{ athlete.name }}.
+        </p>
+    {% endif %}
+
+
+    {% if next_year %}
+        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|add:1 }}" class="back button">
+            <button class="ui left labeled icon button back">
+                <i class="left arrow icon"></i>
+                {{ current_year|add:1 }}
+            </button>
+        </a>
+    {% endif %}
+
+    {% if previous_year %}
+        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|sub:1 }}" class="right floated back button">
+            <button class="ui right labeled icon button back">
+                {{ current_year|sub:1 }}
+                <i class="right arrow icon"></i>
+            </button>
+        </a>
+    {% endif %}
+
+{% endblock %}

@@ -19,6 +19,11 @@ urlpatterns = [
         name='athlete-add-time'
     ),
     url(
+        regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/timeline',
+        view=views.AthleteTimeline.as_view(),
+        name='athlete-timeline'
+    ),
+    url(
         regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/(?P<event_name>[a-z0-9\-()]+)$',
         view=views.EventByAthlete.as_view(),
         name='athlete-event'
