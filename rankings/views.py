@@ -22,8 +22,10 @@ class FrontPageRecords(TemplateView):
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
         context['home'] = True
-        context['last_published_competitions'] = Competition.objects.filter(slug__isnull=False).filter(
-            ~Q(published_on=None)).order_by('-published_on')[:5]
+        context['last_published_competitions'] = Competition.objects.filter(slug__isnull=False,
+                                                                            status=2,
+                                                                            published_on__isnull=False).order_by(
+            '-published_on')[:5]
 
         top_results = {'genders': {'women': [], 'men': []}}
         for gender in top_results['genders']:
