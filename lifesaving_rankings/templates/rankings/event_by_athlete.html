@@ -16,6 +16,76 @@
 
 {% endblock %}
 
+{% block javascript_after %}
+    {% if object_list|length > 1 %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"
+                integrity="sha256-xKeoJ50pzbUGkpQxDYHD7o7hxe0LaOGeguUidbq6vis="
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+
+        <script>
+            var ctx = document.getElementById("progression");
+
+            data = {
+                labels: [{% for result in results_ordered_by_date %}'{{ result.competition.date|date:"Y-m-d" }}',{% endfor %}],
+                datasets: [{
+                    label: 'Result',
+                    backgroundColor: 'rgba(0, 97, 191, 1)',
+                    borderColor: 'rgba(0, 97, 191, .5)',
+                    lineTension: .15,
+                    fill: false,
+                    data: [
+                        {% for result in results_ordered_by_date %}
+                            {
+                                x: new Date('{{ result.competition.date|date:"Y-m-d 00:00" }}'),
+                                y: '{{ result.time|format_time }}'
+                            },
+                        {% endfor %}
+                    ],
+                    borderWidth: 3
+                }]
+            };
+
+
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    responsive: true,
+                    scales: {
+                        yAxes: [{
+                            type: 'time',
+                            time: {
+                                parser: 'm:ss.SS',
+                                unit: 'seconds',
+                                min: '{{ fastest_time.time__min|format_time }}',
+                                max: '{{ slowest_time.time__max|format_time }}',
+                                unitStepSize: 3,
+                                displayFormats: {
+                                    'seconds': 'm:ss.SS'
+                                }
+                            },
+                            ticks: {
+                                reverse: true
+                            }
+                        }],
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit: 'month',
+                                tooltipFormat: 'MMMM D, Y'
+                            }
+                        }]
+                    }
+                }
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <h1>
         {{ athlete.name }} - {{ event.name }}
@@ -28,12 +98,25 @@
         </button>
     </a>
 
-    <a href="{% url 'request-competition' %}">
-        <button class="ui left labeled icon button">
-            <i class="plus icon"></i>
-            Request a competition
+    {% if object_list|length > 1 %}
+        <button class="ui left labeled icon button" onclick="$('.ui.modal.chart').modal('show');">
+            <i class="chart area icon"></i>
+            Progression
         </button>
-    </a>
+
+        <div class="ui modal chart">
+            <i class="close icon"></i>
+            <div class="header">
+                Progression {{ event.name }}
+            </div>
+            <div class="image content">
+                <div class="description">
+                    <canvas id="progression"
+                            style="max-width: 900px !important; max-height: 500px !important;"></canvas>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
     <table class="ui celled table" id="eventByAthlete">
         <thead>

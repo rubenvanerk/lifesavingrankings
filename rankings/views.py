@@ -90,7 +90,7 @@ class CompetitionOverview(TemplateView):
             competition.status = competition.IMPORTED
             competition.published_on = datetime.datetime.now()
             competition.save()
-            for result in competition.individualresult_set.filter(points=0).all():
+            for result in competition.individual_results.filter(points=0).all():
                 result.calculate_points()
             return redirect(competition)
         if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
@@ -255,8 +255,22 @@ class EventByAthlete(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-        context['athlete'] = self.get_athlete()
-        context['event'] = self.get_event()
+        context['athlete'] = athlete = self.get_athlete()
+        context['event'] = event = self.get_event()
+        results_ordered_by_date = self.get_queryset().order_by('competition__date')
+        previous_result = None
+        for i, result in enumerate(results_ordered_by_date):
+            if previous_result is not None and result.competition.date == previous_result.competition.date:
+                if previous_result.time > result.time:
+                    results_ordered_by_date = results_ordered_by_date.exclude(pk=previous_result.pk)
+                else:
+                    results_ordered_by_date = results_ordered_by_date.exclude(pk=result.pk)
+            previous_result = result
+        context['results_ordered_by_date'] = results_ordered_by_date
+        context['fastest_time'] = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False,
+                                                                  disqualified=False).aggregate(Min('time'))
+        context['slowest_time'] = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False,
+                                                                  disqualified=False).aggregate(Max('time'))
         return context
 
     template_name = 'rankings/event_by_athlete.html'
