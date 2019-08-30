@@ -40,7 +40,8 @@
     {% endif %}
 
     {% if previous_year %}
-        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|sub:1 }}" class="right floated back button">
+        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|sub:1 }}"
+           class="right floated back button">
             <button class="ui right labeled icon button back">
                 {{ current_year|sub:1 }}
                 <i class="right arrow icon"></i>
@@ -49,45 +50,56 @@
     {% endif %}
 
     {% if competitions %}
-    <div class="ui items">
-        {% for competition in competitions %}
-            <div class="item">
-                <div class="content">
-                    <a class="header">{{ competition.name }}</a>
-                    <div class="meta">
-                        {{ competition.date }}, {{ competition.location }}</div>
-                    <div class="description">
-                        <table class="ui celled table">
-                        <thead>
-                            <tr>
-                                <th>Event</th>
-                                <th>Time</th>
-                                <th>Compared to previous PR</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for result in competition.athlete_results %}
+        <div class="ui items">
+            {% for competition in competitions %}
+                <div class="item">
+                    <div class="content">
+                        <a class="header">{{ competition.name }}</a>
+                        <div class="meta">
+                            {{ competition.date }}, {{ competition.location }}</div>
+                        <div class="description">
+                            <table class="ui celled table">
+                                <thead>
                                 <tr>
-                                    <td>{{ result.event.name }}</td>
-                                    <td>{{ result.time|format_time }}</td>
-                                    {% with result.difference_with_previous_best as change %}
-                                        <td {% if change is not None %}class="{% if change.total_seconds < 0 %}positive{% else %}negative{% endif %}"{% endif %}>
-                                            {% if change is not None %}
-                                                {% if change.total_seconds >= 0 %}+ {% endif %}{{ change|format_time }}
+                                    <th>Event</th>
+                                    <th>Time</th>
+                                    <th>Compared to previous PR</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for result in competition.athlete_results %}
+                                    <tr>
+                                        <td>{{ result.event.name }}</td>
+                                        <td>
+                                            {% if result.disqualified %}
+                                                DQ
+                                            {% elif result.did_not_start %}
+                                                DNS
                                             {% else %}
-                                                New time
+                                                {{ result.time|format_time }}
                                             {% endif %}
                                         </td>
-                                    {% endwith %}
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
+                                        {% with result.difference_with_previous_best as change %}
+                                            <td {% if change is not None %}class="{% if change.total_seconds < 0 %}positive{% else %}negative{% endif %}"{% endif %}>
+                                                {% if result.disqualified or result.did_not_start %}
+                                                    -
+                                                {% elif change is not None %}
+                                                    {% if change.total_seconds >= 0 %}
+                                                        + {% endif %}{{ change|format_time }}
+                                                {% else %}
+                                                    New time
+                                                {% endif %}
+                                            </td>
+                                        {% endwith %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
     {% else %}
         <p>
             There are no results in year {{ current_year }} for {{ athlete.name }}.
@@ -105,7 +117,8 @@
     {% endif %}
 
     {% if previous_year %}
-        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|sub:1 }}" class="right floated back button">
+        <a href="{% url 'athlete-timeline' slug=athlete.slug %}?year={{ current_year|sub:1 }}"
+           class="right floated back button">
             <button class="ui right labeled icon button back">
                 {{ current_year|sub:1 }}
                 <i class="right arrow icon"></i>
