@@ -25,7 +25,6 @@ footer .item:not(:last-child) {
     float: right;
 }
 
-
 .ghost-button {
     background: none;
     padding: 0;
@@ -251,4 +250,8 @@ form.filter .styled.accordion {
 
 .ui.breadcrumb {
     margin-bottom: 1em;
+}
+
+.item.facebook {
+    padding-top: 7px;
 }
