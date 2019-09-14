@@ -16,122 +16,166 @@
 
 
 {% block content %}
-    <div class="athlete">
-        <h1 class="name">
-            {% for nationality in athlete.nationalities.all %}
-                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
-            {% endfor %}
-            {{ athlete.name }}
-        </h1>
-        <span class="details">
-            ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth }}{% endif %}
-            {% if athlete.gender == 1 %}<i class="mars icon"></i>{% elif athlete.gender == 2 %}
-                <i class="venus icon"></i>{% endif %})
-        </span>
-    </div>
+    <div class="ui stackable grid">
 
-    <br><br>
-    
-    {% if request.user.is_staff %}
-        Total competitions: {{ athlete.count_competitions }}<br>
-        Total results: {{ athlete.count_results }}<br>
-        {% if request.user.is_superuser %}
-            <a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/"
-               target="_blank">EDIT</a><br>
-        {% endif %}
-        <form action="" method="post" class="ui form">{% csrf_token %}
-            <div class="ui fluid search selection dropdown left floated nationalities" style="width: 200px;">
-                <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">
-                <i class="dropdown icon"></i>
-                <div class="default text">Select Country</div>
-                <div class="menu">
-                    {% for nationality in nationalities %}
-                        <div class="item" data-value="{{ nationality.pk }}"><i
-                                class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}</div>
-                    {% endfor %}
+        <div class="row">
+            <div class="sixteen wide column">
+                <div class="athlete">
+                    <h1 class="ui header name">
+                        {% for nationality in athlete.nationalities.all %}
+                            <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                        {% endfor %}
+                        {{ athlete.name }}
+                    </h1>
+                    <span class="details">
+                    ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth }}{% endif %}
+                        {% if athlete.gender == 1 %}
+                            <i class="mars icon"></i>
+                        {% elif athlete.gender == 2 %}
+                            <i class="venus icon"></i>
+                        {% endif %})
+                </span>
                 </div>
             </div>
-            <button type="submit" class="ui green button right floated" style="margin-top: -37px;">Add / Remove</button>
-        </form>
-    {% endif %}
+        </div>
 
-    {% if user.is_authenticated %}
-        <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
-            <button class="ui left labeled icon button back">
-                <i class="left plus icon"></i>
-                Add extra time
-            </button>
-        </a>
-    {% endif %}
-    <a href="{% url 'request-competition' %}">
-        <button class="ui left labeled icon button">
-            <i class="plus icon"></i>
-            Request a competition
-        </button>
-    </a>
-    <a href="{% url 'athlete-timeline' athlete.slug %}">
-        <button class="ui left labeled icon button">
-            <i class="history icon"></i>
-            Timeline
-        </button>
-    </a>
+        <div class="row">
+            <div class="ten wide column">
+                <a href="{% url 'athlete-timeline' athlete.slug %}">
+                    <button class="ui left labeled icon primary button">
+                        <i class="history icon"></i>
+                        Timeline
+                    </button>
+                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
+                        <button class="ui left labeled icon button back">
+                            <i class="left plus icon"></i>
+                            Add extra time
+                        </button>
+                    </a>
+                {% endif %}
+                {% if request.user.is_superuser %}
+                    <a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/"
+                       target="_blank">
+                        <button class="ui left labeled icon button">
+                            <i class="left pencil icon"></i>
+                            Edit
+                        </button>
+                    </a>
+                {% endif %}
 
-    <br><br>
-    <div>
-        Total points: {{ athlete.get_total_points }}
-    </div>
+                {% if request.user.is_superuser %}
+                    <form action="" method="post" class="ui form">{% csrf_token %}
+                        <div class="two fields">
+                            <div class="field">
+                                <div class="ui search selection dropdown nationalities">
+                                    <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required
+                                           autofocus="autofocus">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">Select Country</div>
+                                    <div class="menu">
+                                        {% for nationality in nationalities %}
+                                            <div class="item" data-value="{{ nationality.pk }}"><i
+                                                    class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <button type="submit" class="ui green button">Add /
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="six wide column">
 
-    {% for event_type, times in personal_bests.items %}
-        {% if times %}
-            <table class="ui celled table">
-                <thead>
-                <tr>
-                    <th>{{ event_type|capfirst }}</th>
-                    <th>PR</th>
-                    <th>Points</th>
-                    <th>Date</th>
-                    <th>Location</th>
-                    <th>Competition</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for personal_best in times %}
+                <table class="ui definition compact table">
+                    <tbody>
                     <tr>
-                        <td>
-                            <a href="{% url 'best-by-event' event_name=personal_best.event.name|to_url gender=athlete.gender|gender_to_text %}">
-                                {{ personal_best.event.name }}</a>
-                        </td>
-                        <td>
-                            <a href="{% url 'athlete-event' slug=athlete.slug event_name=personal_best.event.name|to_url %}">
-                                {{ personal_best.time|format_time }}</a>
-                        </td>
-                        <td>{% if personal_best.points > 0 %}{{ personal_best.points }}{% else %} - {% endif %}</td>
-                        <td>
-                            {{ personal_best.competition.date }}
-                        </td>
-                        <td>
-                            {{ personal_best.competition.location }}
-                        </td>
-                        <td>
-                            <a href="{% url 'competition-overview' competition_slug=personal_best.competition.slug %}">
-                                {{ personal_best.competition.name }}
-                            </a>
-                        </td>
+                        <td>Total recorded competitions</td>
+                        <td>{{ athlete.count_competitions }}</td>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-    {% endfor %}
 
-    {% if request.user.is_staff %}
-        <p>
-        <h4>Original import lines:</h4>
-        {% for result in all_results %}
-            {% if result.original_line %}
-                {{ result.original_line }}<br>
-            {% endif %}
-        {% endfor %}
-        </p>
-    {% endif %}
+                    <tr>
+                        <td>Total recorded results</td>
+                        <td>{{ athlete.count_results }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total points</td>
+                        <td>{{ athlete.get_total_points }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="sixteen wide column">
+                {% for event_type, times in personal_bests.items %}
+                    {% if times %}
+                        <table class="ui celled table">
+                            <thead>
+                            <tr>
+                                <th>{{ event_type|capfirst }}</th>
+                                <th>PR</th>
+                                <th>Points</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Competition</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for personal_best in times %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'best-by-event' event_name=personal_best.event.name|to_url gender=athlete.gender|gender_to_text %}">
+                                            {{ personal_best.event.name }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'athlete-event' slug=athlete.slug event_name=personal_best.event.name|to_url %}">
+                                            {{ personal_best.time|format_time }}</a>
+                                    </td>
+                                    <td>{% if personal_best.points > 0 %}{{ personal_best.points }}{% else %}
+                                        - {% endif %}</td>
+                                    <td>
+                                        {{ personal_best.competition.date }}
+                                    </td>
+                                    <td>
+                                        {{ personal_best.competition.location }}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'competition-overview' competition_slug=personal_best.competition.slug %}">
+                                            {{ personal_best.competition.name }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="sixteen wide column">
+                {% if request.user.is_staff %}
+                    <p>
+                    <h4>Original import lines:</h4>
+                    {% for result in all_results %}
+                        {% if result.original_line %}
+                            {{ result.original_line }}<br>
+                        {% endif %}
+                    {% endfor %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
