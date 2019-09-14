@@ -225,6 +225,10 @@ class Competition(models.Model):
         athlete_ids = IndividualResult.objects.filter(competition=self).values('athlete').distinct()
         return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).all()
 
+    def count_unlabeled_athletes(self):
+        athlete_ids = IndividualResult.objects.filter(competition=self).values('athlete').distinct()
+        return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).count()
+
 
 class IndividualResult(models.Model):
     athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
