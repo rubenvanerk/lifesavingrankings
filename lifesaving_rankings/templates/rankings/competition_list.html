@@ -97,6 +97,7 @@
                     {% endif %}
                 </td>
                 <td>
+                    <span hidden>{{ competition.published_on|date:"Y-m-d" }}</span>
                     {{ competition.published_on|date:"M d, Y" }}
                 </td>
                 {% if request.user.is_staff %}
