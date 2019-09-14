@@ -21,6 +21,7 @@ class FrontPageRecords(TemplateView):
         context = super().get_context_data()
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.objects.all().count()
+        context['competition_count'] = Competition.objects.filter(status=Competition.IMPORTED).count()
         context['home'] = True
         context['last_published_competitions'] = Competition.objects.filter(slug__isnull=False,
                                                                             status=2,

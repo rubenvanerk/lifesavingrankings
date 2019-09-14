@@ -255,3 +255,8 @@ form.filter .styled.accordion {
 .item.facebook {
     padding-top: 7px;
 }
+
+.statistics.row {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
