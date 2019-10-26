@@ -113,25 +113,10 @@ class Event(models.Model):
     name = models.CharField(max_length=60)
     type = models.IntegerField(default=UNKNOWN, choices=TYPES)
     use_points_in_athlete_total = models.BooleanField(default=False)
+    slug = models.CharField(max_length=60, unique=True)
 
     def __str__(self):
         return self.name
-
-    def generate_slug(self):
-        return slugify(self.name)
-
-    @classmethod
-    def find_by_name(cls, event_name):
-        event = Event.objects.raw(
-            "SELECT * FROM rankings_event "
-            "WHERE LOWER(REPLACE(name, ' ', '-')) = %s "
-            "LIMIT 1",
-            [event_name]
-        )
-        if len(list(event)):
-            return event[0]
-        else:
-            return False
 
     def are_segments_same(self):
         relay_orders = RelayOrder.objects.filter(event=self).all()

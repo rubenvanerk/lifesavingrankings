@@ -11,7 +11,7 @@
     {% breadcrumb competition.name "competition-overview" competition.slug %}
     {% with gender_name=gender|gender_to_text %}
         {% with label=event.name|add:" "|add:gender_name %}
-            {% breadcrumb label "competition-event" competition.slug event.name|to_url gender|gender_to_text %}
+            {% breadcrumb label "competition-event" competition.slug event.slug gender|gender_to_text %}
         {% endwith %}
     {% endwith %}
 

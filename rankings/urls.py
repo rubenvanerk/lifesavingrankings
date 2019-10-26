@@ -24,7 +24,7 @@ urlpatterns = [
         name='athlete-timeline'
     ),
     url(
-        regex=r'^athlete/(?P<slug>[a-z0-9\-]+)/(?P<event_name>[a-z0-9\-()]+)$',
+        regex=r'^athlete/(?P<athlete_slug>[a-z0-9\-]+)/(?P<event_slug>[a-z0-9\-()]+)$',
         view=views.EventByAthlete.as_view(),
         name='athlete-event'
     ),
@@ -49,7 +49,7 @@ urlpatterns = [
         name='best-by-event-redirect'
     ),
     url(
-        regex=r'^top/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
+        regex=r'^top/(?P<slug>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
         view=views.BestByEvent.as_view(),
         name='best-by-event'
     ),
@@ -89,7 +89,7 @@ urlpatterns = [
         name='competition-list'
     ),
     url(
-        regex=r'^competition/(?P<competition_slug>[a-z0-9\-]+)/(?P<event_name>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
+        regex=r'^competition/(?P<competition_slug>[a-z0-9\-]+)/(?P<slug>[a-z0-9\-()]+)/(?P<gender>\bmen\b|\bwomen\b)',
         view=views.CompetitionEvent.as_view(),
         name='competition-event'
     ),

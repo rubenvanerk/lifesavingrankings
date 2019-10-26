@@ -10,7 +10,7 @@
 
     {% breadcrumb "Home" "/" %}
     {% breadcrumb athlete.name "athlete-overview" athlete.slug %}
-    {% breadcrumb event.name "athlete-event" athlete.slug event.name|to_url %}
+    {% breadcrumb event.name "athlete-event" athlete.slug event.slug %}
 
     {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
 

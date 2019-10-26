@@ -134,11 +134,11 @@
                             {% for personal_best in times %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'best-by-event' event_name=personal_best.event.name|to_url gender=athlete.gender|gender_to_text %}">
+                                        <a href="{% url 'best-by-event' slug=personal_best.event.slug gender=athlete.gender|gender_to_text %}">
                                             {{ personal_best.event.name }}</a>
                                     </td>
                                     <td>
-                                        <a href="{% url 'athlete-event' slug=athlete.slug event_name=personal_best.event.name|to_url %}">
+                                        <a href="{% url 'athlete-event' athlete_slug=athlete.slug event_slug=personal_best.event.slug %}">
                                             {{ personal_best.time|format_time }}</a>
                                     </td>
                                     <td>{% if personal_best.points > 0 %}{{ personal_best.points }}{% else %}

@@ -49,7 +49,7 @@ class CompetitionOverview(TemplateView):
         if not request.user.is_superuser:
             raise Http404
         competition_slug = self.kwargs.get('competition_slug')
-        competition = Competition.objects.filter(slug=competition_slug).first()
+        competition = Competition.objects.get(slug=competition_slug)
         nationality = Nationality.objects.get(pk=request.POST['country'])
 
         for athlete in competition.get_unlabeled_athletes():
@@ -61,7 +61,8 @@ class CompetitionOverview(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         competition_slug = self.kwargs.get('competition_slug')
-        competition = Competition.objects.filter(slug=competition_slug).first()
+        competition = Competition.objects.get(slug=competition_slug)
+
         if competition is None:
             raise Http404
         if competition.is_concept and not self.request.user.is_superuser:
@@ -74,9 +75,11 @@ class CompetitionOverview(TemplateView):
         for event in events:
             context['events'][event.name] = {}
             context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition=competition,
-                                                                                           gender=1, limit=limit)
+                                                                                           gender=Athlete.MALE,
+                                                                                           limit=limit)
             context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition=competition,
-                                                                                             gender=2, limit=limit)
+                                                                                             gender=Athlete.FEMALE,
+                                                                                             limit=limit)
         context['competition'] = competition
         context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
         context['unlabeled_athletes'] = competition.get_unlabeled_athletes()
@@ -109,17 +112,17 @@ class CompetitionEvent(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         competition_slug = self.kwargs.get('competition_slug')
-        competition = Competition.objects.filter(slug=competition_slug).first()
+        competition = Competition.objects.get(slug=competition_slug)
 
-        event_name = self.kwargs.get('event_name')
-        event = Event.find_by_name(event_name)
+        slug = self.kwargs.get('slug')
+        event = Event.objects.get(slug=slug)
         gender = gender_name_to_int(self.kwargs.get('gender'))
 
         if competition is None or event is False:
             raise Http404
 
         results = IndividualResult.objects.filter(competition=competition, event=event,
-                                                  athlete__gender=gender).order_by('-round', 'time').all()
+                                                  athlete__gender=gender).order_by('-round', 'time')
         context['results'] = results
 
         context['competition'] = competition
@@ -177,7 +180,7 @@ class PersonalBests(TemplateView):
     def get_athlete(self):
         if self.athlete is not Athlete:
             slug = self.kwargs.get('slug')
-            self.athlete = Athlete.objects.filter(slug=slug).first()
+            self.athlete = Athlete.objects.get(slug=slug)
             if not self.athlete:
                 raise Http404
         return self.athlete
@@ -226,15 +229,14 @@ class EventByAthlete(ListView):
 
     def get_athlete(self):
         if self.athlete is not Athlete:
-            self.athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
+            self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
             if not self.athlete:
                 raise Http404
         return self.athlete
 
     def get_event(self):
         if self.event is not Event:
-            event_name = self.kwargs.get('event_name')
-            self.event = Event.find_by_name(event_name)
+            self.event = Event.objects.get(slug=self.kwargs.get('event_slug'))
             if not self.event:
                 raise Http404
         return self.event
@@ -306,7 +308,7 @@ class AthleteTimeline(TemplateView):
 
 @login_required
 def add_result(request, athlete_slug):
-    athlete = Athlete.objects.filter(slug=athlete_slug).first()
+    athlete = Athlete.objects.get(slug=athlete_slug)
     if athlete is None:
         raise Http404
 
@@ -335,7 +337,7 @@ def add_result(request, athlete_slug):
             result.extra_analysis_time_by = request.user
             result.save()
 
-            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event.generate_slug())))
+            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event.slug)))
         else:
             return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
     else:
@@ -384,8 +386,8 @@ class BestByEvent(ListView):
 
     def get_event(self):
         if self.event is not Event:
-            event_name = self.kwargs.get('event_name')
-            self.event = Event.find_by_name(event_name)
+            slug = self.kwargs.get('slug')
+            self.event = Event.objects.get(slug=slug)
             if not self.event:
                 raise Http404
         return self.event
@@ -446,8 +448,8 @@ class BestByEvent(ListView):
         context['filter']['nationalities'] = Nationality.objects.all()
 
         if self.request.GET.get('nationality') or 0 > 0:
-            context['filter']['nationality'] = Nationality.objects.filter(
-                pk=self.request.GET.get('nationality').strip()).first()
+            context['filter']['nationality'] = Nationality.objects.get(
+                pk=self.request.GET.get('nationality').strip())
 
         lowest_year_of_birth = Athlete.objects.aggregate(Min('year_of_birth'))['year_of_birth__min']
         highest_year_of_birth = Athlete.objects.aggregate(Max('year_of_birth'))['year_of_birth__max']
@@ -616,29 +618,29 @@ def gender_name_to_int(gender):
 # Redirects from old url format
 
 def athlete_redirect_athlete_id_to_slug(request, athlete_id):
-    athlete = Athlete.objects.filter(pk=athlete_id).first()
+    athlete = Athlete.objects.get(pk=athlete_id)
     if athlete is None:
         raise Http404
     return redirect(athlete, permanent=True)
 
 
 def athlete_redirect_event_id_to_slug(request, slug, event_id):
-    event = Event.objects.filter(pk=event_id).first()
+    event = Event.objects.get(pk=event_id)
     if event is None:
         raise Http404
-    athlete = Athlete.objects.filter(slug=slug).first()
+    athlete = Athlete.objects.get(slug=slug)
     if athlete is None:
-        athlete = Athlete.objects.filter(pk=slug).first()
+        athlete = Athlete.objects.get(pk=slug)
         if athlete is None:
             raise Http404
-    return redirect(reverse('athlete-event', args=[athlete.slug, event.generate_slug()]), permanent=True)
+    return redirect(reverse('athlete-event', args=[athlete.slug, event.slug]), permanent=True)
 
 
 def redirect_event_id_to_slug(request, event_id, gender):
-    event = Event.objects.filter(pk=event_id).first()
+    event = Event.objects.get(pk=event_id)
     if event is None:
         raise Http404
-    return redirect(reverse('best-by-event', args=[event.generate_slug(), gender]), permanent=True)
+    return redirect(reverse('best-by-event', args=[event.slug, gender]), permanent=True)
 
 
 @method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')

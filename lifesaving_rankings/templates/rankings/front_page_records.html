@@ -34,7 +34,7 @@
                         {% for top_result in results %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'best-by-event' event_name=top_result.event.name|to_url gender=gender %}">
+                                    <a href="{% url 'best-by-event' slug=top_result.event.slug gender=gender %}">
                                         {{ top_result.event.name }}</a>
                                 </td>
                                 <td>

@@ -9,7 +9,7 @@
     {% breadcrumb "Home" "/" %}
     {% breadcrumb "Events" "event-overview" %}
     {% with event_name=event.name|add:" "|add:gender %}
-        {% breadcrumb event_name "best-by-event" event.name|to_url gender %}
+        {% breadcrumb event_name "best-by-event" event.slug gender %}
     {% endwith %}
 
     {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
