@@ -256,7 +256,7 @@ form.filter .styled.accordion {
     padding-top: 7px;
 }
 
-.statistics.row {
+.ui.stackable.grid .statistics.row {
     margin-top: 2em;
     margin-bottom: 2em;
 }
