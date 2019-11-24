@@ -225,6 +225,13 @@
                 {% endfor %}
             {% endif %}
 
+            {% if community_ad %}
+                <div class="ui blue segment community-ad">
+                    <span class="about"><a href="#">About community ads</a></span>
+                    <span class="title">{{ community_ad.title }}</span>
+                    <span class="content">{{ community_ad.content }}</span>
+                </div>
+            {% endif %}
 
             {% block content %}
 

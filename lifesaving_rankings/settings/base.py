@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.postgres',
     'rankings',
+    'ads',
     'lifesaving_rankings',
     'analysis',
     'debug_toolbar',
@@ -66,6 +67,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'ads.processors.community_ad',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
