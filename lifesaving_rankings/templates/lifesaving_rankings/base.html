@@ -34,9 +34,7 @@
 
     {% block css %}
 
-        {#        <link rel="stylesheet" href="{% static 'libs/semantic-ui/semantic.min.css' %}">#}
-        <link rel="stylesheet" type="text/css"
-              href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.8/dist/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'libs/fomantic-ui/semantic.min.css' %}">
 
         <!-- Your stuff: Third-party CSS libraries go here -->
         <link rel="stylesheet" type="text/css"
@@ -187,7 +185,7 @@
         </div>
 
         {% if home %}
-            <div id="home-top" style="background-image: url({% static 'images/pool.jpg' %})">
+            <div id="home-top" style="background-image: url({% static 'images/poolcompressed.jpg' %})">
                 <div class="ui container">
                     <div class="name">
                         <h1><span class="de-emphasis">Lifesaving</span> Rankings</h1>
@@ -281,8 +279,7 @@
                 integrity="sha256-YhmtrYJDSZgZFL8jDCR8VNOV/iigJPZYNCk8L9J72Hk=" crossorigin="anonymous"></script>
 
 
-        {#        <script src="{% static 'libs/semantic-ui/semantic.min.js' %}"></script>#}
-        <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.8/dist/semantic.min.js"></script>
+        <script src="{% static 'libs/fomantic-ui/semantic.min.js' %}"></script>
         <!-- place project specific Javascript in this file -->
         <script src="{% static 'javascript/main.js' %}"></script>
 

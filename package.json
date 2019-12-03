@@ -1,0 +1,19 @@
+{
+  "name": "lifesavingrankings.com",
+  "version": "1.0.0",
+  "description": "Lifesaving Rankings tracks results for lifesaving pool competitions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubenvanerk/lifesavingrankings.git"
+  },
+  "author": "Ruben van Erk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rubenvanerk/lifesavingrankings/issues"
+  },
+  "homepage": "https://github.com/rubenvanerk/lifesavingrankings#readme"
+}

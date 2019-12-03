@@ -27,26 +27,28 @@
             var ctx = document.getElementById("progression");
 
             data = {
-                labels: [{% for result in results_ordered_by_date %}'{{ result.competition.date|date:"Y-m-d" }}
-                    ',{% endfor %}],
-                    datasets
-            :
-            [{
-                label: 'Result',
-                backgroundColor: 'rgba(0, 97, 191, 1)',
-                borderColor: 'rgba(0, 97, 191, .5)',
-                lineTension: .15,
-                fill: false,
-                data: [
+                labels: [
                     {% for result in results_ordered_by_date %}
-                        {
-                            x: new Date('{{ result.competition.date|date:"Y-m-d 00:00" }}'),
-                            y: '{{ result.time|format_time }}'
-                        },
+                        '{{ result.competition.date|date:"Y-m-d" }}',
                     {% endfor %}
                 ],
-                borderWidth: 3
-            }]
+                datasets:
+                    [{
+                        label: 'Result',
+                        backgroundColor: 'rgba(0, 97, 191, 1)',
+                        borderColor: 'rgba(0, 97, 191, .5)',
+                        lineTension: .15,
+                        fill: false,
+                        data: [
+                            {% for result in results_ordered_by_date %}
+                                {
+                                    x: new Date('{{ result.competition.date|date:"Y-m-d 00:00" }}'),
+                                    y: '{{ result.time|format_time }}'
+                                },
+                            {% endfor %}
+                        ],
+                        borderWidth: 3
+                    }]
             }
             ;
 
@@ -141,7 +143,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ time.time|format_time }}
+                    {% include 'rankings/partials/time.html' with individual_result=time %}
                     {% if forloop.first %}<sup><i class="disabled small icon star outline"></i></sup>{% endif %}
                 </td>
                 <td>

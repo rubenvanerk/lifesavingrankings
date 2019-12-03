@@ -283,6 +283,15 @@ class IndividualResult(models.Model):
         return None
 
 
+class IndividualResultSplit(models.Model):
+    class Meta:
+        ordering = ('distance', 'time')
+
+    individual_result = ForeignKey(IndividualResult, on_delete=models.CASCADE)
+    time = models.DurationField()
+    distance = models.IntegerField(default=0)
+
+
 class EventRecord(models.Model):
     def __str__(self):
         return self.event.name + " " + self.get_gender_display()

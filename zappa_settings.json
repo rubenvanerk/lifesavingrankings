@@ -9,6 +9,7 @@
         "certificate_arn": "arn:aws:acm:eu-central-1:815574608842:certificate/c463a0e9-8745-4c7c-b1ca-f623a54f1487",
         "domain": "www.lifesavingrankings.com",
         "cloudwatch_log_level": "OFF",
-        "log_level": "CRITICAL"
+        "log_level": "CRITICAL",
+        "exclude": ["lifesaving_rankings/static/*"]
     }
 }

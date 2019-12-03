@@ -3,7 +3,7 @@ import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
-from django.db.models import Count, Min, F, Prefetch
+from django.db.models import Count, Min, F, Prefetch, ExpressionWrapper, IntegerField
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -402,11 +402,22 @@ class BestByEvent(ListView):
 
         yob_start = mk_int(self.request.GET.get('yob_start'))
         yob_end = mk_int(self.request.GET.get('yob_end'))
-
         if yob_start:
             qs = qs.filter(athlete__year_of_birth__gte=yob_start)
         if yob_end:
             qs = qs.filter(athlete__year_of_birth__lte=yob_end)
+
+        # age_min = mk_int(self.request.GET.get('age_min'))
+        # age_max = mk_int(self.request.GET.get('age_max'))
+        # if age_min or age_max:
+        #     qs = qs.exclude(athlete__year_of_birth__isnull=True)
+        # if age_min:
+        #     qs = qs.filter(athlete__age__gte=age_min)
+        # if age_max:
+        #     qs = qs.annotate(min_yob=ExpressionWrapper(F('competition__date__year') - age_max, output_field=IntegerField()))
+        #     qs = qs.filter(athlete__year_of_birth=F('min_yob'))
+
+        print(qs.query)
 
         if self.request.GET.get('nationality') or 0 > 0:
             nationality = Nationality.objects.filter(pk=self.request.GET.get('nationality').strip()).first()
