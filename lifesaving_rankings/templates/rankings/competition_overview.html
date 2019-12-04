@@ -156,7 +156,7 @@
                                     </a>
                                 </td>
                                 <td>{{ result.athlete.year_of_birth }}</td>
-                                <td>{{ result.get_time_display }}</td>
+                                <td>{% include 'rankings/partials/time.html' with individual_result=result %}</td>
                                 <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
                             </tr>
                         {% endfor %}

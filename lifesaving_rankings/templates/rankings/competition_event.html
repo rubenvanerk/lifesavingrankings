@@ -71,13 +71,7 @@
                 </a></td>
                 <td>{{ result.athlete.year_of_birth }}</td>
                 <td>
-                    {% if request.user.is_superuser %}
-                        <a href="https://www.lifesavingrankings.com/admin/rankings/individualresult/{{ result.pk }}/change/">
-                            {{ result.get_time_display }}
-                        </a>
-                    {% else %}
-                        {{ result.get_time_display }}
-                    {% endif %}
+                    {% include 'rankings/partials/time.html' with individual_result=result %}
                 </td>
                 <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
             </tr>

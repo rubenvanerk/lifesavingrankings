@@ -1,5 +1,4 @@
 {% load datetime_filter %}
-
 {% if individual_result.individualresultsplit_set.all %}
     <span hidden>{{ individual_result.time|format_time }}</span>
     <abbr title="Splits" class="popup" data-html="{% for split in individual_result.individualresultsplit_set.all %}{{ split.distance }}m: {{ split.time|format_time }}{% if not forloop.last %}<br>{% endif %}{% endfor %}">
