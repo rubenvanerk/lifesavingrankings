@@ -10,6 +10,6 @@
         "domain": "www.lifesavingrankings.com",
         "cloudwatch_log_level": "OFF",
         "log_level": "CRITICAL",
-        "exclude": ["lifesaving_rankings/static/*"]
+        "exclude": ["static"]
     }
 }
