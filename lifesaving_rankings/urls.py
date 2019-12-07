@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from lifesaving_rankings.views import ultimate_lifesaver
+from lifesaving_rankings.views import ultimate_lifesaver, rankings_redirect
 from rankings import views
 
 urlpatterns = [
@@ -25,11 +25,12 @@ urlpatterns = [
         view=views.FrontPageRecords.as_view(),
         name='home'
     ),
+    url('', include('rankings.urls')),
+    url(r'^rankings/*', rankings_redirect),
     url(r'^accounts/', include('allauth.urls')),
     url(regex=r'^accounts/profile/',
         view=views.FrontPageRecords.as_view(),
         name='profile'),
-    url(r'^rankings/', include('rankings.urls')),
     url(r'^analysis/', include('analysis.urls')),
     url(r'^ultimate-lifesaver/', ultimate_lifesaver),
     url(r'^admin/', admin.site.urls),

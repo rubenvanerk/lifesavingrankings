@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 
 def error_404_view(request, exception):
@@ -13,3 +13,8 @@ def error_500_view(request):
 
 def ultimate_lifesaver(request):
     return render(request, 'lifesaving_rankings/ultimate-lifesaver.html')
+
+
+def rankings_redirect(request):
+    full_path = request.get_full_path()
+    return redirect(full_path.replace('/rankings', ''))
