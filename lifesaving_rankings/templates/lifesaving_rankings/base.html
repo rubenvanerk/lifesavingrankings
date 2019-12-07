@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Lifesaving Rankings | {% block head_title %}{% endblock %}</title>
+    <title>{% block head_title %}{% endblock %} | Lifesaving Rankings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Ruben van Erk">
     <meta name="google-site-verification" content="i0Ovx5SUDs2FSShQ_SxvstFlmVtappJirHsk_p6rF9Y"/>
@@ -34,8 +34,6 @@
 
     {% block css %}
 
-        <link rel="stylesheet" type="text/css" href="{% static 'libs/fomantic-ui/semantic.min.css' %}">
-
         <!-- Your stuff: Third-party CSS libraries go here -->
         <link rel="stylesheet" type="text/css"
               href="https://cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css"/>
@@ -43,7 +41,7 @@
               integrity="sha256-4BosA+P6Qycvyi2wsMf6zbq9Em7BJqMXk/SpXbQVJJY=" crossorigin="anonymous"/>
 
         <!-- This file stores project-specific CSS -->
-        <link href="{% static 'css/project.css' %}" rel="stylesheet">
+        <link href="{% static 'css/main.css' %}" rel="stylesheet">
 
     {% endblock %}
 
@@ -284,10 +282,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.4/js/standalone/selectize.js"
                 integrity="sha256-YhmtrYJDSZgZFL8jDCR8VNOV/iigJPZYNCk8L9J72Hk=" crossorigin="anonymous"></script>
 
-
-        <script src="{% static 'libs/fomantic-ui/semantic.min.js' %}"></script>
         <!-- place project specific Javascript in this file -->
-        <script src="{% static 'javascript/main.js' %}"></script>
+        <script src="{% static 'js/main.js' %}"></script>
 
     {% endblock %}
 
