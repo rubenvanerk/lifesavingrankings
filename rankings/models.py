@@ -243,21 +243,6 @@ class IndividualResult(models.Model):
         self.points = calculate_points(record.time.total_seconds() * 100, self.time.total_seconds() * 100)
         self.save()
 
-    def get_time_display(self):
-        if self.disqualified:
-            return 'DQ'
-        if self.did_not_start:
-            return 'DNS'
-        hours, rem = divmod(self.time.seconds, 3600)
-        minutes, seconds = divmod(rem, 60)
-        tens = int(round(self.time.microseconds / 10000))
-        if tens < 10:
-            tens = str('0') + str(tens)
-        if seconds < 10:
-            seconds = str('0') + str(seconds)
-
-        return '{}:{}.{}'.format(minutes, seconds, tens)
-
     @staticmethod
     def find_by_athlete(athlete):
         return IndividualResult.objects.filter(athlete=athlete)
