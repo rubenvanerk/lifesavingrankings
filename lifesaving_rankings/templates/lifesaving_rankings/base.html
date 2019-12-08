@@ -1,10 +1,27 @@
-{% load staticfiles i18n account active_menu_filter google_analytics_tags %}
+{% load static i18n account active_menu_filter %}
 
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    {% if not request.user.is_staff %}
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145909425-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+
+            gtag('js', new Date());
+
+            gtag('config', 'UA-145909425-1');
+        </script>
+    {% endif %}
+
+
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block head_title %}{% endblock %} | Lifesaving Rankings</title>
@@ -44,29 +61,6 @@
         <link href="{% static 'css/main.css' %}" rel="stylesheet">
 
     {% endblock %}
-
-    {% if not request.user.is_staff %}
-        <!-- Matomo -->
-        <script type="text/javascript">
-            var _paq = _paq || [];
-            /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-            _paq.push(['trackPageView']);
-            _paq.push(['enableLinkTracking']);
-            (function () {
-                var u = "//piwik.rubenvanerk.nl/";
-                _paq.push(['setTrackerUrl', u + 'piwik.php']);
-                _paq.push(['setSiteId', '2']);
-                var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-                g.type = 'text/javascript';
-                g.async = true;
-                g.defer = true;
-                g.src = u + 'piwik.js';
-                s.parentNode.insertBefore(g, s);
-            })();
-        </script>
-        <!-- End Matomo Code -->
-    {% endif %}
-
 </head>
 <body class="loading">
 {% block body %}
@@ -247,12 +241,6 @@
 
     </div>
 
-
-    {% if not request.user.is_staff %}
-        <div style="display:none">
-            <img src="{% google_analytics %}" width="0" height="0"/>
-        </div>
-    {% endif %}
 {% endblock %}
 
 

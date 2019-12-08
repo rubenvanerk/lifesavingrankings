@@ -35,8 +35,6 @@ urlpatterns = [
     url(r'^ultimate-lifesaver/', ultimate_lifesaver),
     url(r'^about/', about),
     url(r'^admin/', admin.site.urls),
-
-    url(r'^djga/', include('google_analytics.urls')),
 ]
 
 handler404 = 'lifesaving_rankings.views.error_404_view'

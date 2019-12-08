@@ -28,21 +28,18 @@ INSTALLED_APPS = [
     'rankings',
     'lifesaving_rankings',
     'analysis',
-    'debug_toolbar',
     'widget_tweaks',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'storages',
     'django_bootstrap_breadcrumbs',
-    'mathfilters',
-    'google_analytics'
+    'mathfilters'
 ]
 
 SITE_ID = 1
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -123,7 +120,3 @@ USE_L10N = True
 USE_TZ = True
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
-
-GOOGLE_ANALYTICS = {
-    'google_analytics_id': 'UA-145909425-1',
-}
