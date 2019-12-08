@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from lifesaving_rankings.views import ultimate_lifesaver, rankings_redirect
+from lifesaving_rankings.views import ultimate_lifesaver, rankings_redirect, about
 from rankings import views
 
 urlpatterns = [
@@ -33,6 +33,7 @@ urlpatterns = [
         name='profile'),
     url(r'^analysis/', include('analysis.urls')),
     url(r'^ultimate-lifesaver/', ultimate_lifesaver),
+    url(r'^about/', about),
     url(r'^admin/', admin.site.urls),
 
     url(r'^djga/', include('google_analytics.urls')),
