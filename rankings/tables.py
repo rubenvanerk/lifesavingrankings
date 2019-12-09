@@ -8,7 +8,7 @@ from rankings.models import Competition
 
 class DateColumn(tables.Column):
     def render(self, value):
-        return value.strftime("%b %d %Y")
+        return value.strftime("%b. %d, %Y")
 
 
 class CompetitionTable(tables.Table):
