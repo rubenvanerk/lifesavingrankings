@@ -12,10 +12,14 @@ class DateColumn(tables.Column):
 
 
 class CompetitionTable(tables.Table):
+    def __init__(self, *args, c1_name="", **kwargs):
+        super().__init__(*args, **kwargs)
+        self.base_columns['athlete_count'].verbose_name = 'Athlete count / status'
+
     class Meta:
         model = Competition
         fields = {'name', 'date', 'location'}
-        sequence = {'name', 'date', 'location'}
+        sequence = ('name', 'date', 'location', 'athlete_count')
 
     date = DateColumn()
     athlete_count = tables.Column(empty_values=())
@@ -24,7 +28,7 @@ class CompetitionTable(tables.Table):
         return format_html('<a href="%s">%s</a>' % (reverse('competition-overview', args={record.slug}), record.name))
 
     def render_athlete_count(self, record):
-        return record.get_athlete_count()
+        return record.get_athlete_count() or record.get_status_display()
 
     def order_athlete_count(self, queryset, is_descending):
         queryset = queryset.annotate(
