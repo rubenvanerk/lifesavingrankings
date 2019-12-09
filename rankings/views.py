@@ -3,16 +3,20 @@ import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.mail import send_mail
-from django.db.models import Count, Min, F, Prefetch, ExpressionWrapper, IntegerField
+from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView, DeleteView, DetailView
+from django_tables2.views import SingleTableMixin
+from django_filters.views import FilterView
 
 from rankings.functions import mk_int, try_parse_int
+from .filters import CompetitionFilter
 from .models import *
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from .forms import *
+from .tables import CompetitionTable
 
 
 class FrontPageRecords(TemplateView):
@@ -133,16 +137,13 @@ class CompetitionEvent(TemplateView):
         return context
 
 
-class CompetitionListView(ListView):
-    model = Competition
+class CompetitionListView(SingleTableMixin, FilterView):
+    table_class = CompetitionTable
+    template_name = "rankings/competition_list.html"
     ordering = ['-date']
-
-    def get_queryset(self):
-        qs = super(CompetitionListView, self).get_queryset()
-        qs = qs.filter(slug__isnull=False)
-        if not self.request.user.is_superuser:
-            return qs.filter(is_concept=False)
-        return qs
+    queryset = Competition.objects.filter(slug__isnull=False).all()
+    model = Competition
+    filterset_class = CompetitionFilter
 
 
 class EventOverview(TemplateView):

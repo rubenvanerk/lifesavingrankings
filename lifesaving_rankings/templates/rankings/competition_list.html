@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load static datetime_filter %}
+{% load static datetime_filter django_tables2 %}
 
 {% load django_bootstrap_breadcrumbs %}
 
@@ -18,89 +18,30 @@
 {% block content %}
     <h1 class="ui header">Competitions</h1>
 
-    <a href="{% url 'request-competition' %}">
-        <button class="ui left labeled icon button request-a-competition">
-            <i class="plus icon"></i>
-            Request a competition
-        </button>
-    </a>
+    <div class="ui stackable grid">
 
-    <div id="competition-filters">
-        <div class="ui checkbox">
-            <input type="checkbox" name="imported" checked>
-            <label>Imported</label>
+        <div class="five wide column">
+            <form action="" method="get" class="ui narrow form column">
+                <div class="fields">
+                    <div class="field">{{ filter.form.as_p }}</div>
+                    <div class="field"><input type="submit" class="ui primary button" value="Search"/></div>
+                </div>
+            </form>
         </div>
-        <div class="ui checkbox">
-            <input type="checkbox" name="wanted" checked>
-            <label>Results wanted</label>
+
+        <div class="four wide column">
+            <a href="{% url 'request-competition' %}">
+                <button class="ui left labeled icon button request-a-competition">
+                    <i class="plus icon"></i>
+                    Request a competition
+                </button>
+            </a>
         </div>
-        <div class="ui checkbox">
-            <input type="checkbox" name="scheduled">
-            <label>Scheduled for import</label>
-        </div>
-        <div class="ui checkbox">
-            <input type="checkbox" name="unable">
-            <label>Unable to import</label>
-        </div>
+
+
+
     </div>
 
-    <table class="ui celled table" id="competitionList">
-        <thead>
-        <tr>
-            <th>Competition</th>
-            <th>Date</th>
-            <th>Location</th>
-            <th>Participants / Status</th>
-            <th>Publish date</th>
-            {% if request.user.is_staff %}
-                <th>Unlabeled</th>
-            {% endif %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for competition in object_list %}
-            <tr>
-                <td>
-                    {% if competition.is_imported or request.user.is_superuser %}
-                        <a href="{% url 'competition-overview' competition.slug %}">
-                            {{ competition.name }}
-                        </a>
-                    {% else %}
-                        {{ competition.name }}
-                    {% endif %}
-                    {% if competition.is_concept %}[CONCEPT]{% endif %}
-                </td>
-                <td>
-                    <span hidden>{{ competition.date|date:"Y-m-d" }}</span>
-                    {{ competition.date }}
-                </td>
-                <td>{{ competition.location }}</td>
-                <td>
-                    {% if competition.is_imported %}
-                        {{ competition.get_athlete_count }}
-                    {% elif competition.date|in_future %}
-                        Upcoming
-                    {% else %}
-                        {{ competition.get_status_display }}
-                    {% endif %}
-                </td>
-                <td>
-                    <span hidden>{{ competition.published_on|date:"Y-m-d" }}</span>
-                    {{ competition.published_on|date:"M d, Y" }}
-                </td>
-                {% if request.user.is_staff %}
-                    <td>
-                        {% if not competition.is_imported %}
-                            <i class="minus icon"></i>
-                        {% elif competition.is_fully_labeled %}
-                            <i class="green check icon"></i>
-                        {% else %}
-                            {{ competition.count_unlabeled_athletes }}
-                        {% endif %}
-                    </td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% render_table table %}
+
 {% endblock %}

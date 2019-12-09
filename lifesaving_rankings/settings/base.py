@@ -34,7 +34,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'storages',
     'django_bootstrap_breadcrumbs',
-    'mathfilters'
+    'mathfilters',
+    'django_tables2',
+    'django_filters'
 ]
 
 SITE_ID = 1
@@ -120,3 +122,5 @@ USE_L10N = True
 USE_TZ = True
 
 DATE_INPUT_FORMATS = '%d-%m-%Y'
+
+DJANGO_TABLES2_TEMPLATE = "django_tables2/semantic.html"
