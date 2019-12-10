@@ -58,7 +58,9 @@
                         <button class="ui button">Cancel</button>
                     </a>
                     <div class="or"></div>
-                    <button class="ui positive button" type="submit" value="Update">Update</button>
+                    <button class="ui positive button" type="submit">
+                        {% if new_group %}Create{% else %}Update{% endif %}
+                    </button>
                 </div>
 
 
