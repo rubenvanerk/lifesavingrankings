@@ -9,7 +9,6 @@ import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Min, Q
-from django import forms
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -41,7 +40,7 @@ class IndividualAnalysis(TemplateView):
 
         context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date, user=group.creator)
         context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
-        context['events'] = Event.objects.filter(type=1).order_by('id')
+        context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
         context['analysis_group'] = group
         return context
 
