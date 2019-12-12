@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "fomantic-ui": "2.8.2"
+    "fomantic-ui": "^2.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",

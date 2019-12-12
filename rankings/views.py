@@ -418,8 +418,6 @@ class BestByEvent(ListView):
         #     qs = qs.annotate(min_yob=ExpressionWrapper(F('competition__date__year') - age_max, output_field=IntegerField()))
         #     qs = qs.filter(athlete__year_of_birth=F('min_yob'))
 
-        print(qs.query)
-
         if self.request.GET.get('nationality') or 0 > 0:
             nationality = Nationality.objects.filter(pk=self.request.GET.get('nationality').strip()).first()
             if nationality:

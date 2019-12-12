@@ -18,18 +18,43 @@
 
 {% block content %}
 
-    <h1>Relay Analysis: {{ analysis_group.name }}</h1>
+    <h1 class="ui header">Relay Analysis: {{ analysis_group.name }}</h1>
+    {% if analysis_group.simulation_date_from %}
+        <p>Simulation below was run with times from {{ analysis_group.simulation_date_from }} and later</p>
+    {% endif %}
+
 
     {% if analysis_group.creator == request.user and not analysis_group.simulation_in_progress %}
-        <a href="{% if analysis_group.athlete.count <= 10 %}{% url 'relay-analysis' analysis_group.id %}?run_simulation=1{% endif %}"
-           {% if analysis_group.athlete.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}>
-            <button class="ui left labeled icon button{% if analysis_group.athlete.count > 10 %} disabled{% endif %}">
+
+        <form action="{% url 'relay-analysis' analysis_group.id %}" method="post">
+            {% csrf_token %}
+
+            <div class="ui calendar" id="rangestart">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    <input type="text" placeholder="From date" name="from_date">
+                </div>
+            </div>
+
+            <button class="ui left labeled icon button{% if analysis_group.athlete.count > 10 %} disabled{% endif %}"
+                    {% if analysis_group.athlete.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}>
                 <i class="right refresh icon"></i>
                 Run simulation
             </button>
-        </a>
+
+        </form>
+
+{#        <a href="{% if analysis_group.athlete.count <= 10 %}{% url 'relay-analysis' analysis_group.id %}?run_simulation=1{% endif %}"#}
+{#           {% if analysis_group.athlete.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}>#}
+{#            <button class="ui left labeled icon button{% if analysis_group.athlete.count > 10 %} disabled{% endif %}">#}
+{#                <i class="right refresh icon"></i>#}
+{#                Run simulation#}
+{#            </button>#}
+{#        </a>#}
+
         <br>
         <br>
+
     {% elif analysis_group.simulation_in_progress %}
         <div class="ui icon message">
             <i class="notched circle loading icon"></i>

@@ -255,6 +255,8 @@ class IndividualResult(models.Model):
     def find_fastest_by_athlete_and_event(athlete, event, analysis_group):
         qs = IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time')
         qs = qs.filter(Q(extra_analysis_time_by=analysis_group.creator) | Q(extra_analysis_time_by=None))
+        if analysis_group.simulation_date_from:
+            qs = qs.filter(competition__date__gte=analysis_group.simulation_date_from)
         return qs.first()
 
     def difference_with_previous_best(self):

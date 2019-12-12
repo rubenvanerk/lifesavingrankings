@@ -1,3 +1,4 @@
+import datetime
 import functools
 import itertools
 from datetime import timedelta
@@ -121,17 +122,22 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
 class RelayAnalysis(TemplateView):
     template_name = "analysis/relay_analysis.html"
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        analysis_group = context['analysis_group']
-        print(analysis_group.athlete.count)
-        if 'run_simulation' in self.request.GET \
-                and self.request.GET['run_simulation'] is '1' and analysis_group.athlete.count() <= 10:
+    def post(self, *args, **kwargs):
+        group_id = kwargs.get('group_id')
+        analysis_group = AnalysisGroup.objects.get(pk=group_id)
+
+        if analysis_group.creator != self.request.user:
+            return HttpResponse('Unauthorized', status=401)
+
+        if analysis_group.athlete.count() <= 10 and not analysis_group.simulation_in_progress:
+            date = self.request.POST.get('from_date') or None
+            if date is not None:
+                date = datetime.datetime.strptime(date, '%B %d, %Y').date()
+            analysis_group.simulation_date_from = date
             create_combinations(analysis_group)
             analysis_group.simulation_in_progress = True
             analysis_group.save()
             return redirect('relay-analysis', analysis_group.id)
-        return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super(RelayAnalysis, self).get_context_data(**kwargs)
@@ -139,7 +145,7 @@ class RelayAnalysis(TemplateView):
         analysis_group = AnalysisGroup.objects.get(pk=group_id)
         if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
-        context['events'] = Event.objects.filter(type=3).order_by('pk').all()
+        context['events'] = Event.objects.filter(type=Event.RELAY_COMPLETE).order_by('pk').all()
         context['analysis_group'] = analysis_group
         context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
         return context
@@ -174,7 +180,7 @@ def create_fastest_setups(request):
 
     last_group_team = GroupTeam.objects.get(pk=request.GET['last_group_team'])
     current_group_team = GroupTeam.objects.get(pk=request.GET['current_group_team'])
-    events = Event.objects.filter(type=3)
+    events = Event.objects.filter(type=Event.RELAY_COMPLETE)
     for event in events:
         get_fastest_time_for_team_and_event(current_group_team, event, analysis_group)
 

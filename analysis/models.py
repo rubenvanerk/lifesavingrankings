@@ -43,9 +43,10 @@ class AnalysisGroup(models.Model):
     public = models.BooleanField(default=False)
     athlete = models.ManyToManyField(Athlete)
     simulation_in_progress = models.BooleanField(default=False)
+    simulation_date_from = models.DateField(null=True)
 
     def get_group_teams_with_full_setup(self):
-        num_events = Event.objects.filter(type=3).count()
+        num_events = Event.objects.filter(type=Event.RELAY_COMPLETE).count()
         group_teams = GroupTeam.objects.annotate(num_setups=Count('setups')).filter(num_setups=num_events,
                                                                                     analysis_group=self).all()
         return group_teams
