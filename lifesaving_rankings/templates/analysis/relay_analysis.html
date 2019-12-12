@@ -44,13 +44,13 @@
 
         </form>
 
-{#        <a href="{% if analysis_group.athlete.count <= 10 %}{% url 'relay-analysis' analysis_group.id %}?run_simulation=1{% endif %}"#}
-{#           {% if analysis_group.athlete.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}>#}
-{#            <button class="ui left labeled icon button{% if analysis_group.athlete.count > 10 %} disabled{% endif %}">#}
-{#                <i class="right refresh icon"></i>#}
-{#                Run simulation#}
-{#            </button>#}
-{#        </a>#}
+        {#        <a href="{% if analysis_group.athlete.count <= 10 %}{% url 'relay-analysis' analysis_group.id %}?run_simulation=1{% endif %}"#}
+        {#           {% if analysis_group.athlete.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}>#}
+        {#            <button class="ui left labeled icon button{% if analysis_group.athlete.count > 10 %} disabled{% endif %}">#}
+        {#                <i class="right refresh icon"></i>#}
+        {#                Run simulation#}
+        {#            </button>#}
+        {#        </a>#}
 
         <br>
         <br>
@@ -81,9 +81,16 @@
         {% for group_team in group_teams %}
             <tr>
                 <td>
-                    {% for athlete in group_team.athletes.all %}
+                    {% for athlete in group_team.get_used_athletes %}
                         {{ athlete.name }}<br>
                     {% endfor %}
+
+                    {% if group_team.get_unused_athletes %}
+                        <hr>
+                        {% for athlete in group_team.get_unused_athletes %}
+                            {{ athlete.name }}<br>
+                        {% endfor %}
+                    {% endif %}
                 </td>
                 {% for setup in group_team.get_ordered_setups %}
                     <td>

@@ -100,3 +100,14 @@ class GroupTeam(models.Model):
 
     def get_ordered_setups(self):
         return self.setups.order_by('event')
+
+    def get_used_athletes(self):
+        setups = self.setups.all()
+        setup_segments = GroupEvenSetupSegment.objects.filter(group_event_setup__in=setups)
+        athletes = Athlete.objects.filter(groupevensetupsegment__in=setup_segments).distinct()
+        return athletes
+
+    def get_unused_athletes(self):
+        used_athletes = self.get_used_athletes()
+        all_athletes = self.athletes.all()
+        return list(set(all_athletes) - set(used_athletes))
