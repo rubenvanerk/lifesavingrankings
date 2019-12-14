@@ -149,10 +149,6 @@ form.ui.form input {
     margin: 0;
 }
 
-.ui.vertical.menu.search-results {
-    width: 23rem;
-}
-
 #content i.flag {
     margin: 0;
 }
@@ -267,4 +263,12 @@ form.filter .styled.accordion {
 
 .ui.container .ui.container.table-container {
     margin: 0;
+}
+
+.full.width {
+    width: 100%;
+}
+
+.ui.vertical.menu.search-results {
+    width: 100%;
 }

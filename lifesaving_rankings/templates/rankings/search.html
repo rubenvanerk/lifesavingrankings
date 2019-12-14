@@ -5,44 +5,73 @@
 {% block content %}
     <h1>Search results for: {{ query }}</h1>
 
-    {% if message %}
-        <div class="ui {% if success %}success{% else %}warning{% endif %} message">
-            {{ message }}
-        </div>
-    {% endif %}
+    <div class="ui stackable grid">
 
-    {% if search_results %}
-        <form method="post">{% csrf_token %}
-            <button class="ui left labeled icon button" id="report-duplicate-athlete">
-                <i class="exclamation circle icon"></i>
-                Report selected athletes as duplicates
-            </button>
-
-            <div class="ui vertical menu search-results">
-                {% for athlete in search_results %}
-                    <a href="{% url 'athlete-overview' athlete.slug %}" class="item">
-                        <div class="ui checkbox">
-                            <input type="checkbox" name="duplicates" value="{{ athlete.pk }}">
-                        </div>
-                        {% for nationality in athlete.nationalities.all %}
-                            <i class="{{ nationality.flag_code }} flag"
-                               title="{{ nationality.name }}"></i>
-                        {% endfor %}
-                        {{ athlete.name }}
-                        {% if athlete.year_of_birth is not None %}
-                            ({{ athlete.year_of_birth }})
-                        {% endif %}
-                        {% if request.user.is_staff %}
-                            <sup>{{ athlete.count_competitions }} | {{ athlete.count_results }}</sup>
-                        {% endif %}
-                        {% if athlete.gender == 1 %}
-                            <i class="mars icon"></i>{% elif athlete.gender == 2 %}<i class="venus icon"></i>
-                        {% endif %}
-                    </a>
-                {% endfor %}
+        <div class="row">
+            <div class="five wide column">
+                <form action="{% url 'search' %}" role="search">
+                    <div class="ui icon input full width">
+                        <input type="text"
+                               placeholder="Search athletes"
+                               name="athlete"
+                               {% if query %}value="{{ query }}"{% endif %}
+                               required>
+                        <i class="search icon"></i>
+                    </div>
+                </form>
             </div>
-        </form>
-    {% else %}
-        <p>No search results</p>
-    {% endif %}
+        </div>
+
+        <br>
+
+        {% if message %}
+            <div class="ui {% if success %}success{% else %}warning{% endif %} message">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        {% if search_results %}
+
+            <div class="row">
+                <div class="five wide column">
+                    <form method="post">{% csrf_token %}
+                        <button class="ui left labeled icon button full width" id="report-duplicate-athlete">
+                            <i class="exclamation circle icon"></i>
+                            Report selected athletes as duplicates
+                        </button>
+
+                        <div class="ui vertical menu full width search-results">
+                            {% for athlete in search_results %}
+                                <a href="{% url 'athlete-overview' athlete.slug %}" class="item">
+                                    <div class="ui checkbox">
+                                        <input type="checkbox" name="duplicates" value="{{ athlete.pk }}">
+                                    </div>
+                                    {% for nationality in athlete.nationalities.all %}
+                                        <i class="{{ nationality.flag_code }} flag"
+                                           title="{{ nationality.name }}"></i>
+                                    {% endfor %}
+                                    {{ athlete.name }}
+                                    {% if athlete.year_of_birth is not None %}
+                                        ({{ athlete.year_of_birth }})
+                                    {% endif %}
+                                    {% if request.user.is_staff %}
+                                        <sup>{{ athlete.count_competitions }} | {{ athlete.count_results }}</sup>
+                                    {% endif %}
+                                    {% if athlete.gender == 1 %}
+                                        <i class="mars icon"></i>{% elif athlete.gender == 2 %}
+                                        <i class="venus icon"></i>
+                                    {% endif %}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <p>No search results</p>
+        {% endif %}
+
+
+    </div>
+
 {% endblock %}
