@@ -1,6 +1,16 @@
 {% extends "lifesaving_rankings/base.html" %}
+{% load django_bootstrap_breadcrumbs %}
 
 {% block head_title %}Search{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Search ("|add:query|add:")" "search?athlete="|add:query %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
 
 {% block content %}
     <h1>Search results for: {{ query }}</h1>

@@ -206,11 +206,16 @@
             </div>
         {% endif %}
 
+        <div id="breadcrumb-container">
+            <div class="ui container">
+                {% block breadcrumbs %}
+
+                {% endblock %}
+            </div>
+        </div>
+
         <div id="content" class="ui container">
 
-            {% block breadcrumbs %}
-
-            {% endblock %}
 
             {% if messages %}
                 {% for message in messages %}
