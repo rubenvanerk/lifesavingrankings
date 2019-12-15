@@ -3,6 +3,7 @@
 @import "utils/vendor";
 
 $theme-color: #0060bf;
+$grey: rgba(0,0,0,.03);
 $break-small: 769px;
 $break-medium: 991px;
 //$break-large: 1200px;
@@ -282,13 +283,13 @@ form.filter .styled.accordion {
     height: 2em;
   }
   height: 3em;
-  background-color: $theme-color;
+  background-color: $grey;
 
   .ui.breadcrumb a.section, .ui.breadcrumb i.icon {
     @media screen and (max-width: $break-medium) {
       margin-top: 3px;
     }
     margin-top: 15px;
-    color: white;
+    color: rgba(0,0,0,.95);
   }
 }
