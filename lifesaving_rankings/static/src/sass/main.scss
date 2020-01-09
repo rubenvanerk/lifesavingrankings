@@ -280,9 +280,10 @@ form.filter .styled.accordion {
 
 #breadcrumb-container {
   @media screen and (max-width: $break-medium) {
-    height: 2em;
+    min-height: 2em;
+    padding-bottom: 3px;
   }
-  height: 3em;
+  min-height: 3em;
   background-color: $grey;
 
   .ui.breadcrumb a.section, .ui.breadcrumb i.icon {

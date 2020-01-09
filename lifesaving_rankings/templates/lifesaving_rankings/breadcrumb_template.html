@@ -1,8 +1,12 @@
-<div class="ui breadcrumb">
-    {% for url, label in breadcrumbs %}
-        <a href="{{ url }}" class="section">{{ label }}</a>
-        {% if forloop.counter != breadcrumbs_total %}
-            <i class="right angle icon divider"></i>
-        {% endif %}
-    {% endfor %}
+<div id="breadcrumb-container">
+    <div class="ui container">
+        <div class="ui breadcrumb">
+            {% for url, label in breadcrumbs %}
+                <a href="{{ url }}" class="section">{{ label }}</a>
+                {% if forloop.counter != breadcrumbs_total %}
+                    <i class="right angle icon divider"></i>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
 </div>
