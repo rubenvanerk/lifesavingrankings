@@ -17,5 +17,6 @@ In relay analysis all possible combinations of 6 (maximum team size on world/eur
 - Create a Postgresql database
 - Copy `.env.example` to `.env`
 - Edit the environment variables to your situation
+- Run `pip install -r requirements.txt`
 - Run `python manage.py migrate`
 - Run `python manage.py runserver`
