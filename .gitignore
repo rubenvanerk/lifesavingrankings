@@ -105,3 +105,4 @@ lifesaving_rankings/static/libs/*
 aws.keys
 lifesaving_rankings/static/pdf/*
 node_modules
+.env
