@@ -12,3 +12,10 @@ Rankings is the representation of the database in understandable and browsable f
 In Analysis users can create groups of athletes. These groups get analysed on two fronts: individual and relay analysis. 
 In indvidual analysis the personal bests of each athlete are compared a set time, which is usualy the 16th time of the previous World Championships.
 In relay analysis all possible combinations of 6 (maximum team size on world/european championships) are generated. For each of this generated team, every possible combination and the total time on the relays is calculated and recorded. These times are added up for each possible team and possible teams are ordered on this added up times
+
+## Setup
+- Create a Postgresql database
+- Copy `.env.example` to `.env`
+- Edit the environment variables to your situation
+- Run `python manage.py migrate`
+- Run `python manage.py runserver`
