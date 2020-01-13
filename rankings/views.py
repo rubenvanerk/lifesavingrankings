@@ -596,8 +596,13 @@ def delete_empty_athletes(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def calculate_points(request):
-    for result in IndividualResult.objects.filter(event__type=1, points=0):
+    total_results = IndividualResult.objects.filter(event__type=1).count()
+    print('Amount of results to calculate: ' + str(total_results))
+
+    for index, result in enumerate(IndividualResult.objects.filter(event__type=1), start=1):
         result.calculate_points()
+        if index % 100 == 0:
+            print(str(index) + '/' + str(total_results))
 
     return HttpResponse('points calculated')
 
