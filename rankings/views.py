@@ -37,7 +37,8 @@ class FrontPageRecords(TemplateView):
             for event in Event.objects.filter(type=1).all():
                 top_result = next(
                     iter(event.get_top_by_competition_and_gender(competition=None, gender=gender, limit=1)), None)
-                top_results['genders'][gender].append(top_result)
+                if top_result:
+                    top_results['genders'][gender].append(top_result)
 
         context['top_results'] = top_results
 
