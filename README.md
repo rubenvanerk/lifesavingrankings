@@ -15,6 +15,7 @@ In relay analysis all possible combinations of 6 (maximum team size on world/eur
 
 ## Setup
 - Create a Postgresql database
+- Execute `CREATE EXTENSION unaccent;` in your database
 - Copy `.env.example` to `.env`
 - Edit the environment variables to your situation
 - Run `pipenv install`
