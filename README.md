@@ -25,3 +25,7 @@ In relay analysis all possible combinations of 6 (maximum team size on world/eur
 - Run `python manage.py migrate`
 - Run `python manage.py loaddata rankings`
 - Run `python manage.py runserver`
+
+## Production
+- `zappa update production`
+- `zappa manage production "collectstatic --noinput"`
