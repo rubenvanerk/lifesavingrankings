@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'storages',
+    'django_s3_storage',
     'django_bootstrap_breadcrumbs',
     'mathfilters',
     'django_tables2',
