@@ -20,7 +20,7 @@ In relay analysis all possible combinations of 6 (maximum team size on world/eur
 - Edit the environment variables to your situation
 - Run `pipenv install`
 - Run `pipenv shell`
-- Run `npm install` in `lifesaving_rankings/static`, use default settings for fomantic-ui (hit enter until installation is completed)
+- Run `npm install` in `lifesaving_rankings/static`
 - Run `gulp build` in `lifesaving_rankings/static`
 - Run `python manage.py migrate`
 - Run `python manage.py loaddata rankings`
