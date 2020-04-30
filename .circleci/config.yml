@@ -13,10 +13,9 @@ jobs:
           command: |
             sudo pip install pipenv
             pipenv install
-            pipenv shell
           name: Install dependencies
       - run:
-          command: python ./manage.py test
+          command: pipenv run python ./manage.py test
           name: Test
 
 workflows:
