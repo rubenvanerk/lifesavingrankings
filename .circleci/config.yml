@@ -23,3 +23,9 @@ workflows:
   main:
     jobs:
       - build-and-test
+  tagged-build:
+    jobs:
+      - build-and-test:
+          filters:
+            tags:
+              only: /.*/
