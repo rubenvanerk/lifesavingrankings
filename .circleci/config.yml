@@ -35,6 +35,8 @@ workflows:
           filters:
             tags:
               only: /.*/
+            branches:
+              only: /master/
       - deploy:
           requires:
             - build-and-test
@@ -42,4 +44,4 @@ workflows:
             tags:
               only: /.*/
             branches:
-              only: /master/
+              ignore: /.*/
