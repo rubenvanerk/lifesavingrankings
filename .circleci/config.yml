@@ -18,13 +18,24 @@ jobs:
       - run:
           command: pipenv run python ./manage.py test
           name: Test
-  deploy:
+  deploy-production:
     docker:
       - image: circleci/python:3.6.10
     resource_class: small
     steps:
     - run: 
-        command: echo 'placeholder deploy job'  
+        command: echo 'placeholder deploy job'
+  deploy-staging:
+    docker:
+      - image: circleci/python:3.6.10
+    resource_class: small
+    steps:
+    - run:
+        command: zappa update staging
+        name: Update lambda function
+    - run:
+        command: zappa manage staging "collectstatic --noinput"
+        name: Deploy static files
     
           
 workflows:
@@ -37,7 +48,7 @@ workflows:
               only: /.*/
             branches:
               only: /master/
-      - deploy:
+      - deploy-production:
           requires:
             - build-and-test
           filters:
@@ -45,3 +56,9 @@ workflows:
               only: /.*/
             branches:
               ignore: /.*/
+      - deploy-staging:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: /master/
