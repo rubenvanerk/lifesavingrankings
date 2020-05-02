@@ -5,6 +5,7 @@ orbs:
 
 jobs:
   build-and-test:
+    working_directory: ~/build
     docker:
       - image: circleci/python:3.6.10
     resource_class: small
@@ -19,6 +20,7 @@ jobs:
           command: pipenv run python ./manage.py test
           name: Test
   deploy-production:
+    working_directory: ~/build
     docker:
       - image: circleci/python:3.6.10
     resource_class: small
@@ -26,6 +28,7 @@ jobs:
     - run: 
         command: echo 'placeholder deploy job'
   deploy-staging:
+    working_directory: ~/build
     docker:
       - image: circleci/python:3.6.10
     resource_class: small
@@ -43,14 +46,12 @@ workflows:
   main:
     jobs:
       - build-and-test:
-          working_directory: ~/build
           filters:
             tags:
               only: /.*/
             branches:
               only: /master/
       - deploy-production:
-          working_directory: ~/build
           requires:
             - build-and-test
           filters:
@@ -59,7 +60,6 @@ workflows:
             branches:
               ignore: /.*/
       - deploy-staging:
-          working_directory: ~/build
           requires:
             - build-and-test
           filters:
