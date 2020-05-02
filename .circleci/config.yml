@@ -43,12 +43,14 @@ workflows:
   main:
     jobs:
       - build-and-test:
+          working_directory: ~/build
           filters:
             tags:
               only: /.*/
             branches:
               only: /master/
       - deploy-production:
+          working_directory: ~/build
           requires:
             - build-and-test
           filters:
@@ -57,6 +59,7 @@ workflows:
             branches:
               ignore: /.*/
       - deploy-staging:
+          working_directory: ~/build
           requires:
             - build-and-test
           filters:
