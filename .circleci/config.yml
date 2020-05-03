@@ -1,41 +1,68 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
+executors:
+  default:
+    docker:
+      - image: circleci/python:3.6.10-node
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+    resource_class: small
 
 jobs:
   build-and-test:
-    docker:
-      - image: circleci/python:3.6.10
-    resource_class: small
+    executor: default
     steps:
-      - checkout
+      - checkout      
       - run:
+          name: Install dependencies
           command: |
             sudo pip install pipenv
             pipenv install
-          name: Install dependencies
       - run:
+          name: Compile static files
+          command: |            
+            cd ~/project/lifesaving_rankings/static/
+            npm install
+            sudo npm install -g gulp
+            gulp --production
+      - run:
+          name: Run tests
           command: pipenv run python ./manage.py test
-          name: Test
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project
+            - .local
   deploy-production:
-    docker:
-      - image: circleci/python:3.6.10
-    resource_class: small
+    executor: default
     steps:
-    - run: 
-        command: echo 'placeholder deploy job'
+      - attach_workspace:
+          at: ~/
+      - checkout
+      - run:
+          name: Update lambda function
+          command: pipenv run zappa update production
+      - run:
+          name: Run database migrations
+          command: pipenv run zappa manage production "migrate"
+      - run:
+          name: Deploy static files
+          command: pipenv run zappa manage production "collectstatic --noinput"
   deploy-staging:
-    docker:
-      - image: circleci/python:3.6.10
-    resource_class: small
+    executor: default
     steps:
-    - run:
-        command: zappa update staging
-        name: Update lambda function
-    - run:
-        command: zappa manage staging "collectstatic --noinput"
-        name: Deploy static files
+      - attach_workspace:
+          at: ~/
+      - checkout
+      - run:
+          name: Update lambda function
+          command: pipenv run zappa update staging
+      - run:
+          name: Run database migrations
+          command: pipenv run zappa manage staging "migrate"
+      - run:
+          name: Deploy static files
+          command: pipenv run zappa manage staging "collectstatic --noinput"
     
           
 workflows:
