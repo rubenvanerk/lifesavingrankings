@@ -10,7 +10,7 @@
         "domain": "www.lifesavingrankings.com",
         "cloudwatch_log_level": "OFF",
         "log_level": "CRITICAL",
-        "exclude": ["node_modules"]
+        "exclude": ["node_modules", "src"]
     },
     "staging": {
         "aws_region": "eu-central-1",
@@ -21,7 +21,7 @@
         "s3_bucket": "rankings-staging",
         "cloudwatch_log_level": "OFF",
         "log_level": "CRITICAL",
-        "exclude": ["node_modules"],
+        "exclude": ["node_modules", "src"],
         "certificate_arn": " arn:aws:acm:us-east-1:815574608842:certificate/cce8ad07-169a-46c3-8449-4e686f1a53a4",
         "domain": "staging.lifesavingrankings.com"
     }
