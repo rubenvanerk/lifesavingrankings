@@ -119,8 +119,8 @@ class CompetitionEvent(TemplateView):
         competition_slug = self.kwargs.get('competition_slug')
         competition = Competition.objects.get(slug=competition_slug)
 
-        slug = self.kwargs.get('slug')
-        event = Event.objects.get(slug=slug)
+        event_slug = self.kwargs.get('event_slug')
+        event = Event.objects.get(slug=event_slug)
         gender = gender_name_to_int(self.kwargs.get('gender'))
 
         if competition is None or event is False:
@@ -176,12 +176,12 @@ class EventOverview(TemplateView):
         return context
 
 
-class PersonalBests(TemplateView):
+class AthleteOverview(TemplateView):
     athlete = None
 
     def get_athlete(self):
         if self.athlete is not Athlete:
-            slug = self.kwargs.get('slug')
+            slug = self.kwargs.get('athlete_slug')
             self.athlete = Athlete.objects.get(slug=slug)
             if not self.athlete:
                 raise Http404
@@ -287,7 +287,7 @@ class AthleteTimeline(TemplateView):
 
     def get_athlete(self):
         if self.athlete is not Athlete:
-            self.athlete = Athlete.objects.get(slug=self.kwargs.get('slug'))
+            self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
             if not self.athlete:
                 raise Http404
         return self.athlete
@@ -388,7 +388,7 @@ class BestByEvent(ListView):
 
     def get_event(self):
         if self.event is not Event:
-            slug = self.kwargs.get('slug')
+            slug = self.kwargs.get('event_slug')
             self.event = Event.objects.get(slug=slug)
             if not self.event:
                 raise Http404
@@ -531,12 +531,12 @@ class Search(ListView):
     template_name = 'rankings/search.html'
 
 
-class DeleteEmptyAthletes(ListView):
+class EmptyAthletes(ListView):
     model = Athlete
     template_name = 'rankings/list_empty_athletes.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DeleteEmptyAthletes, self).get_context_data(**kwargs)
+        context = super(EmptyAthletes, self).get_context_data(**kwargs)
 
         athletes = Athlete.objects.annotate(
             result_count=Count('individualresult')
@@ -551,8 +551,11 @@ def label_nationality(request, pk):
     athlete = Athlete.objects.filter(pk=pk).first()
     queue = Athlete.objects.filter(nationalities=None).annotate(num_results=Count('individualresult')).filter(
         num_results__gt=3).all()
-    next_athlete = random.choice(queue)
-    if not athlete:
+
+    next_athlete = None
+    if queue:
+        next_athlete = random.choice(queue)
+    if not athlete and next_athlete is not None:
         return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))
 
     if request.method == 'POST':
@@ -569,7 +572,8 @@ def label_nationality(request, pk):
                   {'athlete': athlete, 'nationalities': Nationality.objects.filter(is_parent_country=False),
                    'athlete_count': athlete_count,
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
-                   'queue': queue, 'all_results': IndividualResult.objects.filter(athlete=athlete)})
+                   'queue': queue,
+                   'all_results': IndividualResult.objects.filter(athlete=athlete)})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -586,7 +590,7 @@ def delete_empty_athletes(request):
 
 
 @user_passes_test(lambda u: u.is_superuser)
-def calculate_points(request):
+def recalculate_points(request):
     total_results = IndividualResult.objects.filter(event__type=1).count()
     print('Amount of results to calculate: ' + str(total_results))
 
@@ -630,16 +634,11 @@ def athlete_redirect_athlete_id_to_slug(request, athlete_id):
     return redirect(athlete, permanent=True)
 
 
-def athlete_redirect_event_id_to_slug(request, slug, event_id):
+def athlete_redirect_event_id_to_slug(request, athlete_slug, event_id):
     event = Event.objects.get(pk=event_id)
     if event is None:
         raise Http404
-    athlete = Athlete.objects.get(slug=slug)
-    if athlete is None:
-        athlete = Athlete.objects.get(pk=slug)
-        if athlete is None:
-            raise Http404
-    return redirect(reverse('athlete-event', args=[athlete.slug, event.slug]), permanent=True)
+    return redirect(reverse('athlete-event', args=[athlete_slug, event.slug]), permanent=True)
 
 
 def redirect_event_id_to_slug(request, event_id, gender):

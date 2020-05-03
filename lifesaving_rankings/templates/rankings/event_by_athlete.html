@@ -97,7 +97,7 @@
         {{ athlete.name }} - {{ event.name }}
     </h1>
 
-    <a href="{% url 'athlete-overview' slug=athlete.slug %}" class="back button">
+    <a href="{% url 'athlete-overview' athlete.slug %}" class="back button">
         <button class="ui left labeled icon button back">
             <i class="left arrow icon"></i>
             Back

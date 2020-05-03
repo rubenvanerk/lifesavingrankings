@@ -82,7 +82,7 @@
 
             {% if request.user.is_staff %}
                 <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
-                <a href="{% url 'label_athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
+                <a href="{% url 'label-athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
             {% endif %}
 
             <div class="right menu">
@@ -143,7 +143,7 @@
 
         {% if request.user.is_staff %}
             <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
-            <a href="{% url 'label_athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
+            <a href="{% url 'label-athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
         {% endif %}
 
         <div class="item">

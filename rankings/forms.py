@@ -9,7 +9,7 @@ class MergeAthletesForm(forms.Form):
 
 
 class AddResultForm(forms.Form):
-    event = forms.ModelChoiceField(queryset=Event.objects.all())
+    event = forms.ModelChoiceField(queryset=Event.objects.all())  # TODO: filter out relays
     time = forms.DurationField(label='Time', widget=forms.TextInput(attrs={'placeholder': '00:00.00'}))
     date = forms.DateField(label='Date', widget=forms.TextInput(attrs={'placeholder': 'YYYY-MM-DD'}))
 
