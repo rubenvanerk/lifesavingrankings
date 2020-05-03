@@ -8,16 +8,14 @@ from rankings import views
 
 urlpatterns = [
     path('', views.FrontPageRecords.as_view(), name='home'),
-    url('', include('rankings.urls')),
-    url(r'^rankings/*', rankings_redirect),
-    url(r'^accounts/', include('allauth.urls')),
-    url(regex=r'^accounts/profile/',
-        view=views.FrontPageRecords.as_view(),
-        name='profile'),
-    url(r'^analysis/', include('analysis.urls')),
-    url(r'^ultimate-lifesaver/', ultimate_lifesaver),
-    url(r'^about/', about),
-    url(r'^admin/', admin.site.urls),
+    path('', include('rankings.urls')),
+    path('rankings<path:path>', rankings_redirect),
+    path('accounts/', include('allauth.urls')),
+    path('accounts/profile/', views.FrontPageRecords.as_view(), name='profile'),  # TODO: replace with actual profile
+    path('analysis/', include('analysis.urls')),
+    path('ultimate-lifesaver/', ultimate_lifesaver),
+    path('about/', about),
+    path('admin/', admin.site.urls),
 ]
 
 
