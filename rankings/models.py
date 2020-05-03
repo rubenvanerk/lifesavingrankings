@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import ForeignKey, Q, Max, Prefetch, Min
 from django.urls import reverse
-from django.utils.text import slugify
 from rankings.functions import calculate_points
 
 

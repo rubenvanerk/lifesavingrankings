@@ -134,7 +134,7 @@
                             {% for personal_best in times %}
                                 <tr>
                                     <td>
-                                        <a href="{% url 'best-by-event' slug=personal_best.event.slug gender=athlete.gender|gender_to_text %}">
+                                        <a href="{% url 'best-by-event' personal_best.event.slug athlete.gender|gender_to_text %}">
                                             {{ personal_best.event.name }}</a>
                                     </td>
                                     <td>

@@ -19,6 +19,5 @@ def about(request):
     return render(request, 'lifesaving_rankings/about.html')
 
 
-def rankings_redirect(request):
-    full_path = request.get_full_path()
-    return redirect(full_path.replace('/rankings', ''))
+def rankings_redirect(request, path):
+    return redirect(path)
