@@ -25,7 +25,7 @@ class IndividualAnalysis(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndividualAnalysis, self).get_context_data(**kwargs)
-        group_id = self.kwargs.get('group_id')
+        group_id = self.kwargs.get('pk')
         group = AnalysisGroup.objects.get(pk=group_id)
         if not group.public and group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
@@ -123,7 +123,7 @@ class RelayAnalysis(TemplateView):
     template_name = "analysis/relay_analysis.html"
 
     def post(self, *args, **kwargs):
-        group_id = kwargs.get('group_id')
+        group_id = kwargs.get('pk')
         analysis_group = AnalysisGroup.objects.get(pk=group_id)
 
         if analysis_group.creator != self.request.user:
@@ -141,7 +141,7 @@ class RelayAnalysis(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RelayAnalysis, self).get_context_data(**kwargs)
-        group_id = self.kwargs.get('group_id')
+        group_id = self.kwargs.get('pk')
         analysis_group = AnalysisGroup.objects.get(pk=group_id)
         if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
