@@ -78,11 +78,13 @@ class CompetitionOverview(TemplateView):
         context['events'] = {}
         limit = 8
         for event in events:
-            context['events'][event.name] = {}
-            context['events'][event.name]['men'] = event.get_top_by_competition_and_gender(competition=competition,
+            context['events'][event.pk] = {}
+            context['events'][event.pk]['object'] = event
+            context['events'][event.pk]['results'] = {}
+            context['events'][event.pk]['results']['men'] = event.get_top_by_competition_and_gender(competition=competition,
                                                                                            gender=Athlete.MALE,
                                                                                            limit=limit)
-            context['events'][event.name]['women'] = event.get_top_by_competition_and_gender(competition=competition,
+            context['events'][event.pk]['results']['women'] = event.get_top_by_competition_and_gender(competition=competition,
                                                                                              gender=Athlete.FEMALE,
                                                                                              limit=limit)
         context['competition'] = competition
@@ -156,7 +158,9 @@ class EventOverview(TemplateView):
         context['events'] = {}
         limit = 3
         for event in events:
-            context['events'][event.name] = {}
+            context['events'][event.pk] = {}
+            context['events'][event.pk]['object'] = event
+            context['events'][event.pk]['results'] = {}
 
             results_men = IndividualResult.objects.filter(event=event, athlete__gender=1,
                                                           extra_analysis_time_by=None, disqualified=False).order_by(
@@ -164,7 +168,7 @@ class EventOverview(TemplateView):
                 'time').distinct(
                 'athlete')
             results_men = IndividualResult.objects.filter(id__in=results_men).order_by('time')[:limit]
-            context['events'][event.name]['men'] = results_men
+            context['events'][event.pk]['results']['men'] = results_men
 
             results_women = IndividualResult.objects.filter(event=event, athlete__gender=2,
                                                             extra_analysis_time_by=None, disqualified=False).order_by(
@@ -172,7 +176,7 @@ class EventOverview(TemplateView):
                 'time').distinct(
                 'athlete')
             results_women = IndividualResult.objects.filter(id__in=results_women).order_by('time')[:limit]
-            context['events'][event.name]['women'] = results_women
+            context['events'][event.pk]['results']['women'] = results_women
         return context
 
 
