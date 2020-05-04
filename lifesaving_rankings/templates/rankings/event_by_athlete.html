@@ -1,6 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
 {% load datetime_filter django_bootstrap_breadcrumbs %}
-{% load to_url_filter %}
 
 {% block head_title %}{{ athlete.name }}: {{ event.name }}{% endblock %}
 {% block meta_description %}All the times of {{ athlete.name }} on the {{ event.name }},
