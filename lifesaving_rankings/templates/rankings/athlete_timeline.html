@@ -1,6 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
 {% load datetime_filter django_bootstrap_breadcrumbs mathfilters %}
-{% load to_url_filter %}
 
 {% block head_title %}{{ athlete.name }}: Timeline {{ current_year }}{% endblock %}
 {% block meta_description %}Competition timeline of {{ athlete.name }},

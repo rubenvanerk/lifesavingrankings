@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter static %}
+{% load datetime_filter django_bootstrap_breadcrumbs static %}
 
 {% block head_title %}{{ competition.name }} results{% endblock %}
 {% block meta_description %}
@@ -114,10 +114,10 @@
         </div>
     </div>
 
-    {% for event, results_by_gender in events.items %}
-        <h2 class="ui header">{{ event }}</h2>
+    {% for pk, event in events.items %}
+        <h2 class="ui header">{{ event.object.name }}</h2>
         <div class="ui stackable two column grid">
-            {% for gender, results in results_by_gender.items %}
+            {% for gender, results in event.results.items %}
                 <div class="column">
                     <h3 class="ui header">{{ gender|capfirst }}</h3>
                     <table class="ui celled table">
@@ -162,7 +162,7 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <a href="{% url 'competition-event' competition.slug event|to_url gender %}">More results</a>
+                    <a href="{% url 'competition-event' competition.slug event.object.slug gender %}">More results</a>
                 </div>
             {% endfor %}
         </div>

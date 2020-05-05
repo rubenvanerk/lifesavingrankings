@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load datetime_filter django_bootstrap_breadcrumbs to_url_filter gender_to_text_filter i18n mathfilters helpers %}
+{% load datetime_filter django_bootstrap_breadcrumbs gender_to_text_filter i18n mathfilters helpers %}
 {% block head_title %}{{ competition.name }} {{ event.name }} {{ gender|gender_to_text }}{% endblock %}
 {% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on
     {{ competition.name }}{% endblock %}
