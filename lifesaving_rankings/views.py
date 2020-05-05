@@ -15,6 +15,10 @@ def ultimate_lifesaver(request):
     return render(request, 'lifesaving_rankings/ultimate-lifesaver.html')
 
 
+def changelog(request):
+    return render(request, 'lifesaving_rankings/changelog.html')
+
+
 def about(request):
     return render(request, 'lifesaving_rankings/about.html')
 

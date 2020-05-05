@@ -2,19 +2,23 @@ from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
 
-from lifesaving_rankings.views import ultimate_lifesaver, rankings_redirect, about
-from rankings import views
+from . import views
+from rankings import views as rankings_views
 
 urlpatterns = [
-    path('', views.FrontPageRecords.as_view(), name='home'),
+    path('', rankings_views.FrontPageRecords.as_view(), name='home'),
+
+    path('about/', views.about),
+    path('changelog/', views.changelog),
+    path('ultimate-lifesaver/', views.ultimate_lifesaver),
+
     path('', include('rankings.urls')),
-    path('rankings<path:path>', rankings_redirect),
-    path('accounts/', include('allauth.urls')),
-    path('accounts/profile/', views.FrontPageRecords.as_view(), name='profile'),  # TODO: replace with actual profile
     path('analysis/', include('analysis.urls')),
-    path('ultimate-lifesaver/', ultimate_lifesaver),
-    path('about/', about),
+    path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
+
+    path('rankings<path:path>', views.rankings_redirect),
+    path('accounts/profile/', rankings_views.FrontPageRecords.as_view(), name='profile'),  # TODO: replace with actual profile
 ]
 
 
