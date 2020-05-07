@@ -11,5 +11,5 @@ urlpatterns = [
     path('group/<int:pk>/edit/', views.AnalysisGroupUpdate.as_view(), name='group-edit'),
     path('group/<int:pk>/individual-analysis/', views.IndividualAnalysis.as_view(), name='individual-analysis'),
     path('group/<int:pk>/relay-analysis/', views.RelayAnalysis.as_view(), name='relay-analysis'),
-    path('analyse/create-fastest-setupes', views.create_fastest_setups, name='create-stetups')
+    path('analyse/create-fastest-setups/', views.create_fastest_setups, name='create-setups')
 ]

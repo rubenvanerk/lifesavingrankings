@@ -8,6 +8,7 @@ from time import sleep
 import requests
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.db.models import Min, Q
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -163,7 +164,10 @@ def create_combinations(analysis_group):
 
     params = {'current_group_team': first_group_team.id, 'last_group_team': last_group_team.id,
               'analysis_group': analysis_group.id}
-    url = 'https://www.lifesavingrankings.com/analysis/analyse/create-fastest-setups/'
+
+    current_site = Site.objects.get_current()
+    url = current_site.domain + str(reverse_lazy('create-setups'))
+
     p = Process(target=async_request, args=(url, params))
     p.daemon = True
     p.start()
@@ -187,7 +191,10 @@ def create_fastest_setups(request):
     if last_group_team.id is not current_group_team.id:
         params = {'current_group_team': current_group_team.id + 1, 'last_group_team': last_group_team.id,
                   'analysis_group': analysis_group.id}
-        url = 'https://www.lifesavingrankings.com/analysis/analyse/create-fastest-setups/'
+
+        current_site = Site.objects.get_current()
+        url = current_site.domain + str(reverse_lazy('create-setups'))
+
         p = Process(target=async_request, args=(url, params))
         p.daemon = True
         p.start()
