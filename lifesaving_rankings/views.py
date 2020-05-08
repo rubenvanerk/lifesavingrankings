@@ -16,7 +16,7 @@ def ultimate_lifesaver(request):
 
 
 def changelog(request):
-    return render(request, 'lifesaving_rankings/changelog.html')
+    return render(request, 'lifesaving_rankings/changelog.html', {'static': True})
 
 
 def about(request):

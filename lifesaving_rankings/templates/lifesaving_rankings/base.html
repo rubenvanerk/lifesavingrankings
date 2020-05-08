@@ -62,7 +62,7 @@
 
     {% endblock %}
 </head>
-<body class="loading">
+<body {% if not static %}class="loading"{% endif %}>
 {% block body %}
 
     {# menu bar #}
