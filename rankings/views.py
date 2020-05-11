@@ -1,7 +1,9 @@
 import datetime
+import json
 import random
 
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core import serializers
 from django.core.mail import send_mail
 from django.db.models import Count
 from django.shortcuts import render, redirect
@@ -482,8 +484,6 @@ class Search(ListView):
     def get_context_data(self, **kwargs):
         context = super(Search, self).get_context_data(**kwargs)
 
-        athletes = super(Search, self).get_queryset()
-
         query = self.request.GET.get('athlete').strip()
 
         if not query:
@@ -491,15 +491,7 @@ class Search(ListView):
             context['query'] = query
             return context
 
-        parts = query.split(' ')
-
-        if query and len(parts) > 1:
-            for part in parts:
-                athletes = athletes.filter(name__unaccent__icontains=part)
-        else:
-            athletes = athletes.filter(name__unaccent__icontains=query)
-
-        athletes.order_by('name')
+        athletes = Athlete.search(query)
 
         reported = try_parse_int(self.request.GET.get('reported'))
         message = ''
@@ -533,6 +525,15 @@ class Search(ListView):
                 reverse('search') + '?athlete=' + self.request.GET.get('athlete').strip() + '&reported=1')
 
     template_name = 'rankings/search.html'
+
+
+def api_search_athletes(request, query):
+    athletes = Athlete.search(query)
+    json_athletes = []
+    for athlete in athletes:
+        json_athletes.append({'name': athlete.name + str(athlete.pk), 'value': str(athlete.pk)})
+    response = {'success': True, 'results': json_athletes}
+    return HttpResponse(json.dumps(response), content_type="text/json")
 
 
 class EmptyAthletes(ListView):

@@ -103,6 +103,11 @@ button.back.button {
 
 .ui.form.narrow {
   max-width: 400px;
+
+  .dropdown {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }
 
 .analysis-time {
@@ -128,9 +133,9 @@ button.back.button {
   padding: 5px;
 }
 
-.selectize-input {
-  margin-bottom: 10px;
-}
+//.selectize-input {
+//  margin-bottom: 10px;
+//}
 
 form.filter button.ui.button {
   margin-left: 5px;
@@ -241,7 +246,7 @@ button.ui.button.request-a-competition {
   bottom: -15px;
   left: -15px;
   right: -15px;
-  background: rgba(218, 218, 218, 0.1) url("../../images/loading.gif") no-repeat center;
+  background: rgba(218, 218, 218, 0.1) url("../../images/logo-loading.gif") no-repeat center;
   z-index: 10;
 }
 

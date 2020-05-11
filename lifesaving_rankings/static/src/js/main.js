@@ -1,3 +1,7 @@
+$.fn.api.settings.api = {
+    'search athletes': '/athletes/{query}/'
+}
+
 var colorPercentages = function () {
     var analysisResults = $(".analysis-percentage");
 
@@ -68,22 +72,15 @@ $(document).ready(function () {
     $('#competition-filters input').change(function () {
         competitionList.draw();
     });
+
     $('.init-datatable').DataTable();
-
-
     $('.popup').popup();
-    $('#pick-athletes').selectize({
-        plugins: ['remove_button'],
-        delimiter: ',',
-        persist: false,
-        create: function (input) {
-            return {
-                value: input,
-                text: input
-            }
-        }
-    });
+    $('.ui.checkbox').checkbox();
+    $('.ui.accordion').accordion();
+    $('#labeledAthletes').progress();
 
+    //initialize mobile menu
+    $('.ui.sidebar').sidebar('attach events', '#mobile_item');
 
     var label = $('.dataTables_filter label');
     label.addClass('ui input').contents().filter(function () {
@@ -92,16 +89,10 @@ $(document).ready(function () {
     var input = label.find('input');
     input.prop('placeholder', 'Search..');
 
-    //initialize mobile menu
-    $('.ui.sidebar').sidebar('attach events', '#mobile_item');
-
-    $('.ui.checkbox').checkbox();
-
     $('.ui.dropdown.nationalities').dropdown({
         fullTextSearch: true
     });
     $('.ui.dropdown .default.text').select();
-
     $('.ui.dropdown.year-of-birth').dropdown({
         fullTextSearch: false
     });
@@ -117,19 +108,26 @@ $(document).ready(function () {
         startMode: 'year'
     });
 
-    $('.ui.accordion')
-        .accordion()
-    ;
+    let $selectAthletes = $('#select-athletes');
+    let values = $selectAthletes.data('values');
+    $selectAthletes.dropdown({
+        apiSettings: {action: 'search athletes'},
+        values: $selectAthletes.data('values'),
+        onChange: function(value, text, choice) {
+            console.log(value);
+        },
+        minCharacters: 2,
+        saveRemoteData: false
+    });
 
-
-    $('#labeledAthletes').progress();
-
-    $('.ui.dropdown select').each(
-        function () {
-            console.log($(this));
-            $(this).dropdown('set selected', $(this).data('value'))
+    if (values) {
+        var arrayLength = values.length;
+        for (var i = 0; i < arrayLength; i++) {
+            let valueObject = values[i];
+            $selectAthletes.dropdown('set selected', valueObject.value)
         }
-    );
+    }
+
 
     $('body').removeClass('loading');
     $('#content').fadeIn();
