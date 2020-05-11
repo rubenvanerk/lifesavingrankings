@@ -26,45 +26,53 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
+<div class="row">
 
-        <div class="col-md-4">
-            <h1>
-                {% if new_group %}
-                    Create a new group
-                {% else %}
-                    Edit group
-                {% endif %}
-            </h1>
-            <form action="" method="post" class="ui form narrow">{% csrf_token %}
+    <div class="col-md-4">
+        <h1>
+            {% if new_group %}
+                Create a new group
+            {% else %}
+                Edit group
+            {% endif %}
+        </h1>
+        <form action="" method="post" class="ui form narrow">{% csrf_token %}
 
-                {% for field in form %}
-                    {% if field.name == 'public' %}
-                        <div class="inline field">
-                            <div class="ui toggle checkbox">
-                                {{ field }}
-                                <label>{{ field.label }}</label>
-                            </div>
-                        </div>
-                    {% else %}
-                        <label for="{{ field.name }}">{{ field.label }}</label>
-                        {% render_field field %}
-                    {% endif %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="ui negative message">
+                        <p>{{ error|escape }}</p>
+                    </div>
                 {% endfor %}
+            {% endfor %}
 
-                <br>
-                <div class="ui buttons">
-                    <a href="{% url "private-group-list" %}">
-                        <button class="ui button">Cancel</button>
-                    </a>
-                    <div class="or"></div>
-                    <button class="ui positive button" type="submit">
-                        {% if new_group %}Create{% else %}Update{% endif %}
-                    </button>
-                </div>
+            {% for field in form %}
+                {% if field.name == 'public' %}
+                    <div class="inline field">
+                        <div class="ui toggle checkbox">
+                            {{ field }}
+                            <label>{{ field.label }}</label>
+                        </div>
+                    </div>
+                {% else %}
+                    <label for="{{ field.name }}">{{ field.label }}</label>
+                    {% render_field field %}
+                {% endif %}
+            {% endfor %}
+
+            <br>
+            <div class="ui buttons">
+                <a href="{% url "private-group-list" %}">
+                    <button class="ui button">Cancel</button>
+                </a>
+                <div class="or"></div>
+                <button class="ui positive button" type="submit">
+                    {% if new_group %}Create{% else %}Update{% endif %}
+                </button>
+            </div>
 
 
-            </form>
-        </div>
+        </form>
     </div>
+</div>
 {% endblock %}

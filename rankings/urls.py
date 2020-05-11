@@ -17,6 +17,7 @@ urlpatterns = [
     path('athlete/add-time/<slug:athlete_slug>/', views.add_result, name='athlete-add-time'),
     path('athlete/<slug:athlete_slug>/<slug:event_slug>/', views.EventByAthlete.as_view(), name='athlete-event'),
     path('search/', views.Search.as_view(), name='search'),
+    path('athletes/<str:query>/', views.api_search_athletes),
 
     # event routes
     path('events/', views.EventOverview.as_view(), name='event-overview'),

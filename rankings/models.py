@@ -97,6 +97,21 @@ class Athlete(models.Model):
     def count_competitions(self):
         return IndividualResult.objects.filter(athlete=self).values_list('competition', flat=True).distinct().count()
 
+    @classmethod
+    def search(cls, query):
+        athletes = Athlete.objects
+        parts = query.split(' ')
+
+        if query and len(parts) > 1:
+            for part in parts:
+                athletes = athletes.filter(name__unaccent__icontains=part)
+        else:
+            athletes = athletes.filter(name__unaccent__icontains=query)
+
+        athletes.order_by('name')
+
+        return athletes
+
 
 class Event(models.Model):
     UNKNOWN = 0

@@ -48,7 +48,7 @@ gulp.task('js', () => {
 
 gulp.task('watch', () => {
     gulp.watch('./src/sass/**/*.scss', gulp.series('sass'));
-    gulp.watch('./src/js/**/*.js', gulp.series('js'));
+    gulp.watch(['./src/js/**/*.js'], gulp.series('js'));
 });
 
 gulp.task('build', gulp.series('buildFomantic', 'sass', 'js'));
