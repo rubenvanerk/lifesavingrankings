@@ -531,7 +531,7 @@ def api_search_athletes(request, query):
     athletes = Athlete.search(query)
     json_athletes = []
     for athlete in athletes:
-        json_athletes.append({'name': athlete.name + str(athlete.pk), 'value': str(athlete.pk)})
+        json_athletes.append({'name': athlete.name, 'value': str(athlete.pk)})
     response = {'success': True, 'results': json_athletes}
     return HttpResponse(json.dumps(response), content_type="text/json")
 

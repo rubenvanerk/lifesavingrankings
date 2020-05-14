@@ -26,6 +26,6 @@ class AnalysisGroupForm(forms.ModelForm):
         super(AnalysisGroupForm, self).__init__(*args, **kwargs)
         fomantic_dropdown_values = []
         for athlete in self.instance.athlete.all():
-            fomantic_dropdown_values.append({'name': athlete.name + str(athlete.pk), 'value': str(athlete.pk)})
+            fomantic_dropdown_values.append({'name': athlete.name, 'value': str(athlete.pk)})
         self.fields['athlete'].widget.attrs['data-values'] = json.dumps(fomantic_dropdown_values)
 
