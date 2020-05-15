@@ -561,13 +561,13 @@ def label_nationality(request, pk):
     if queue:
         next_athlete = random.choice(queue)
     if not athlete and next_athlete is not None:
-        return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))
+        return HttpResponseRedirect(reverse('label-athlete', kwargs={'pk': next_athlete.pk}))
 
     if request.method == 'POST':
         nationality = Nationality.objects.get(pk=request.POST['country'])
         athlete.nationalities.add(nationality)
         athlete.save()
-        return HttpResponseRedirect(reverse('label_athlete', kwargs={'pk': next_athlete.pk}))
+        return HttpResponseRedirect(reverse('label-athlete', kwargs={'pk': next_athlete.pk}))
 
     athlete_count = Athlete.objects.count()
     labeled_athletes = Athlete.objects.filter(~Q(nationalities=None)).count()
