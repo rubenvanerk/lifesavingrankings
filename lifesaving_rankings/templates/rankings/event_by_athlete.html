@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block javascript_after %}
-    {% if object_list|length > 1 %}
+    {% if results_ordered_by_date|length > 1 %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"
                 integrity="sha256-xKeoJ50pzbUGkpQxDYHD7o7hxe0LaOGeguUidbq6vis="
                 crossorigin="anonymous"></script>
@@ -102,7 +102,7 @@
         </button>
     </a>
 
-    {% if object_list|length > 1 %}
+    {% if results_ordered_by_date|length > 1 %}
         <button class="ui left labeled icon primary button" onclick="$('.ui.modal.chart').modal('show');">
             <i class="chart area icon"></i>
             Progression

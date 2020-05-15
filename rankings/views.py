@@ -269,6 +269,8 @@ class EventByAthlete(ListView):
         context['athlete'] = athlete = self.get_athlete()
         context['event'] = event = self.get_event()
         results_ordered_by_date = self.get_queryset().order_by('competition__date')
+
+        # if 2 results on 1 day, only show fastest
         previous_result = None
         for i, result in enumerate(results_ordered_by_date):
             if previous_result is not None and result.competition.date == previous_result.competition.date:
@@ -277,6 +279,7 @@ class EventByAthlete(ListView):
                 else:
                     results_ordered_by_date = results_ordered_by_date.exclude(pk=result.pk)
             previous_result = result
+
         context['results_ordered_by_date'] = results_ordered_by_date
         context['fastest_time'] = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False,
                                                                   disqualified=False).aggregate(Min('time'))
