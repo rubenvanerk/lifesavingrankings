@@ -9,7 +9,7 @@ function findPos(obj) {
         do {
             curtop += obj.offsetTop;
         } while (obj = obj.offsetParent);
-    return [curtop];
+        return [curtop];
     }
 }
 
@@ -43,6 +43,7 @@ var selectAsMain = function (card) {
 };
 
 $(document).ready(function () {
+    let $body = $('body');
     $('#eventByAthlete').DataTable({
         'order': [1, 'asc']
     });
@@ -93,11 +94,17 @@ $(document).ready(function () {
         }
     }
 
-    $('[data-scroll-to]').on('click', function(e) {
+    $('[data-scroll-to]').on('click', function (e) {
         let $target = $(e.target);
         window.scroll(0, findPos(document.getElementById($target.data('scroll-to'))) - 100);
     })
 
-    $('body').removeClass('loading');
+    $body.on('click', function (event) {
+        if ($(event.target).closest('#competition-navigation').length < 1) {
+            $('#competition-navigation').accordion('close', 0);
+        }
+    });
+
+    $body.removeClass('loading');
     $('#content').fadeIn();
 });
