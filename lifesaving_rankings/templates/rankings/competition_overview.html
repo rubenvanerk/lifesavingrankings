@@ -115,7 +115,7 @@
     </div>
 
     {% for pk, event in events.items %}
-        <h2 class="ui header">{{ event.object.name }}</h2>
+        <h2 class="ui header" id="{{ pk }}">{{ event.object.name }}</h2>
         <div class="ui stackable two column grid">
             {% for gender, results in event.results.items %}
                 <div class="column">
@@ -167,6 +167,21 @@
             {% endfor %}
         </div>
     {% endfor %}
+
+    <nav id="competition-navigation" class="ui vertical accordion menu">
+        <h3 class="title ui header">
+            <i class="dropdown icon"></i> Navigation
+        </h3>
+        <div class="content">
+            <div class="items transition hidden">
+                {% for pk, event in events.items %}
+                    <a class="item" data-scroll-to="{{ pk }}">
+                        {{ event.object.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </nav>
 
     {% if request.user.is_staff %}
         <p>

@@ -2,6 +2,17 @@ $.fn.api.settings.api = {
     'search athletes': '/athletes/{query}/'
 }
 
+//Finds y value of given object
+function findPos(obj) {
+    var curtop = 0;
+    if (obj.offsetParent) {
+        do {
+            curtop += obj.offsetTop;
+        } while (obj = obj.offsetParent);
+    return [curtop];
+    }
+}
+
 var colorPercentages = function () {
     var analysisResults = $(".analysis-percentage");
 
@@ -31,48 +42,12 @@ var selectAsMain = function (card) {
     $('#main-athlete-input').val($card.data('athlete-pk'));
 };
 
-/* Custom filtering function which will search data in column four between two values */
-$.fn.dataTable.ext.search.push(
-    function (settings, data, dataIndex) {
-        if (settings.nTable.id !== 'competitionList') {
-            return true;
-        }
-        var imported = $('#competition-filters input[name=imported]').is(':checked');
-        console.log(imported);
-        var wanted = $('#competition-filters input[name=wanted]').is(':checked');
-        var scheduled = $('#competition-filters input[name=scheduled]').is(':checked');
-        var unable = $('#competition-filters input[name=unable]').is(':checked');
-        var status = data[3];
-        if (imported && $.isNumeric(status) && status > 0) {
-            return true;
-        } else if (wanted && (status.toString().indexOf('Wanted') !== -1 || status.toString().indexOf('Upcoming') !== -1)) {
-            return true;
-        } else if (scheduled && status.toString().indexOf('Scheduled') !== -1) {
-            return true;
-        } else if (unable && status.toString().indexOf('Unable') !== -1) {
-            return true;
-        }
-        return false;
-    }
-);
-
 $(document).ready(function () {
     $('#eventByAthlete').DataTable({
         'order': [1, 'asc']
     });
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
-    var competitionList = $('#competitionList').DataTable({
-        'order': [1, 'desc'],
-        "columnDefs": [
-            {"type": "num", "targets": 3}
-        ]
-    });
-    competitionList.draw();
-    $('#competition-filters input').change(function () {
-        competitionList.draw();
-    });
-
     $('.init-datatable').DataTable();
     $('.popup').popup();
     $('.ui.checkbox').checkbox();
@@ -81,13 +56,6 @@ $(document).ready(function () {
 
     //initialize mobile menu
     $('.ui.sidebar').sidebar('attach events', '#mobile_item');
-
-    var label = $('.dataTables_filter label');
-    label.addClass('ui input').contents().filter(function () {
-        return (this.nodeType == 3);
-    }).remove();
-    var input = label.find('input');
-    input.prop('placeholder', 'Search..');
 
     $('.ui.dropdown.nationalities').dropdown({
         fullTextSearch: true
@@ -113,9 +81,6 @@ $(document).ready(function () {
     $selectAthletes.dropdown({
         apiSettings: {action: 'search athletes'},
         values: $selectAthletes.data('values'),
-        onChange: function(value, text, choice) {
-            console.log(value);
-        },
         minCharacters: 2,
         saveRemoteData: false
     });
@@ -128,6 +93,10 @@ $(document).ready(function () {
         }
     }
 
+    $('[data-scroll-to]').on('click', function(e) {
+        let $target = $(e.target);
+        window.scroll(0, findPos(document.getElementById($target.data('scroll-to'))) - 100);
+    })
 
     $('body').removeClass('loading');
     $('#content').fadeIn();
