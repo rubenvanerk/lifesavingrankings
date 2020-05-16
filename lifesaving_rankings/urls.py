@@ -9,7 +9,7 @@ urlpatterns = [
     path('', rankings_views.FrontPageRecords.as_view(), name='home'),
 
     path('about/', views.about),
-    path('changelog/', views.changelog),
+    path('changelog/', views.changelog, name='changelog'),
     path('ultimate-lifesaver/', views.ultimate_lifesaver),
 
     path('', include('rankings.urls')),
