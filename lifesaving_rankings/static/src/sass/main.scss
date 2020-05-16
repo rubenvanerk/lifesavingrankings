@@ -3,7 +3,7 @@
 @import "vendor";
 
 $theme-color: #0060bf;
-$grey: rgba(0,0,0,.03);
+$grey: rgba(0, 0, 0, .03);
 $break-small: 769px;
 $break-medium: 991px;
 //$break-large: 1200px;
@@ -62,7 +62,6 @@ body:not(.loading) #content {
   filter: brightness(100%);
   color: white;
 }
-
 
 #home-top .name .de-emphasis {
   display: block;
@@ -300,6 +299,25 @@ form.filter .styled.accordion {
       margin-top: 3px;
     }
     margin-top: 15px;
-    color: rgba(0,0,0,.95);
+    color: rgba(0, 0, 0, .95);
+  }
+}
+
+#competition-navigation {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  background-color: #f7f7f7;
+  width: 20rem;
+  -webkit-box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
+
+  @media screen and (max-width: $break-small) {
+    width: 100%;
+  }
+  .title {
+    padding-top: 20px;
+    padding-left: 10px;
   }
 }
