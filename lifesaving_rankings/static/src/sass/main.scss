@@ -308,19 +308,17 @@ form.filter .styled.accordion {
   left: 0;
   position: fixed;
   margin: 0;
-  background-color: #f7f7f7;
+  border-radius: 0;
   width: 20rem;
-  -webkit-box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.3);
 
   @media screen and (max-width: $break-small) {
     width: 100%;
   }
+
   .title {
     margin-bottom: 0;
-    padding-bottom: 15px;
-    padding-top: 20px;
+    padding-bottom: 12px;
+    padding-top: 17px;
     padding-left: 15px;
   }
 }
