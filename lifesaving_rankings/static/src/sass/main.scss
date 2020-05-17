@@ -310,15 +310,23 @@ form.filter .styled.accordion {
   margin: 0;
   border-radius: 0;
   width: 20rem;
+  z-index: 10;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 
   @media screen and (max-width: $break-small) {
     width: 100%;
   }
 
+
+  @media screen and (max-width: $break-medium) {
+    z-index: 0;
+  }
+
   .title {
     margin-bottom: 0;
-    padding-bottom: 12px;
-    padding-top: 17px;
+    padding-bottom: 13px;
+    padding-top: 16px;
     padding-left: 15px;
   }
 }
