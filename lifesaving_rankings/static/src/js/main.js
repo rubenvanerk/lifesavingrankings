@@ -53,6 +53,7 @@ $(document).ready(function () {
     $('.popup').popup();
     $('.ui.checkbox').checkbox();
     $('.ui.accordion').accordion();
+    $('.ui.date.calendar').calendar({type: 'date'});
     $('#labeledAthletes').progress();
 
     //initialize mobile menu

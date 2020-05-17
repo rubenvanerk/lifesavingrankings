@@ -2,6 +2,7 @@ import datetime
 import json
 import random
 
+from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core import serializers
 from django.core.mail import send_mail
@@ -424,10 +425,10 @@ class BestByEvent(ListView):
                 qs = qs.filter(athlete__nationalities__in=nationality.get_children_pks())
 
         if self.request.GET.get('rangestart'):
-            date_range_start = datetime.datetime.strptime(self.request.GET.get('rangestart'), '%B %d, %Y').date()
+            date_range_start = datetime.datetime.strptime(self.request.GET.get('rangestart'), settings.DATE_INPUT_FORMAT).date()
             qs = qs.filter(competition__date__gte=date_range_start)
         if self.request.GET.get('rangeend'):
-            date_range_end = datetime.datetime.strptime(self.request.GET.get('rangeend'), '%B %d, %Y').date()
+            date_range_end = datetime.datetime.strptime(self.request.GET.get('rangeend'), settings.DATE_INPUT_FORMAT).date()
             qs = qs.filter(competition__date__lte=date_range_end)
 
         qs = qs.values('athlete').annotate(pb=Min('time')).order_by('time')

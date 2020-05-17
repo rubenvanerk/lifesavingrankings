@@ -23,7 +23,6 @@
         <div class="ui twelve wide column">
             <h1 class="ui header">Individual Analysis: {{ analysis_group.name }}</h1>
         </div>
-
         <div class="ui four wide column">
             {% if request.user == analysis_group.creator %}
                 <a href="{% url 'group-edit' analysis_group.id %}">
@@ -35,6 +34,23 @@
         </div>
     </div>
 
+    <form action="" method="get" class="ui form input filter">{% csrf_token %}
+        <div class="fields">
+            <div class="field">
+                <label>{{ form.from_date.label }}</label>
+                <div class="ui date calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.from_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <button class="ui submit primary button" type="submit">Filter</button>
+            </div>
+        </div>
+    </form>
+
     <table class="ui celled table">
         <thead>
         <tr>
@@ -44,9 +60,7 @@
                     {{ event.name }}
                 </th>
             {% endfor %}
-
         </tr>
-
         </thead>
 
         <tbody>
@@ -58,9 +72,6 @@
                 </td>
             {% endfor %}
         </tr>
-
-
-
         {% for athlete_id, qs in results.items %}
             <tr>
                 <td>
@@ -70,12 +81,12 @@
                 </td>
                 {% for result in qs %}
                     {% if result %}
-                            <td>
-                                <div class="analysis-time">
-                                    {{ result.time|format_time }}
-                                    <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
-                                </div>
-                            </td>
+                        <td>
+                            <div class="analysis-time">
+                                {{ result.time|format_time }}
+                                <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
+                            </div>
+                        </td>
                     {% else %}
                         <td></td>
                     {% endif %}
@@ -84,15 +95,6 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <br>
-
-    <form action="" method="get" class="ui input filter">{% csrf_token %}
-        {% for field in form %}
-            {% render_field field %}
-        {% endfor %}
-        <button class="ui submit button" type="submit">Filter</button>
-    </form>
 {% endblock %}
 
 {% block javascript_after %}

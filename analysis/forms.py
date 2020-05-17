@@ -1,13 +1,14 @@
 import ast
 import json
-
 from django import forms
+from django.conf import settings
 
 from analysis.models import AnalysisGroup
 
 
 class ChooseFromDateForm(forms.Form):
-    from_date = forms.DateField(widget=forms.TextInput(attrs={'placeholder': 'YYYY-MM-DD'}))
+    from_date = forms.DateField(label='Only use results from', input_formats=[settings.DATE_INPUT_FORMAT],
+                                widget=forms.TextInput(attrs={'class': 'ui calendar'}))
 
 
 class AnalysisGroupForm(forms.ModelForm):

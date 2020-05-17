@@ -109,6 +109,14 @@ button.back.button {
   }
 }
 
+.ui.form {
+  .fields {
+    .submit.button {
+      margin-top: 25px;
+    }
+  }
+}
+
 .analysis-time {
   padding: 0.5em;
   width: 5em;
@@ -177,12 +185,6 @@ form.ui.form input {
 
 .ui.fluid.search.selection.dropdown.left.floated.nationalities {
   width: 15em !important;
-}
-
-@media screen and (max-width: 1200px) {
-  .ui.calendar .ui.input:last-of-type {
-    margin-top: 10px;
-  }
 }
 
 .merge.cards .card.selected, .merge.cards .card.selected:hover {

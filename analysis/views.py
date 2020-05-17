@@ -34,7 +34,7 @@ class IndividualAnalysis(TemplateView):
         date = None
         form = ChooseFromDateForm(self.request.GET)
         if form.is_valid():
-            date = form['from_date'].value()
+            date = form.cleaned_data['from_date']
         if form is None:
             context['form'] = ChooseFromDateForm()
         else:
