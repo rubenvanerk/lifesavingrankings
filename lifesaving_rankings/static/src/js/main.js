@@ -36,7 +36,7 @@ var colorPercentages = function () {
 };
 
 var selectAsMain = function (card) {
-    $card = $(card);
+    let $card = $(card);
     $('.merge.cards .card').removeClass('selected');
     $card.addClass('selected');
     $('#main-athlete-input').val($card.data('athlete-pk'));
