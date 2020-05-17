@@ -58,6 +58,13 @@ $(document).ready(function () {
     //initialize mobile menu
     $('.ui.sidebar').sidebar('attach events', '#mobile_item');
 
+    var label = $('.dataTables_filter label');
+    label.addClass('ui input').contents().filter(function () {
+        return (this.nodeType == 3);
+    }).remove();
+    var input = label.find('input');
+    input.prop('placeholder', 'Search..');
+
     $('.ui.dropdown.nationalities').dropdown({
         fullTextSearch: true
     });
