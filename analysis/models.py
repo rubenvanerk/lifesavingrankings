@@ -51,6 +51,12 @@ class AnalysisGroup(models.Model):
                                                                                     analysis_group=self).all()
         return group_teams
 
+    def count_group_teams_without_full_setup(self):
+        num_events = Event.objects.filter(type=Event.RELAY_COMPLETE).count()
+        group_team_count = GroupTeam.objects.annotate(num_setups=Count('setups')).filter(num_setups__lt=num_events)\
+            .filter(analysis_group=self).count()
+        return group_team_count
+
     def delete_all_previous_analysis(self):
         group_teams = GroupTeam.objects.filter(analysis_group=self)
         for group_team in group_teams:
@@ -69,6 +75,22 @@ class AnalysisGroup(models.Model):
             last_group_team = group_teams[-1]
             self.relay_analysis_is_available = len(list(last_group_team.setups.all())) > 0
         return self.relay_analysis_is_available
+
+    def clean_teams(self):
+        self.remove_unused_athletes_from_teams()
+        self.delete_duplicate_teams()
+
+    def remove_unused_athletes_from_teams(self):
+        for group_team in self.groupteam_set.all():
+            group_team.remove_unused_athletes()
+
+    def delete_duplicate_teams(self):
+        for group_team in self.groupteam_set.all():
+            qs = self.groupteam_set.exclude(pk=group_team.pk)
+            qs = qs.annotate(athlete_count=Count('athletes')).filter(athlete_count=group_team.athletes.count())
+            for athlete in group_team.athletes.all():
+                qs = qs.filter(athletes__pk=athlete.pk)
+            qs.delete()
 
 
 class GroupEventSetup(models.Model):
@@ -111,3 +133,7 @@ class GroupTeam(models.Model):
         used_athletes = self.get_used_athletes()
         all_athletes = self.athletes.all()
         return list(set(all_athletes) - set(used_athletes))
+
+    def remove_unused_athletes(self):
+        for unused_athlete in self.get_unused_athletes():
+            self.athletes.remove(unused_athlete)

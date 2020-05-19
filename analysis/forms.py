@@ -7,12 +7,19 @@ from analysis.models import AnalysisGroup
 
 
 class ChooseFromDateForm(forms.Form):
-    from_date = forms.DateField(label='Only use results from', input_formats=[settings.DATE_INPUT_FORMAT],
-                                widget=forms.TextInput(attrs={'class': 'ui calendar'}))
+    required = False
+
+    def __init__(self, *args, **kwargs):
+        self.required = kwargs.pop('required', False)
+        super(ChooseFromDateForm, self).__init__(*args, **kwargs)
+
+    from_date = forms.DateField(required=required, label='Only use results from', input_formats=[settings.DATE_INPUT_FORMAT],
+                                widget=forms.TextInput(attrs={'class': 'ui calendar', 'placeholder': 'Date'}))
 
 
 class AnalysisGroupForm(forms.ModelForm):
-    athlete = forms.CharField(widget=forms.SelectMultiple(attrs={'id': 'select-athletes', 'class': 'ui dropdown search selection multiple'}))
+    athlete = forms.CharField(
+        widget=forms.SelectMultiple(attrs={'id': 'select-athletes', 'class': 'ui dropdown search selection multiple'}))
 
     def clean_athlete(self):
         athlete = self.cleaned_data['athlete']
@@ -29,4 +36,3 @@ class AnalysisGroupForm(forms.ModelForm):
         for athlete in self.instance.athlete.all():
             fomantic_dropdown_values.append({'name': athlete.name, 'value': str(athlete.pk)})
         self.fields['athlete'].widget.attrs['data-values'] = json.dumps(fomantic_dropdown_values)
-

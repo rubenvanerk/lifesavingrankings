@@ -6,6 +6,7 @@ from multiprocessing import Process
 from time import sleep
 
 import requests
+from django.conf import settings
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.models import Site
@@ -19,32 +20,6 @@ from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 from analysis.forms import ChooseFromDateForm, AnalysisGroupForm
 from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
-
-
-class IndividualAnalysis(TemplateView):
-    template_name = 'analysis/individual_analysis.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(IndividualAnalysis, self).get_context_data(**kwargs)
-        group_id = self.kwargs.get('pk')
-        group = AnalysisGroup.objects.get(pk=group_id)
-        if not group.public and group.creator != self.request.user and not self.request.user.is_superuser:
-            raise PermissionDenied
-
-        date = None
-        form = ChooseFromDateForm(self.request.GET)
-        if form.is_valid():
-            date = form.cleaned_data['from_date']
-        if form is None:
-            context['form'] = ChooseFromDateForm()
-        else:
-            context['form'] = form
-
-        context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date, user=group.creator)
-        context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
-        context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
-        context['analysis_group'] = group
-        return context
 
 
 def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None):
@@ -120,20 +95,46 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
         return context
 
 
+class IndividualAnalysis(TemplateView):
+    template_name = 'analysis/individual_analysis.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndividualAnalysis, self).get_context_data(**kwargs)
+        analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
+        if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+
+        date = None
+        form = ChooseFromDateForm(self.request.GET)
+        if form.is_valid():
+            date = form.cleaned_data['from_date']
+        if form is None:
+            context['form'] = ChooseFromDateForm()
+        else:
+            context['form'] = form
+
+        context['results'] = get_top_results_by_athlete(athletes=analysis_group.athlete.all(), date=date, user=analysis_group.creator)
+        context['special_results'] = SpecialResult.objects.filter(gender=analysis_group.gender).order_by('event_id')
+        context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
+        context['analysis_group'] = analysis_group
+        return context
+
+
 class RelayAnalysis(TemplateView):
     template_name = "analysis/relay_analysis.html"
 
     def post(self, *args, **kwargs):
-        group_id = kwargs.get('pk')
-        analysis_group = AnalysisGroup.objects.get(pk=group_id)
+        analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
 
         if analysis_group.creator != self.request.user:
             return HttpResponse('Unauthorized', status=401)
 
+        form = ChooseFromDateForm(self.request.POST)
+        date = None
+        if form.is_valid():
+            date = form.cleaned_data['from_date']
+
         if analysis_group.athlete.count() <= 10 and not analysis_group.simulation_in_progress:
-            date = self.request.POST.get('from_date') or None
-            if date is not None:
-                date = datetime.datetime.strptime(date, '%B %d, %Y').date()
             analysis_group.simulation_date_from = date
             create_combinations(analysis_group)
             analysis_group.simulation_in_progress = True
@@ -142,13 +143,15 @@ class RelayAnalysis(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RelayAnalysis, self).get_context_data(**kwargs)
-        group_id = self.kwargs.get('pk')
-        analysis_group = AnalysisGroup.objects.get(pk=group_id)
+        analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
         if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
+
+        context['form'] = ChooseFromDateForm(required=False)
         context['events'] = Event.objects.filter(type=Event.RELAY_COMPLETE).order_by('pk').all()
         context['analysis_group'] = analysis_group
         context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
+        context['progress'] = context['group_teams'].count() / analysis_group.groupteam_set.count() * 100
         return context
 
 
@@ -180,6 +183,7 @@ def create_fastest_setups(request):
     if not GroupTeam.objects.filter(pk=request.GET['current_group_team']).exists():
         analysis_group.simulation_in_progress = False
         analysis_group.save()
+        analysis_group.clean_teams()
         return HttpResponseBadRequest
 
     last_group_team = GroupTeam.objects.get(pk=request.GET['last_group_team'])
@@ -200,6 +204,7 @@ def create_fastest_setups(request):
         p.start()
         sleep(1)
     else:
+        analysis_group.clean_teams()
         analysis_group.simulation_in_progress = False
         analysis_group.save()
 
