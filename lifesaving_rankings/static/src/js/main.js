@@ -13,7 +13,7 @@ function findPos(obj) {
     }
 }
 
-var colorPercentages = function () {
+var colorPercentages = function () { // TODO: delete this function when replaced
     var analysisResults = $(".analysis-percentage");
 
     analysisResults.each(function () {
@@ -113,6 +113,44 @@ $(document).ready(function () {
         }
     });
 
+    $('.special-result input').on('change', function (e) {
+        let $target = $(e.target);
+        let specialTime = new Duration($target.val());
+        $target.val(specialTime.time);
+        let eventId = $target.closest('.special-result').data('event-id');
+        $('.analysis-time[data-event-id="' + eventId + '"]').each(function (index, analysisTime) {
+            let timeToCompare = new Duration($(analysisTime).text());
+            let percentage = specialTime.getPercentageOf(timeToCompare);
+            $(analysisTime).removeClass('positive warning negative');
+            let color;
+            if (percentage < 100) {
+                color = 'positive';
+            } else if (percentage < 105) {
+                color = 'warning';
+            } else {
+                color = 'negative';
+            }
+            $(analysisTime).addClass(color);
+        });
+    });
+
     $body.removeClass('loading');
     $('#content').fadeIn();
 });
+
+class Duration {
+    constructor(input) {
+        this.time = input.replace(/[^0-9](?=[0-9]{2}$)/, '.');
+        this.time = this.time.replace(/[^0-9](?=[0-9]{2}\.[0-9]{2}$)/, ':')
+    }
+
+    getPercentageOf(timeToCompare) {
+        return timeToCompare.getTimeInSeconds() / this.getTimeInSeconds() * 100;
+    }
+
+    getTimeInSeconds() {
+        let minutes = Number(this.time.match(/[0-9]+(?=:[0-9]{2}\.[0-9]{2})/));
+        let seconds = parseFloat(this.time.match(/[0-9]{2}\.[0-9]{2}/))
+        return minutes * 60 + seconds;
+    }
+}

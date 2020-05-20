@@ -26,6 +26,11 @@ class SpecialResult(models.Model):
         return self.time
 
 
+class SpecialResultGroup(models.Model):
+    name = models.CharField(max_length=60)
+    special_results = models.ManyToManyField(SpecialResult)
+
+
 class AnalysisGroup(models.Model):
     UNKNOWN = 0
     MALE = 1

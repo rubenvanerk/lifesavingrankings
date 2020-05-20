@@ -2,7 +2,6 @@
 {% load datetime_filter django_bootstrap_breadcrumbs %}
 {% load id_to_athlete_name %}
 {% load id_to_slug %}
-{% load analysis_filters %}
 {% load widget_tweaks %}
 {% block head_title %}Individual analysis{% endblock %}
 
@@ -49,7 +48,8 @@
         </div>
     </form>
 
-    <table class="ui celled table">
+    <table class="ui celled table" id="analysis-table">
+
         <thead>
         <tr>
             <th>Name</th>
@@ -62,14 +62,18 @@
         </thead>
 
         <tbody>
+
         <tr>
             <td>WC 2016 best 16</td>
             {% for event in events %}
-                <td>
-                    {{ special_results|find_special_time_by_event:event }}
+                <td class="special-result" data-event-id="{{ event.id }}">
+                    <div class="ui input">
+                        <input type="text" placeholder="0:00.00">
+                    </div>
                 </td>
             {% endfor %}
         </tr>
+
         {% for athlete_id, qs in results.items %}
             <tr>
                 <td>
@@ -79,11 +83,8 @@
                 </td>
                 {% for result in qs %}
                     {% if result %}
-                        <td>
-                            <div class="analysis-time">
-                                {{ result.time|format_time }}
-                                <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
-                            </div>
+                        <td class="analysis-time" data-event-id="{{ result.event.pk }}">
+                            {{ result.time|format_time }}
                         </td>
                     {% else %}
                         <td></td>
@@ -91,7 +92,9 @@
                 {% endfor %}
             </tr>
         {% endfor %}
+
         </tbody>
+
     </table>
 {% endblock %}
 
