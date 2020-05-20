@@ -64,7 +64,18 @@
         <tbody>
 
         <tr>
-            <td>WC 2016 best 16</td>
+            <td>
+                <select class="ui default dropdown" id="special-result-set">
+                    <option value="">Comparison times</option>
+                    {% for special_result_group in special_result_groups %}
+                        <option value="{% for special_result in special_result_group.special_results.all %}'{{ special_result.event.pk }}': '{{ special_result.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                            {{ special_result_group.name }}
+                        </option>
+                    {% endfor %}
+                    <option value="{% for world_record in world_records_women %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">World Records women</option>
+                    <option value="{% for world_record in world_records_men %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">World Records men</option>
+                </select>
+            </td>
             {% for event in events %}
                 <td class="special-result" data-event-id="{{ event.id }}">
                     <div class="ui input">

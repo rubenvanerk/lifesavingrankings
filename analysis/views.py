@@ -18,7 +18,8 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 
 from analysis.forms import ChooseFromDateForm, AnalysisGroupForm
-from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment
+from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment, \
+    SpecialResultGroup
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
 
@@ -114,10 +115,19 @@ class IndividualAnalysis(TemplateView):
             context['form'] = form
 
         context['results'] = get_top_results_by_athlete(athletes=analysis_group.athlete.all(), date=date, user=analysis_group.creator)
-        context['special_results'] = SpecialResult.objects.filter(gender=analysis_group.gender).order_by('event_id')
         context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
         context['analysis_group'] = analysis_group
+        context['special_result_groups'] = SpecialResultGroup.objects.all()
+        context['world_records_women'] = get_world_records(Athlete.FEMALE)
+        context['world_records_men'] = get_world_records(Athlete.MALE)
         return context
+
+
+def get_world_records(gender):
+    world_records = []
+    for event in Event.objects.filter(use_points_in_athlete_total=True).all():
+        world_records.append(IndividualResult.objects.filter(athlete__gender=gender, event=event).order_by('time').first())
+    return world_records
 
 
 class RelayAnalysis(TemplateView):

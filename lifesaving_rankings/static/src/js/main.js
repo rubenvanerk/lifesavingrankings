@@ -13,28 +13,6 @@ function findPos(obj) {
     }
 }
 
-var colorPercentages = function () { // TODO: delete this function when replaced
-    var analysisResults = $(".analysis-percentage");
-
-    analysisResults.each(function () {
-        var percentage = $(this).text();
-        if (percentage === "") {
-            return;
-        }
-        percentage = percentage.replace('%', '');
-        var color = '';
-        if (percentage < 100) {
-            color = 'positive';
-        } else if (percentage < 105) {
-            color = 'warning';
-        } else {
-            color = 'negative';
-        }
-        $(this).parents('td').addClass(color);
-    });
-
-};
-
 var selectAsMain = function (card) {
     let $card = $(card);
     $('.merge.cards .card').removeClass('selected');
@@ -53,6 +31,7 @@ $(document).ready(function () {
     $('.popup').popup();
     $('.ui.checkbox').checkbox();
     $('.ui.accordion').accordion();
+    $('.ui.default.dropdown').dropdown();
     $('.ui.date.calendar').calendar({type: 'date'});
     $('#labeledAthletes').progress();
 
@@ -131,6 +110,16 @@ $(document).ready(function () {
                 color = 'negative';
             }
             $(analysisTime).addClass(color);
+        });
+    });
+
+    $('#special-result-set').on('change', function (e) {
+        let value = $(e.target).dropdown('get value');
+        value = '{' + value + '}';
+        value = value.replace(/'/g, '"');
+        let specialTimes = JSON.parse(value);
+        $.each(specialTimes, function (index, value) {
+            $('.special-result[data-event-id=' + index + '] input').val(value).change();
         });
     });
 

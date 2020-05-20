@@ -23,12 +23,15 @@ class SpecialResult(models.Model):
     time = models.DurationField()
 
     def __str__(self):
-        return self.time
+        return self.event.name
 
 
 class SpecialResultGroup(models.Model):
     name = models.CharField(max_length=60)
-    special_results = models.ManyToManyField(SpecialResult)
+    special_results = models.ManyToManyField(SpecialResult, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class AnalysisGroup(models.Model):
