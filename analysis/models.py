@@ -7,51 +7,32 @@ from rankings.models import Event, Athlete
 from django.contrib.auth.models import User
 
 
-class SpecialResult(models.Model):
-    UNKNOWN = 0
-    MALE = 1
-    FEMALE = 2
-    GENDER_CHOICES = (
-        (UNKNOWN, 'Unknown'),
-        (MALE, 'Male'),
-        (FEMALE, 'Female')
-    )
-
-    gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-
-    event = ForeignKey(Event, on_delete=models.CASCADE)
-    time = models.DurationField()
-
-    def __str__(self):
-        return self.event.name
-
-
 class SpecialResultGroup(models.Model):
     name = models.CharField(max_length=60)
-    special_results = models.ManyToManyField(SpecialResult, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
 
+class SpecialResult(models.Model):
+    event = ForeignKey(Event, on_delete=models.CASCADE)
+    time = models.DurationField()
+    special_result_group = models.ForeignKey(SpecialResultGroup, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.special_result_group.name + ': ' + self.event.name
+
+
 class AnalysisGroup(models.Model):
-    UNKNOWN = 0
-    MALE = 1
-    FEMALE = 2
-    GENDER_CHOICES = (
-        (UNKNOWN, 'Unknown'),
-        (MALE, 'Male'),
-        (FEMALE, 'Female')
-    )
-
-    gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-
     name = models.CharField(max_length=60)
     creator = ForeignKey(User, on_delete=models.SET_NULL, null=True)
     public = models.BooleanField(default=False)
-    athlete = models.ManyToManyField(Athlete)
+    athletes = models.ManyToManyField(Athlete)
     simulation_in_progress = models.BooleanField(default=False)
     simulation_date_from = models.DateField(null=True)
+
+    class Meta:
+        ordering = ('pk',)
 
     def get_group_teams_with_full_setup(self):
         num_events = Event.objects.filter(type=Event.RELAY_COMPLETE).count()

@@ -1,5 +1,5 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load widget_tweaks django_bootstrap_breadcrumbs %}
+{% load widget_tweaks django_bootstrap_breadcrumbs styled_fields %}
 
 {% block head_title %}
     {% if new_group %}
@@ -24,53 +24,27 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
+    <h1>
+        {% if new_group %}
+            Create a new group
+        {% else %}
+            Edit group
+        {% endif %}
+    </h1>
 
-    <div class="col-md-4">
-        <h1>
-            {% if new_group %}
-                Create a new group
-            {% else %}
-                Edit group
-            {% endif %}
-        </h1>
-        <form action="" method="post" class="ui form narrow">{% csrf_token %}
+    <form action="" method="post" class="ui narrow form">{% csrf_token %}
 
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <div class="ui negative message">
-                        <p>{{ error|escape }}</p>
-                    </div>
-                {% endfor %}
-            {% endfor %}
+        {% styled_fields form %}
 
-            {% for field in form %}
-                {% if field.name == 'public' %}
-                    <div class="inline field">
-                        <div class="ui toggle checkbox">
-                            {{ field }}
-                            <label>{{ field.label }}</label>
-                        </div>
-                    </div>
-                {% else %}
-                    <label for="{{ field.name }}">{{ field.label }}</label>
-                    {% render_field field %}
-                {% endif %}
-            {% endfor %}
+        <div class="ui buttons">
+            <a href="{% url "private-group-list" %}" class="ui button">
+                Cancel
+            </a>
+            <div class="or"></div>
+            <button class="ui positive button" type="submit">
+                {% if new_group %}Create{% else %}Update{% endif %}
+            </button>
+        </div>
 
-            <br>
-            <div class="ui buttons">
-                <a href="{% url "private-group-list" %}">
-                    <button class="ui button">Cancel</button>
-                </a>
-                <div class="or"></div>
-                <button class="ui positive button" type="submit">
-                    {% if new_group %}Create{% else %}Update{% endif %}
-                </button>
-            </div>
-
-
-        </form>
-    </div>
-</div>
+    </form>
 {% endblock %}

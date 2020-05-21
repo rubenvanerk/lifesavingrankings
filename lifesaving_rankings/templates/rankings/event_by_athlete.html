@@ -134,18 +134,29 @@
         </thead>
         <tbody>
         {% for time in object_list %}
-            <tr>
+            <tr {% if time.extra_analysis_time_by is not None %}class="blue"{% endif %}>
                 <td>
                     {% if time.competition.name %}
                         <a href="{% url 'competition-overview' time.competition.slug %}">{{ time.competition.name }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td {% if time.extra_analysis_time_by is not None %}data-tooltip="This time was added by you"{% endif %}>
+                    {% include 'rankings/partials/time.html' with individual_result=time %}
+                    {% if forloop.first %}<sup><i class="disabled small icon star outline"></i></sup>{% endif %}
+                    {% if time.extra_analysis_time_by is not None %}
+                        <a href="{% url 'delete-time' time.pk %}" class="mini ui right floated icon button">
+                            <i class="trash icon"></i>
+                        </a>
                     {% endif %}
                 </td>
                 <td>
-                    {% include 'rankings/partials/time.html' with individual_result=time %}
-                    {% if forloop.first %}<sup><i class="disabled small icon star outline"></i></sup>{% endif %}
-                </td>
-                <td>
-                    {{ time.competition.location }}
+                    {% if time.extra_analysis_time_by is None %}
+                        {{ time.competition.location }}
+                    {% else %}
+                        -
+                    {% endif %}
                 </td>
                 <td>
                     <span hidden>{{ time.competition.date|date:"Y-m-d" }}</span>

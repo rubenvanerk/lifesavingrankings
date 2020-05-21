@@ -36,8 +36,8 @@
                 </div>
 
                 <div class="field">
-                    <button class="ui submit left labeled primary icon button{% if analysis_group.athlete.count > 10 %} disabled{% endif %}"
-                            {% if analysis_group.athlete.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}
+                    <button class="ui submit left labeled primary icon button{% if analysis_group.athletes.count > 10 %} disabled{% endif %}"
+                            {% if analysis_group.athletes.count > 10 %}data-tooltip="Group is too big (max. 10) to run simulation"{% endif %}
                             type="submit">
                         <i class="right refresh icon"></i>
                         Run simulation

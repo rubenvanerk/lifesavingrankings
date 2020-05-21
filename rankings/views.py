@@ -27,7 +27,7 @@ class FrontPageRecords(TemplateView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
         context['athlete_count'] = Athlete.objects.all().count()
-        context['result_count'] = IndividualResult.objects.all().count()
+        context['result_count'] = IndividualResult.public_objects.all().count()
         context['competition_count'] = Competition.objects.filter(status=Competition.IMPORTED).count()
         context['home'] = True
         context['last_published_competitions'] = Competition.objects.filter(slug__isnull=False,
@@ -84,12 +84,14 @@ class CompetitionOverview(TemplateView):
             context['events'][event.pk] = {}
             context['events'][event.pk]['object'] = event
             context['events'][event.pk]['results'] = {}
-            context['events'][event.pk]['results']['men'] = event.get_top_by_competition_and_gender(competition=competition,
-                                                                                           gender=Athlete.MALE,
-                                                                                           limit=limit)
-            context['events'][event.pk]['results']['women'] = event.get_top_by_competition_and_gender(competition=competition,
-                                                                                             gender=Athlete.FEMALE,
-                                                                                             limit=limit)
+            context['events'][event.pk]['results']['men'] = event.get_top_by_competition_and_gender(
+                competition=competition,
+                gender=Athlete.MALE,
+                limit=limit)
+            context['events'][event.pk]['results']['women'] = event.get_top_by_competition_and_gender(
+                competition=competition,
+                gender=Athlete.FEMALE,
+                limit=limit)
         context['competition'] = competition
         context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
         context['unlabeled_athletes'] = competition.get_unlabeled_athletes()
@@ -165,20 +167,20 @@ class EventOverview(TemplateView):
             context['events'][event.pk]['object'] = event
             context['events'][event.pk]['results'] = {}
 
-            results_men = IndividualResult.objects.filter(event=event, athlete__gender=1,
-                                                          extra_analysis_time_by=None, disqualified=False).order_by(
+            results_men = IndividualResult.public_objects.filter(event=event, athlete__gender=1,
+                                                                 disqualified=False).order_by(
                 'athlete',
                 'time').distinct(
                 'athlete')
-            results_men = IndividualResult.objects.filter(id__in=results_men).order_by('time')[:limit]
+            results_men = IndividualResult.public_objects.filter(id__in=results_men).order_by('time')[:limit]
             context['events'][event.pk]['results']['men'] = results_men
 
-            results_women = IndividualResult.objects.filter(event=event, athlete__gender=2,
-                                                            extra_analysis_time_by=None, disqualified=False).order_by(
+            results_women = IndividualResult.public_objects.filter(event=event, athlete__gender=2,
+                                                                   disqualified=False).order_by(
                 'athlete',
                 'time').distinct(
                 'athlete')
-            results_women = IndividualResult.objects.filter(id__in=results_women).order_by('time')[:limit]
+            results_women = IndividualResult.public_objects.filter(id__in=results_women).order_by('time')[:limit]
             context['events'][event.pk]['results']['women'] = results_women
         return context
 
@@ -213,17 +215,17 @@ class AthleteOverview(TemplateView):
 
         context['personal_bests'] = {}
 
-        qs = IndividualResult.find_by_athlete(athlete) \
-            .filter(event__type=1, extra_analysis_time_by=None, disqualified=False) \
+        qs = IndividualResult.public_objects.filter(athlete=athlete) \
+            .filter(event__type=Event.INDIVIDUAL, disqualified=False) \
             .order_by('event', 'time').distinct('event')
-        context['personal_bests']['individual'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
+        context['personal_bests']['individual'] = IndividualResult.public_objects.filter(id__in=qs).order_by('time')
 
-        qs = IndividualResult.find_by_athlete(athlete) \
-            .filter(event__type=2, extra_analysis_time_by=None, disqualified=False) \
+        qs = IndividualResult.public_objects.filter(athlete=athlete) \
+            .filter(event__type=Event.RELAY_SEGMENT, disqualified=False) \
             .order_by('event', 'time').distinct('event')
-        context['personal_bests']['relay'] = IndividualResult.objects.filter(id__in=qs).order_by('time')
+        context['personal_bests']['relay'] = IndividualResult.public_objects.filter(id__in=qs).order_by('time')
 
-        context['all_results'] = IndividualResult.find_by_athlete(athlete)
+        context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
         context['athlete'] = athlete
         context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
         return context
@@ -277,15 +279,19 @@ class EventByAthlete(ListView):
             if previous_result is not None and result.competition.date == previous_result.competition.date:
                 if previous_result.time > result.time:
                     results_ordered_by_date = results_ordered_by_date.exclude(pk=previous_result.pk)
+                    previous_result = result
                 else:
                     results_ordered_by_date = results_ordered_by_date.exclude(pk=result.pk)
-            previous_result = result
+            else:
+                previous_result = result
 
         context['results_ordered_by_date'] = results_ordered_by_date
-        context['fastest_time'] = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False,
-                                                                  disqualified=False).aggregate(Min('time'))
-        context['slowest_time'] = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False,
-                                                                  disqualified=False).aggregate(Max('time'))
+        context['fastest_time'] = IndividualResult.public_objects.filter(athlete=athlete, event=event,
+                                                                         did_not_start=False,
+                                                                         disqualified=False).aggregate(Min('time'))
+        context['slowest_time'] = IndividualResult.public_objects.filter(athlete=athlete, event=event,
+                                                                         did_not_start=False,
+                                                                         disqualified=False).aggregate(Max('time'))
         return context
 
     template_name = 'rankings/event_by_athlete.html'
@@ -328,10 +334,9 @@ def add_result(request, athlete_slug):
         form = AddResultForm(request.POST)
 
         if form.is_valid():
-            time = form['time'].value()
-            date = form['date'].value()
-            event_id = form['event'].value()
-            event = Event.objects.get(pk=event_id)
+            time = form.cleaned_data['time']
+            date = form.cleaned_data['date']
+            event = form.cleaned_data['event']
 
             competition = Competition()
             competition.date = date
@@ -339,6 +344,7 @@ def add_result(request, athlete_slug):
             competition.slug = None
             competition.location = 'Database'
             competition.type_of_timekeeping = 0
+            competition.status = Competition.EXTRA_TIME
             competition.save()
 
             result = IndividualResult()
@@ -348,6 +354,7 @@ def add_result(request, athlete_slug):
             result.event = event
             result.extra_analysis_time_by = request.user
             result.save()
+            result.calculate_points()
 
             return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event.slug)))
         else:
@@ -356,6 +363,18 @@ def add_result(request, athlete_slug):
         form = AddResultForm
 
         return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
+
+
+class IndividualResultDelete(DeleteView):
+    model = IndividualResult
+    success_url = reverse_lazy('home')
+
+    def get_object(self, queryset=None):
+        obj = super(IndividualResultDelete, self).get_object()
+        self.success_url = reverse_lazy('athlete-overview', args=[obj.athlete.pk])
+        if not obj.extra_analysis_time_by == self.request.user:
+            raise Http404
+        return obj
 
 
 def request_competition(request):
@@ -425,10 +444,12 @@ class BestByEvent(ListView):
                 qs = qs.filter(athlete__nationalities__in=nationality.get_children_pks())
 
         if self.request.GET.get('rangestart'):
-            date_range_start = datetime.datetime.strptime(self.request.GET.get('rangestart'), settings.DATE_INPUT_FORMAT).date()
+            date_range_start = datetime.datetime.strptime(self.request.GET.get('rangestart'),
+                                                          settings.DATE_INPUT_FORMAT).date()
             qs = qs.filter(competition__date__gte=date_range_start)
         if self.request.GET.get('rangeend'):
-            date_range_end = datetime.datetime.strptime(self.request.GET.get('rangeend'), settings.DATE_INPUT_FORMAT).date()
+            date_range_end = datetime.datetime.strptime(self.request.GET.get('rangeend'),
+                                                        settings.DATE_INPUT_FORMAT).date()
             qs = qs.filter(competition__date__lte=date_range_end)
 
         qs = qs.values('athlete').annotate(pb=Min('time')).order_by('time')
@@ -582,7 +603,7 @@ def label_nationality(request, pk):
                    'athlete_count': athlete_count,
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
                    'queue': queue,
-                   'all_results': IndividualResult.objects.filter(athlete=athlete)})
+                   'all_results': IndividualResult.public_objects.filter(athlete=athlete)})
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -682,7 +703,7 @@ class MergeRequestDetailView(DetailView):
                 continue
 
             for result in athlete.individualresult_set.all():
-                result.athlete = main_athlete
+                result.athletes = main_athlete
                 result.save()
 
             for nationality in athlete.nationalities.all():

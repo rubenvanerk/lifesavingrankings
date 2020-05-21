@@ -1,0 +1,23 @@
+{% for field in form %}
+    <div class="field">
+        {{ field.errors }}
+        {{ field.label_tag }}
+
+
+
+        {% if field.field.widget.attrs.class == 'ui calendar' %}
+            <div class="ui date calendar">
+                <div class="ui input left icon">
+                    <i class="calendar icon"></i>
+                    {{ field }}
+                </div>
+            </div>
+        {% elif field.field.widget.input_type == 'checkbox' %}
+            <div class="ui toggle checkbox">
+                {{ field }}
+            </div>
+        {% else %}
+            {{ field }}
+        {% endif %}
+    </div>
+{% endfor %}

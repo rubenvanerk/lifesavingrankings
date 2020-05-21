@@ -28,7 +28,7 @@ $(document).ready(function () {
     $('#bestByEvent').DataTable();
     $('#teamMaker').DataTable();
     $('.init-datatable').DataTable();
-    $('.popup').popup();
+    $('[data-content]').popup();
     $('.ui.checkbox').checkbox();
     $('.ui.accordion').accordion();
     $('.ui.default.dropdown').dropdown();
@@ -92,15 +92,21 @@ $(document).ready(function () {
         }
     });
 
-    $('.special-result input').on('change', function (e) {
+    $('input.time').on('change', function (e) {
         let $target = $(e.target);
         let specialTime = new Duration($target.val());
         $target.val(specialTime.time);
+    });
+
+    $('.special-result input').on('change', function (e) {
+        let $target = $(e.target);
+        let specialTime = new Duration($target.val());
         let eventId = $target.closest('.special-result').data('event-id');
         $('.analysis-time[data-event-id="' + eventId + '"]').each(function (index, analysisTime) {
+            let $analysisTime = $(analysisTime);
             let timeToCompare = new Duration($(analysisTime).text());
             let percentage = specialTime.getPercentageOf(timeToCompare);
-            $(analysisTime).removeClass('positive warning negative');
+            $analysisTime.removeClass('positive warning negative');
             let color;
             if (percentage < 100) {
                 color = 'positive';
@@ -109,7 +115,9 @@ $(document).ready(function () {
             } else {
                 color = 'negative';
             }
-            $(analysisTime).addClass(color);
+            $analysisTime.addClass(color);
+            if (percentage && !isNaN(percentage))
+            $analysisTime.find('.percentage').text(' (' + Math.round(percentage * 10) / 10 + '%' + ')');
         });
     });
 

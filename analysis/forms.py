@@ -18,21 +18,22 @@ class ChooseFromDateForm(forms.Form):
 
 
 class AnalysisGroupForm(forms.ModelForm):
-    athlete = forms.CharField(
+    athletes = forms.CharField(
         widget=forms.SelectMultiple(attrs={'id': 'select-athletes', 'class': 'ui dropdown search selection multiple'}))
 
-    def clean_athlete(self):
-        athlete = self.cleaned_data['athlete']
-        athlete = ast.literal_eval(athlete)
-        return athlete
+    def clean_athletes(self):
+        athletes = self.cleaned_data['athletes']
+        athletes = ast.literal_eval(athletes)
+        return athletes
 
     class Meta:
         model = AnalysisGroup
-        fields = ['name', 'athlete', 'public', 'gender']
+        fields = ['name', 'athletes', 'public']
 
     def __init__(self, *args, **kwargs):
         super(AnalysisGroupForm, self).__init__(*args, **kwargs)
-        fomantic_dropdown_values = []
-        for athlete in self.instance.athlete.all():
-            fomantic_dropdown_values.append({'name': athlete.name, 'value': str(athlete.pk)})
-        self.fields['athlete'].widget.attrs['data-values'] = json.dumps(fomantic_dropdown_values)
+        if self.instance.pk:
+            fomantic_dropdown_values = []
+            for athlete in self.instance.athletes.all():
+                fomantic_dropdown_values.append({'name': athlete.name, 'value': str(athlete.pk)})
+            self.fields['athletes'].widget.attrs['data-values'] = json.dumps(fomantic_dropdown_values)

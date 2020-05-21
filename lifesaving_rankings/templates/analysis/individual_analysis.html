@@ -66,19 +66,23 @@
         <tr>
             <td>
                 <select class="ui default dropdown" id="special-result-set">
-                    <option value="">Comparison times</option>
+                    <option value="">Comparison sets</option>
                     {% for special_result_group in special_result_groups %}
-                        <option value="{% for special_result in special_result_group.special_results.all %}'{{ special_result.event.pk }}': '{{ special_result.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        <option value="{% for special_result in special_result_group.specialresult_set.all %}'{{ special_result.event.pk }}': '{{ special_result.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
                             {{ special_result_group.name }}
                         </option>
                     {% endfor %}
-                    <option value="{% for world_record in world_records_women %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">World Records women</option>
-                    <option value="{% for world_record in world_records_men %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">World Records men</option>
+                    <option value="{% for world_record in world_records_women %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        World Records women
+                    </option>
+                    <option value="{% for world_record in world_records_men %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        World Records men
+                    </option>
                 </select>
             </td>
             {% for event in events %}
                 <td class="special-result" data-event-id="{{ event.id }}">
-                    <div class="ui input">
+                    <div class="ui time input">
                         <input type="text" placeholder="0:00.00">
                     </div>
                 </td>
@@ -95,7 +99,12 @@
                 {% for result in qs %}
                     {% if result %}
                         <td class="analysis-time" data-event-id="{{ result.event.pk }}">
-                            {{ result.time|format_time }}
+                            {{ result.time|format_time }}<sup class="percentage"></sup>
+                            {% if result.extra_analysis_time_by is not None %}
+                                <span data-content="This time was added by the group's creator">
+                                    <i class="attention grey icon"></i>
+                                </span>
+                            {% endif %}
                         </td>
                     {% else %}
                         <td></td>
@@ -111,6 +120,8 @@
 
 {% block javascript_after %}
     <script>
-        colorPercentages();
+        $(document).ready(function () {
+            $('.special-result input').trigger('change');
+        });
     </script>
 {% endblock %}

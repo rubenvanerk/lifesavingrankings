@@ -15,10 +15,10 @@ from django.db.models import Min, Q
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, UpdateView, CreateView
+from django.views.generic import TemplateView, ListView, UpdateView, CreateView, DeleteView
 
 from analysis.forms import ChooseFromDateForm, AnalysisGroupForm
-from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment, \
+from analysis.models import AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment, \
     SpecialResultGroup
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
@@ -32,7 +32,7 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None)
     for athlete in athletes:
         individual_results = []
         for event in events:
-            qs = IndividualResult.find_by_athlete_and_event(athlete, event)
+            qs = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False, disqualified=False)
             if user is not None:
                 qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
             if date is not None:
@@ -50,7 +50,7 @@ class AnalysisGroupListView(LoginRequiredMixin, ListView):
         user = self.request.user
         qs = super(AnalysisGroupListView, self).get_queryset()
         if not self.request.user.is_superuser:
-            qs = qs.filter(creator=user).order_by('id')
+            qs = qs.filter(creator=user)
         return qs
 
 
@@ -75,6 +75,18 @@ class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         obj = super(AnalysisGroupUpdate, self).get_object()
+        if obj.creator != self.request.user:
+            raise PermissionDenied
+        else:
+            return obj
+
+
+class AnalysisGroupDelete(LoginRequiredMixin, DeleteView):
+    model = AnalysisGroup
+    success_url = reverse_lazy('private-group-list')
+
+    def get_object(self, queryset=None):
+        obj = super(AnalysisGroupDelete, self).get_object()
         if obj.creator != self.request.user:
             raise PermissionDenied
         else:
@@ -114,7 +126,7 @@ class IndividualAnalysis(TemplateView):
         else:
             context['form'] = form
 
-        context['results'] = get_top_results_by_athlete(athletes=analysis_group.athlete.all(), date=date, user=analysis_group.creator)
+        context['results'] = get_top_results_by_athlete(athletes=analysis_group.athletes.all(), date=date, user=analysis_group.creator)
         context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
         context['analysis_group'] = analysis_group
         context['special_result_groups'] = SpecialResultGroup.objects.all()
@@ -126,7 +138,7 @@ class IndividualAnalysis(TemplateView):
 def get_world_records(gender):
     world_records = []
     for event in Event.objects.filter(use_points_in_athlete_total=True).all():
-        world_records.append(IndividualResult.objects.filter(athlete__gender=gender, event=event).order_by('time').first())
+        world_records.append(IndividualResult.public_objects.filter(athlete__gender=gender, event=event).order_by('time').first())
     return world_records
 
 
@@ -144,7 +156,7 @@ class RelayAnalysis(TemplateView):
         if form.is_valid():
             date = form.cleaned_data['from_date']
 
-        if analysis_group.athlete.count() <= 10 and not analysis_group.simulation_in_progress:
+        if analysis_group.athletes.count() <= 10 and not analysis_group.simulation_in_progress:
             analysis_group.simulation_date_from = date
             create_combinations(analysis_group)
             analysis_group.simulation_in_progress = True
@@ -161,13 +173,16 @@ class RelayAnalysis(TemplateView):
         context['events'] = Event.objects.filter(type=Event.RELAY_COMPLETE).order_by('pk').all()
         context['analysis_group'] = analysis_group
         context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
-        context['progress'] = context['group_teams'].count() / analysis_group.groupteam_set.count() * 100
+        groupteam_count = analysis_group.groupteam_set.count()
+        if groupteam_count > 0:
+            context['progress'] = context['group_teams'].count() / analysis_group.groupteam_set.count() * 100
+        context['progress'] = 0
         return context
 
 
 def create_combinations(analysis_group):
     analysis_group.delete_all_previous_analysis()
-    athletes = analysis_group.athlete.all()
+    athletes = analysis_group.athletes.all()
     possible_teams = itertools.combinations(athletes, 6)
 
     group_teams = map(functools.partial(create_group_teams, analysis_group), possible_teams)

@@ -25,23 +25,20 @@
         {% endif %}
     </h1>
     {% if public %}
-        <a href="{% url 'private-group-list' %}">
-            <button class="ui right labeled icon button">
-                <i class="right arrow icon"></i>
-                Go to My Groups
-            </button>
+        <a href="{% url 'private-group-list' %}" class="ui right labeled icon button">
+            <i class="right arrow icon"></i>
+            Go to My Groups
         </a>
     {% else %}
-        <a href="{% url 'public-group-list' %}">
-            <button class="ui left labeled icon button">
-                <i class="left arrow icon"></i>
-                Go to Public Groups
-            </button>
+        <a href="{% url 'public-group-list' %}" class="ui left labeled icon button">
+            <i class="left arrow icon"></i>
+            Go to Public Groups
         </a>
     {% endif %}
 
-    <a href="{% url 'group-create' %}" class="ui right floated">
-        <button class="ui icon button" data-tooltip="Create a group"><i class="plus square icon"></i></button>
+    <a href="{% url 'group-create' %}" class="ui right floated left labeled primary icon button">
+        <i class="plus square icon"></i>
+        Create a group
     </a>
 
     <br>
@@ -62,27 +59,26 @@
                 <td>
                     {{ group.name }}
                 </td>
-                <td>{{ group.athlete.count }}</td>
+                <td>{{ group.athletes.count }}</td>
                 <td class="analysis-actions">
 
 
-                    <div class="ui icon mini buttons">
-                        <a href="{% url 'individual-analysis' group.id %}">
-                            <button class="ui left attached button" data-tooltip="Individual analysis"><i
-                                    class="user icon"></i></button>
+                    <div class="ui basic icon buttons">
+                        <a href="{% url 'individual-analysis' group.id %}" class="ui button" data-tooltip="Individual analysis">
+                            <i class="user icon"></i>
                         </a>
-                        <a href="{% url 'relay-analysis' group.id %}">
-                            <button class="right attached ui button"
-                                    data-tooltip="Relay analysis"><i class="users icon"></i></button>
+                        <a href="{% url 'relay-analysis' group.id %}" class="ui button" data-tooltip="Relay analysis">
+                            <i class="users icon"></i>
                         </a>
-                    </div>
-                    {% if group.creator == request.user %}
-                        <div class="ui icon mini buttons">
-                            <a href="{% url 'group-edit' group.id %}">
-                                <button class="ui button edit"><i class="edit icon"></i></button>
+                        {% if group.creator == request.user %}
+                            <a href="{% url 'group-edit' group.id %}" class="ui button">
+                                <i class="edit icon"></i>
                             </a>
-                        </div>
-                    {% endif %}
+                            <a href="{% url 'group-delete' group.id %}" class="ui button">
+                                <i class="trash icon"></i>
+                            </a>
+                        {% endif %}
+                    </div>
 
                 </td>
             </tr>
