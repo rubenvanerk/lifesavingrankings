@@ -703,7 +703,7 @@ class MergeRequestDetailView(DetailView):
                 continue
 
             for result in athlete.individualresult_set.all():
-                result.athletes = main_athlete
+                result.athlete = main_athlete
                 result.save()
 
             for nationality in athlete.nationalities.all():
