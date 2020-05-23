@@ -1,7 +1,6 @@
 {
   "dependencies": {
-    "fomantic-ui": "^2.8.4",
-    "select2": "^4.0.13"
+    "fomantic-ui": "^2.8.4"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

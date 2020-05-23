@@ -2,7 +2,6 @@
 {% load datetime_filter django_bootstrap_breadcrumbs %}
 {% load id_to_athlete_name %}
 {% load id_to_slug %}
-{% load analysis_filters %}
 {% load widget_tweaks %}
 {% block head_title %}Individual analysis{% endblock %}
 
@@ -14,8 +13,6 @@
     {% endwith %}
 
     {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
-    <br>
-    <br>
 {% endblock %}
 
 {% block content %}
@@ -23,7 +20,6 @@
         <div class="ui twelve wide column">
             <h1 class="ui header">Individual Analysis: {{ analysis_group.name }}</h1>
         </div>
-
         <div class="ui four wide column">
             {% if request.user == analysis_group.creator %}
                 <a href="{% url 'group-edit' analysis_group.id %}">
@@ -35,7 +31,25 @@
         </div>
     </div>
 
-    <table class="ui celled table">
+    <form action="" method="get" class="ui form input filter">{% csrf_token %}
+        <div class="fields">
+            <div class="field">
+                <label>{{ form.from_date.label }}</label>
+                <div class="ui date calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.from_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <button class="ui submit primary button" type="submit">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="ui celled table" id="analysis-table">
+
         <thead>
         <tr>
             <th>Name</th>
@@ -44,22 +58,36 @@
                     {{ event.name }}
                 </th>
             {% endfor %}
-
         </tr>
-
         </thead>
 
         <tbody>
+
         <tr>
-            <td>WC 2016 best 16</td>
+            <td>
+                <select class="ui default dropdown" id="special-result-set">
+                    <option value="">Comparison sets</option>
+                    {% for special_result_group in special_result_groups %}
+                        <option value="{% for special_result in special_result_group.specialresult_set.all %}'{{ special_result.event.pk }}': '{{ special_result.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                            {{ special_result_group.name }}
+                        </option>
+                    {% endfor %}
+                    <option value="{% for world_record in world_records_women %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        World Records women
+                    </option>
+                    <option value="{% for world_record in world_records_men %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        World Records men
+                    </option>
+                </select>
+            </td>
             {% for event in events %}
-                <td>
-                    {{ special_results|find_special_time_by_event:event }}
+                <td class="special-result" data-event-id="{{ event.id }}">
+                    <div class="ui time input">
+                        <input type="text" placeholder="0:00.00">
+                    </div>
                 </td>
             {% endfor %}
         </tr>
-
-
 
         {% for athlete_id, qs in results.items %}
             <tr>
@@ -70,33 +98,30 @@
                 </td>
                 {% for result in qs %}
                     {% if result %}
-                            <td>
-                                <div class="analysis-time">
-                                    {{ result.time|format_time }}
-                                    <span class="analysis-percentage">{{ result|calculate_percentage:special_results }}</span>
-                                </div>
-                            </td>
+                        <td class="analysis-time" data-event-id="{{ result.event.pk }}">
+                            {{ result.time|format_time }}<sup class="percentage"></sup>
+                            {% if result.extra_analysis_time_by is not None %}
+                                <span data-content="This time was added by the group's creator">
+                                    <i class="attention grey icon"></i>
+                                </span>
+                            {% endif %}
+                        </td>
                     {% else %}
                         <td></td>
                     {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
+
         </tbody>
+
     </table>
-
-    <br>
-
-    <form action="" method="get" class="ui input filter">{% csrf_token %}
-        {% for field in form %}
-            {% render_field field %}
-        {% endfor %}
-        <button class="ui submit button" type="submit">Filter</button>
-    </form>
 {% endblock %}
 
 {% block javascript_after %}
     <script>
-        colorPercentages();
+        $(document).ready(function () {
+            $('.special-result input').trigger('change');
+        });
     </script>
 {% endblock %}

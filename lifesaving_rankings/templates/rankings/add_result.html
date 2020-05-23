@@ -1,22 +1,23 @@
 {% extends "lifesaving_rankings/base.html" %}
-{% load widget_tweaks %}
+{% load widget_tweaks styled_fields %}
 
 {% block head_title %}
     Add result
 {% endblock %}
 {% block content %}
 
-    <h1>
-        Add {{ event.name }} result for {{ athlete.name }}
-    </h1>
+    <h1>Add {{ event.name }} result for {{ athlete.name }}</h1>
+
     <p>Results added by you are <strong>only</strong> visible in analysis groups created by you.</p>
-    <form action="" method="post" class="ui form narrow">
-        {% csrf_token %}
 
-        {{ form }}
+    <form action="" method="post" class="ui form narrow">{% csrf_token %}
 
-        <button type="submit" class="ui input button">
-            Add result
-        </button>
+    {% styled_fields form %}
+
+    <button type="submit" class="ui primary submit button">
+        Add result
+    </button>
+
     </form>
+
 {% endblock %}

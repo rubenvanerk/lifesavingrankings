@@ -2,8 +2,10 @@ from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
 
+from analysis.views import ExtraTimesListView, AnalysisGroupListView
 from . import views
 from rankings import views as rankings_views
+from .views import Account
 
 urlpatterns = [
     path('', rankings_views.FrontPageRecords.as_view(), name='home'),
@@ -18,7 +20,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('rankings<path:path>', views.rankings_redirect),
-    path('accounts/profile/', rankings_views.FrontPageRecords.as_view(), name='profile'),  # TODO: replace with actual profile
+    path('accounts/details/', Account.as_view(), name='account'),
+    path('accounts/extra-times/', ExtraTimesListView.as_view(), name='extra-times-list'),
+    path('accounts/analysis-groups/', AnalysisGroupListView.as_view(), name='private-group-list'),
 ]
 
 

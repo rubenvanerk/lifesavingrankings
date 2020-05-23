@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import template
-from .datetime_filter import format_datetime
+from .datetime_filter import format_time
 
 register = template.Library()
 
@@ -10,7 +10,7 @@ register = template.Library()
 def find_special_time_by_event(special_results, event):
     for result in special_results:
         if result.event == event:
-            return format_datetime(result.time)
+            return format_time(result.time)
     return 0
 
 

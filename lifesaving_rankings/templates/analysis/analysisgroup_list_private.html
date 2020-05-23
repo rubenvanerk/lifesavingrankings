@@ -1,24 +1,24 @@
-{% extends "lifesaving_rankings/base.html" %}
+{% extends "lifesaving_rankings/account.html" %}
 {% load django_tables2 %}
 {% load django_bootstrap_breadcrumbs %}
 
-{% block head_title %}Public groups{% endblock %}
+{% block head_title %}My groups{% endblock %}
 
 {% block breadcrumbs %}
 
     {% breadcrumb "Home" "/" %}
-    {% breadcrumb "Analysis" "public-group-list" %}
+    {% breadcrumb "My Account" "account" %}
+    {% breadcrumb "My analysis groups" "private-group-list" %}
 
     {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
 
 {% endblock %}
 
-{% block content %}
-    <h1>Public groups</h1>
-
-    <a href="{% url 'private-group-list' %}" class="ui right labeled icon button">
-        <i class="right arrow icon"></i>
-        Go to My Groups
+{% block account_content %}
+    <h1>My groups</h1>
+    <a href="{% url 'public-group-list' %}" class="ui left labeled icon button">
+        <i class="left arrow icon"></i>
+        Go to Public Groups
     </a>
 
     <a href="{% url 'group-create' %}" class="ui right floated left labeled primary icon button">

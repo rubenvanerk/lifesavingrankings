@@ -4,9 +4,7 @@ import itertools
 from datetime import timedelta
 from multiprocessing import Process
 from time import sleep
-
 import requests
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
@@ -14,37 +12,14 @@ from django.db.models import Min, Q
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, UpdateView, CreateView
+from django.views.generic import TemplateView, ListView, UpdateView, CreateView, DeleteView
+from django_tables2 import SingleTableMixin, SingleTableView
 
 from analysis.forms import ChooseFromDateForm, AnalysisGroupForm
-from analysis.models import SpecialResult, AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment
+from analysis.models import AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment, \
+    SpecialResultGroup
+from analysis.tables import ExtraTimesTable, AnalysisGroupTable
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
-
-
-class IndividualAnalysis(TemplateView):
-    template_name = 'analysis/individual_analysis.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(IndividualAnalysis, self).get_context_data(**kwargs)
-        group_id = self.kwargs.get('pk')
-        group = AnalysisGroup.objects.get(pk=group_id)
-        if not group.public and group.creator != self.request.user and not self.request.user.is_superuser:
-            raise PermissionDenied
-
-        date = None
-        form = ChooseFromDateForm(self.request.GET)
-        if form.is_valid():
-            date = form['from_date'].value()
-        if form is None:
-            context['form'] = ChooseFromDateForm()
-        else:
-            context['form'] = form
-
-        context['results'] = get_top_results_by_athlete(athletes=group.athlete.all(), date=date, user=group.creator)
-        context['special_results'] = SpecialResult.objects.filter(gender=group.gender).order_by('event_id')
-        context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
-        context['analysis_group'] = group
-        return context
 
 
 def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None):
@@ -56,7 +31,7 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None)
     for athlete in athletes:
         individual_results = []
         for event in events:
-            qs = IndividualResult.find_by_athlete_and_event(athlete, event)
+            qs = IndividualResult.objects.filter(athlete=athlete, event=event, did_not_start=False, disqualified=False)
             if user is not None:
                 qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
             if date is not None:
@@ -67,19 +42,28 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None)
     return results
 
 
-class AnalysisGroupListView(LoginRequiredMixin, ListView):
+class AnalysisGroupListView(LoginRequiredMixin, SingleTableView):
     model = AnalysisGroup
+    template_name = 'analysis/analysisgroup_list_private.html'
+    table_class = AnalysisGroupTable
+    ordering = ['pk']
+    table_pagination = {
+        "per_page": 10
+    }
 
     def get_queryset(self):
         user = self.request.user
         qs = super(AnalysisGroupListView, self).get_queryset()
         if not self.request.user.is_superuser:
-            qs = qs.filter(creator=user).order_by('id')
+            qs = qs.filter(creator=user)
         return qs
 
 
-class PublicAnalysisGroupListView(ListView):
+class PublicAnalysisGroupListView(SingleTableView):
     model = AnalysisGroup
+    table_class = AnalysisGroupTable
+    ordering = ['pk']
+    template_name = 'analysis/analysisgroup_list.html'
 
     def get_queryset(self):
         qs = super(PublicAnalysisGroupListView, self).get_queryset().order_by('pk')
@@ -105,6 +89,18 @@ class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
             return obj
 
 
+class AnalysisGroupDelete(LoginRequiredMixin, DeleteView):
+    model = AnalysisGroup
+    success_url = reverse_lazy('private-group-list')
+
+    def get_object(self, queryset=None):
+        obj = super(AnalysisGroupDelete, self).get_object()
+        if obj.creator != self.request.user:
+            raise PermissionDenied
+        else:
+            return obj
+
+
 class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
@@ -120,20 +116,55 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
         return context
 
 
+class IndividualAnalysis(TemplateView):
+    template_name = 'analysis/individual_analysis.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndividualAnalysis, self).get_context_data(**kwargs)
+        analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
+        if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
+            raise PermissionDenied
+
+        date = None
+        form = ChooseFromDateForm(self.request.GET)
+        if form.is_valid():
+            date = form.cleaned_data['from_date']
+        if form is None:
+            context['form'] = ChooseFromDateForm()
+        else:
+            context['form'] = form
+
+        context['results'] = get_top_results_by_athlete(athletes=analysis_group.athletes.all(), date=date, user=analysis_group.creator)
+        context['events'] = Event.objects.filter(type=Event.INDIVIDUAL, use_points_in_athlete_total=True).order_by('id')
+        context['analysis_group'] = analysis_group
+        context['special_result_groups'] = SpecialResultGroup.objects.all()
+        context['world_records_women'] = get_world_records(Athlete.FEMALE)
+        context['world_records_men'] = get_world_records(Athlete.MALE)
+        return context
+
+
+def get_world_records(gender):
+    world_records = []
+    for event in Event.objects.filter(use_points_in_athlete_total=True).all():
+        world_records.append(IndividualResult.public_objects.filter(athlete__gender=gender, event=event).order_by('time').first())
+    return world_records
+
+
 class RelayAnalysis(TemplateView):
     template_name = "analysis/relay_analysis.html"
 
     def post(self, *args, **kwargs):
-        group_id = kwargs.get('pk')
-        analysis_group = AnalysisGroup.objects.get(pk=group_id)
+        analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
 
         if analysis_group.creator != self.request.user:
             return HttpResponse('Unauthorized', status=401)
 
-        if analysis_group.athlete.count() <= 10 and not analysis_group.simulation_in_progress:
-            date = self.request.POST.get('from_date') or None
-            if date is not None:
-                date = datetime.datetime.strptime(date, '%B %d, %Y').date()
+        form = ChooseFromDateForm(self.request.POST)
+        date = None
+        if form.is_valid():
+            date = form.cleaned_data['from_date']
+
+        if analysis_group.athletes.count() <= 10 and not analysis_group.simulation_in_progress:
             analysis_group.simulation_date_from = date
             create_combinations(analysis_group)
             analysis_group.simulation_in_progress = True
@@ -142,19 +173,24 @@ class RelayAnalysis(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RelayAnalysis, self).get_context_data(**kwargs)
-        group_id = self.kwargs.get('pk')
-        analysis_group = AnalysisGroup.objects.get(pk=group_id)
+        analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
         if not analysis_group.public and analysis_group.creator != self.request.user and not self.request.user.is_superuser:
             raise PermissionDenied
+
+        context['form'] = ChooseFromDateForm(required=False)
         context['events'] = Event.objects.filter(type=Event.RELAY_COMPLETE).order_by('pk').all()
         context['analysis_group'] = analysis_group
         context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
+        groupteam_count = analysis_group.groupteam_set.count()
+        if groupteam_count > 0:
+            context['progress'] = context['group_teams'].count() / analysis_group.groupteam_set.count() * 100
+        context['progress'] = 0
         return context
 
 
 def create_combinations(analysis_group):
     analysis_group.delete_all_previous_analysis()
-    athletes = analysis_group.athlete.all()
+    athletes = analysis_group.athletes.all()
     possible_teams = itertools.combinations(athletes, 6)
 
     group_teams = map(functools.partial(create_group_teams, analysis_group), possible_teams)
@@ -180,6 +216,7 @@ def create_fastest_setups(request):
     if not GroupTeam.objects.filter(pk=request.GET['current_group_team']).exists():
         analysis_group.simulation_in_progress = False
         analysis_group.save()
+        analysis_group.clean_teams()
         return HttpResponseBadRequest
 
     last_group_team = GroupTeam.objects.get(pk=request.GET['last_group_team'])
@@ -200,6 +237,7 @@ def create_fastest_setups(request):
         p.start()
         sleep(1)
     else:
+        analysis_group.clean_teams()
         analysis_group.simulation_in_progress = False
         analysis_group.save()
 
@@ -288,3 +326,19 @@ def get_fastest_time_for_team_and_event(group_team, event, analysis_group):
     fastest_setup.save()
     group_team.setups.add(fastest_setup)
     group_team.save()
+
+
+class ExtraTimesListView(LoginRequiredMixin, SingleTableView):
+    model = IndividualResult
+    table_class = ExtraTimesTable
+    ordering = ['athlete__name']
+    template_name = 'analysis/extra_times_list.html'
+    table_pagination = {
+        "per_page": 10
+    }
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = super(ExtraTimesListView, self).get_queryset()
+        qs = qs.filter(extra_analysis_time_by=user.pk).prefetch_related('athlete', 'competition', 'event')
+        return qs

@@ -15,6 +15,7 @@ urlpatterns = [
     path('athlete/<slug:athlete_slug>/', views.AthleteOverview.as_view(), name='athlete-overview'),
     path('athlete/<slug:athlete_slug>/timeline/', views.AthleteTimeline.as_view(), name='athlete-timeline'),
     path('athlete/add-time/<slug:athlete_slug>/', views.add_result, name='athlete-add-time'),
+    path('individual-result/<int:pk>/delete/', views.IndividualResultDelete.as_view(), name='delete-time'),
     path('athlete/<slug:athlete_slug>/<slug:event_slug>/', views.EventByAthlete.as_view(), name='athlete-event'),
     path('search/', views.Search.as_view(), name='search'),
     path('athletes/<str:query>/', views.api_search_athletes),

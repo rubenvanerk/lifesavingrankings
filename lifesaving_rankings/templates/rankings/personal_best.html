@@ -47,14 +47,12 @@
                         Timeline
                     </button>
                 </a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
-                        <button class="ui left labeled icon button back">
-                            <i class="left plus icon"></i>
-                            Add extra time
-                        </button>
-                    </a>
-                {% endif %}
+                <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
+                    <button class="ui left labeled icon button back">
+                        <i class="left plus icon"></i>
+                        Add extra time
+                    </button>
+                </a>
                 {% if request.user.is_superuser %}
                     <a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/"
                        target="_blank">

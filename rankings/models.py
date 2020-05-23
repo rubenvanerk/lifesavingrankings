@@ -53,7 +53,7 @@ class Athlete(models.Model):
         events = Event.objects.filter(use_points_in_athlete_total=True)
         total_points = 0
         for event in events:
-            result = IndividualResult.objects.filter(event=event, athlete=self).aggregate(Max('points'))
+            result = IndividualResult.public_objects.filter(event=event, athlete=self).aggregate(Max('points'))
             if result['points__max'] is not None:
                 total_points += result['points__max']
         return round(total_points, 2)
@@ -62,13 +62,13 @@ class Athlete(models.Model):
         events = Event.objects.filter(use_points_in_athlete_total=True)
         personal_bests = []
         for event in events:
-            personal_best = IndividualResult.objects.filter(event=event, athlete=self).order_by('time').first()
+            personal_best = IndividualResult.public_objects.filter(event=event, athlete=self).order_by('time').first()
             if personal_best:
                 personal_bests.append(personal_best)
         return personal_bests
 
     def get_competitions(self, year=None):
-        individual_results = IndividualResult.objects.filter(athlete=self)
+        individual_results = IndividualResult.public_objects.filter(athlete=self)
         if year is not None:
             individual_results = individual_results.filter(competition__date__year=year)
         competitions = individual_results.values('competition_id')
@@ -78,24 +78,30 @@ class Athlete(models.Model):
         return competitions
 
     def get_last_competition_date(self):
-        return IndividualResult.objects.filter(athlete=self).aggregate(Max('competition__date'))['competition__date__max']
+        return IndividualResult.public_objects.filter(athlete=self).aggregate(Max('competition__date'))[
+            'competition__date__max']
 
     def get_next_competition_year(self, current_year):
-        result = IndividualResult.objects.filter(athlete=self, competition__date__year__gt=current_year).order_by('competition__date').first()
+        result = IndividualResult.public_objects.filter(athlete=self,
+                                                        competition__date__year__gt=current_year).order_by(
+            'competition__date').first()
         if result is not None:
             return result.competition.date.year
         return None
 
     def get_previous_competition_year(self, current_year):
-        result = IndividualResult.objects.filter(athlete=self, competition__date__year__lt=current_year).order_by('-competition__date').first()
+        result = IndividualResult.public_objects.filter(athlete=self,
+                                                        competition__date__year__lt=current_year).order_by(
+            '-competition__date').first()
         if result is not None:
             return result.competition.date.year
 
     def count_results(self):
-        return IndividualResult.objects.filter(athlete=self).count()
+        return IndividualResult.public_objects.filter(athlete=self).count()
 
     def count_competitions(self):
-        return IndividualResult.objects.filter(athlete=self).values_list('competition', flat=True).distinct().count()
+        return IndividualResult.public_objects.filter(athlete=self).values_list('competition',
+                                                                                flat=True).distinct().count()
 
     @classmethod
     def search(cls, query):
@@ -147,14 +153,15 @@ class Event(models.Model):
                 gender = 1
             else:
                 gender = 2
-        query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender)
-        if competition is not None:
-            max_round = \
-                IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition).aggregate(
-                    Max('round'))['round__max']
-            query_set = query_set.filter(competition=competition, round=max_round)
+        if competition is None:
+            query_set = IndividualResult.public_objects.filter(event=self, athlete__gender=gender, disqualified=False)
         else:
-            query_set = query_set.filter(disqualified=False)
+            query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition)
+            max_round = \
+                IndividualResult.objects.filter(event=self, athlete__gender=gender,
+                                                competition=competition).aggregate(
+                    Max('round'))['round__max']
+            query_set = query_set.filter(round=max_round)
 
         return query_set.order_by('time')[:limit]
 
@@ -175,11 +182,13 @@ class Competition(models.Model):
     IMPORTED = 2
     UNABLE_TO_IMPORT = 3
     WANTED = 4
+    EXTRA_TIME = 5
     STATUS_OPTIONS = (
         (SCHEDULED, 'Scheduled for import'),
         (IMPORTED, 'Imported'),
         (UNABLE_TO_IMPORT, 'Unable to import'),
-        (WANTED, 'Wanted')
+        (WANTED, 'Wanted'),
+        (EXTRA_TIME, 'Extra time competition')
     )
     name = models.CharField(max_length=100, unique=True, null=True)
     slug = models.SlugField(null=True)
@@ -200,33 +209,40 @@ class Competition(models.Model):
         return 'unknown ' + str(self.pk)
 
     def get_athlete_count(self):
-        return IndividualResult.objects.filter(competition=self).values('athlete').distinct().count()
+        return IndividualResult.public_objects.filter(competition=self).values('athlete').distinct().count()
 
     def get_result_count(self):
-        return IndividualResult.objects.filter(competition=self).count()
+        return IndividualResult.public_objects.filter(competition=self).count()
 
     def get_absolute_url(self):
         return reverse('competition-overview', args=[self.slug])
 
     def get_athletes(self):
         return Athlete.objects.filter(
-            pk__in=IndividualResult.objects.filter(competition=self).values('athlete').distinct())
+            pk__in=IndividualResult.public_objects.filter(competition=self).values('athlete').distinct())
 
     def is_fully_labeled(self):
         return Athlete.objects.filter(nationalities=None,
-                                      pk__in=IndividualResult.objects.filter(competition=self).values(
+                                      pk__in=IndividualResult.public_objects.filter(competition=self).values(
                                           'athlete').distinct()).count() < 1
 
     def is_imported(self):
         return self.status == self.IMPORTED
 
     def get_unlabeled_athletes(self):
-        athlete_ids = IndividualResult.objects.filter(competition=self).values('athlete').distinct()
+        athlete_ids = IndividualResult.public_objects.filter(competition=self).values('athlete').distinct()
         return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).all()
 
     def count_unlabeled_athletes(self):
-        athlete_ids = IndividualResult.objects.filter(competition=self).values('athlete').distinct()
+        athlete_ids = IndividualResult.public_objects.filter(competition=self).values('athlete').distinct()
         return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).count()
+
+
+class PublicIndividualResultsManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(competition__is_concept=False,
+                                             competition__status=Competition.IMPORTED,
+                                             extra_analysis_time_by=None)
 
 
 class IndividualResult(models.Model):
@@ -244,6 +260,9 @@ class IndividualResult(models.Model):
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None, blank=True)
 
+    objects = models.Manager()
+    public_objects = PublicIndividualResultsManager()
+
     class Meta:
         ordering = ['time']
 
@@ -258,14 +277,6 @@ class IndividualResult(models.Model):
         self.save()
 
     @staticmethod
-    def find_by_athlete(athlete):
-        return IndividualResult.objects.filter(athlete=athlete)
-
-    @staticmethod
-    def find_by_athlete_and_event(athlete, event):
-        return IndividualResult.objects.filter(athlete=athlete, event=event)
-
-    @staticmethod
     def find_fastest_by_athlete_and_event(athlete, event, analysis_group):
         qs = IndividualResult.objects.filter(athlete=athlete, event=event).order_by('time')
         qs = qs.filter(Q(extra_analysis_time_by=analysis_group.creator) | Q(extra_analysis_time_by=None))
@@ -274,11 +285,11 @@ class IndividualResult(models.Model):
         return qs.first()
 
     def difference_with_previous_best(self):
-        previous_best = IndividualResult.objects.filter(athlete=self.athlete,
-                                                        competition__date__lt=self.competition.date,
-                                                        disqualified=False,
-                                                        did_not_start=False,
-                                                        event=self.event).aggregate(Min('time'))
+        previous_best = IndividualResult.public_objects.filter(athlete=self.athlete,
+                                                               competition__date__lt=self.competition.date,
+                                                               disqualified=False,
+                                                               did_not_start=False,
+                                                               event=self.event).aggregate(Min('time'))
         if previous_best['time__min'] is not None:
             return self.time - previous_best['time__min']
         return None

@@ -127,3 +127,7 @@ USE_TZ = True
 DATE_INPUT_FORMATS = '%d-%m-%Y'
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/semantic.html"
+
+DATE_INPUT_FORMAT = '%B %d, %Y'
+
+LOGIN_REDIRECT_URL = 'account'
