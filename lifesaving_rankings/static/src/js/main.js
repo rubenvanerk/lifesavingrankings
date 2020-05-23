@@ -35,6 +35,14 @@ $(document).ready(function () {
     $('.ui.date.calendar').calendar({type: 'date'});
     $('#labeledAthletes').progress();
 
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade');
+        })
+    ;
+
     //initialize mobile menu
     $('.ui.sidebar').sidebar('attach events', '#mobile_item');
 
@@ -117,7 +125,7 @@ $(document).ready(function () {
             }
             $analysisTime.addClass(color);
             if (percentage && !isNaN(percentage))
-            $analysisTime.find('.percentage').text(' (' + Math.round(percentage * 10) / 10 + '%' + ')');
+                $analysisTime.find('.percentage').text(' (' + Math.round(percentage * 10) / 10 + '%' + ')');
         });
     });
 
