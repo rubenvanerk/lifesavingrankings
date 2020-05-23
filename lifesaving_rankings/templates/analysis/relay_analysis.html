@@ -17,6 +17,22 @@
 {% block content %}
     <h1 class="ui header">Relay Analysis: {{ analysis_group.name }}</h1>
 
+    <div class="ui styled fluid accordion">
+        <div class="title"><i class="dropdown icon"></i>Explanation</div>
+        <div class="content">
+            Relay Analysis tries to answer the following question: which athletes do I need to select to create the
+            fastest team on relays?<br>
+            When you run a simulation, every possible team of 6 athletes will be created. For those teams the fastest
+            setups for each of the relays will be calculated.<br>
+            Note:
+            <ul>
+                <li>When an athlete in a possible team is not used in one of the fastest relay setups, it will be removed from the possible team</li>
+            </ul>
+        </div>
+    </div>
+
+    <br>
+
     {% if analysis_group.simulation_date_from %}
         <p>The simulation below was run with times from {{ analysis_group.simulation_date_from }} and later</p>
     {% endif %}

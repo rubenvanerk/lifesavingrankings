@@ -143,19 +143,6 @@
 
     {# side bar #}
     <div class="ui right fixed sidebar vertical inverted menu" id="sidebar">
-        <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
-        <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
-        <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
-        <a href="{% url 'changelog' %}" class="item">Changelog</a>
-        <a href="http://shop.lifesavingrankings.com" target="_blank" class="item">
-            Shop <sup><i class="external alternate icon"></i></sup>
-        </a>
-
-        {% if request.user.is_staff %}
-            <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
-            <a href="{% url 'label-athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
-        {% endif %}
-
         <div class="item">
             <form action="{% url 'search' %}" role="search">
                 <div class="ui inverted transparent icon input">
@@ -169,9 +156,21 @@
                 </div>
             </form>
         </div>
+        <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
+        <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
+        <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
+        <a href="{% url 'changelog' %}" class="item">Changelog</a>
+        <a href="http://shop.lifesavingrankings.com" target="_blank" class="item">
+            Shop <sup><i class="external alternate icon"></i></sup>
+        </a>
+
+        {% if request.user.is_staff %}
+            <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
+            <a href="{% url 'label-athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
+        {% endif %}
 
         {% if user.is_authenticated %}
-            <a class="{% active 'account_logout' %} item" href="{% url 'account' %}">My Account</a>
+            <a class="{% active 'account' %} item" href="{% url 'account' %}">My Account</a>
             <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">
                 Logout
             </a>

@@ -16,8 +16,8 @@
 {% block content %}
     <div class="ui stackable grid">
 
-        <div class="five wide column">
-            <div class="ui vertical secondary menu">
+        <div class="four wide column">
+            <div class="ui fluid vertical menu">
                 <a class="{% active 'account' %} item" href="{% url 'account' %}">
                     Details
                 </a>
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="eleven wide column">
+        <div class="twelve wide column">
             {% block account_content %}
                 <h3>Account details</h3>
                 <p>Username: {{ request.user.username }}</p>

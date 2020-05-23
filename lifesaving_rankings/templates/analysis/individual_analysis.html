@@ -31,6 +31,24 @@
         </div>
     </div>
 
+
+    <div class="ui styled fluid accordion">
+        <div class="title"><i class="dropdown icon"></i>Explanation</div>
+        <div class="content">
+            Individual Analysis tries to answer the following question: which athlete in a group has the best potential to swim a given time?<br>
+            In the grid below, all athletes in the group are displayed with their best time per event. You can choose to ignore older results by using the filter option.<br>
+            In the top row there are multiple input fields for times with which you want to compare your athletes. You can also preset these fields with one of the sets using the dropdown on the left of these input fields.<br>
+            If you change these fields you'll see that the colors of the athlete's times change. This is based on how close they are compared to the time you specified:
+            <ul>
+                <li>Green: within 100%, so faster then the given time</li>
+                <li>Orange: between 100% and 105% of the given time</li>
+                <li>Red: slower then 105% of the given time</li>
+            </ul>
+        </div>
+    </div>
+
+    <br>
+
     <form action="" method="get" class="ui form input filter">{% csrf_token %}
         <div class="fields">
             <div class="field">

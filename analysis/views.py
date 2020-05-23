@@ -182,9 +182,9 @@ class RelayAnalysis(TemplateView):
         context['analysis_group'] = analysis_group
         context['group_teams'] = analysis_group.get_group_teams_with_full_setup()
         groupteam_count = analysis_group.groupteam_set.count()
+        context['progress'] = 0
         if groupteam_count > 0:
             context['progress'] = context['group_teams'].count() / analysis_group.groupteam_set.count() * 100
-        context['progress'] = 0
         return context
 
 
