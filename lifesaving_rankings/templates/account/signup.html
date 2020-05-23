@@ -1,6 +1,6 @@
 {% extends "lifesaving_rankings/base.html" %}
 
-{% load i18n %}
+{% load i18n styled_fields %}
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
@@ -9,13 +9,13 @@
 
 <p>{% blocktrans %}Already have a account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
-<form class="signup ui form narrow" id="signup_form" method="post" action="{% url 'account_signup' %}">
+<form class="signup ui narrow form" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}
-  {{ form}}
+  {% styled_fields form %}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
-  <button type="submit" class="ui button">{% trans "Sign Up" %} &raquo;</button>
+  <button type="submit" class="ui primary button">{% trans "Sign Up" %}</button>
 </form>
 
 {% endblock %}

@@ -4,10 +4,7 @@ import itertools
 from datetime import timedelta
 from multiprocessing import Process
 from time import sleep
-
 import requests
-from django.conf import settings
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
@@ -16,10 +13,12 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, CreateView, DeleteView
+from django_tables2 import SingleTableMixin, SingleTableView
 
 from analysis.forms import ChooseFromDateForm, AnalysisGroupForm
 from analysis.models import AnalysisGroup, GroupTeam, GroupEventSetup, GroupEvenSetupSegment, \
     SpecialResultGroup
+from analysis.tables import ExtraTimesTable, AnalysisGroupTable
 from rankings.models import Event, Athlete, IndividualResult, RelayOrder
 
 
@@ -43,8 +42,14 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None)
     return results
 
 
-class AnalysisGroupListView(LoginRequiredMixin, ListView):
+class AnalysisGroupListView(LoginRequiredMixin, SingleTableView):
     model = AnalysisGroup
+    template_name = 'analysis/analysisgroup_list_private.html'
+    table_class = AnalysisGroupTable
+    ordering = ['pk']
+    table_pagination = {
+        "per_page": 10
+    }
 
     def get_queryset(self):
         user = self.request.user
@@ -54,8 +59,11 @@ class AnalysisGroupListView(LoginRequiredMixin, ListView):
         return qs
 
 
-class PublicAnalysisGroupListView(ListView):
+class PublicAnalysisGroupListView(SingleTableView):
     model = AnalysisGroup
+    table_class = AnalysisGroupTable
+    ordering = ['pk']
+    template_name = 'analysis/analysisgroup_list.html'
 
     def get_queryset(self):
         qs = super(PublicAnalysisGroupListView, self).get_queryset().order_by('pk')
@@ -318,3 +326,19 @@ def get_fastest_time_for_team_and_event(group_team, event, analysis_group):
     fastest_setup.save()
     group_team.setups.add(fastest_setup)
     group_team.save()
+
+
+class ExtraTimesListView(LoginRequiredMixin, SingleTableView):
+    model = IndividualResult
+    table_class = ExtraTimesTable
+    ordering = ['athlete__name']
+    template_name = 'analysis/extra_times_list.html'
+    table_pagination = {
+        "per_page": 10
+    }
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = super(ExtraTimesListView, self).get_queryset()
+        qs = qs.filter(extra_analysis_time_by=user.pk).prefetch_related('athlete', 'competition', 'event')
+        return qs

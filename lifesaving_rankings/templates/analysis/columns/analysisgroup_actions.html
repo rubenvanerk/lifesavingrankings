@@ -1,0 +1,17 @@
+<div class="ui basic icon buttons">
+    <a href="{% url 'individual-analysis' record.id %}" class="ui button"
+       data-tooltip="Individual analysis">
+        <i class="user icon"></i>
+    </a>
+    <a href="{% url 'relay-analysis' record.id %}" class="ui button" data-tooltip="Relay analysis">
+        <i class="users icon"></i>
+    </a>
+    {% if record.creator == request.user %}
+        <a href="{% url 'group-edit' record.id %}" class="ui button">
+            <i class="edit icon"></i>
+        </a>
+        <a href="{% url 'group-delete' record.id %}" class="ui button">
+            <i class="trash icon"></i>
+        </a>
+    {% endif %}
+</div>

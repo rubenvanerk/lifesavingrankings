@@ -1,4 +1,11 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
+
+
+class Account(LoginRequiredMixin, TemplateView):
+    athlete = None
+    template_name = 'lifesaving_rankings/account.html'
 
 
 def error_404_view(request, exception):

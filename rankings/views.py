@@ -37,9 +37,10 @@ class FrontPageRecords(TemplateView):
 
         top_results = {'genders': {'women': [], 'men': []}}
         for gender in top_results['genders']:
-            for event in Event.objects.filter(type=1).all():
-                top_result = next(
-                    iter(event.get_top_by_competition_and_gender(competition=None, gender=gender, limit=1)), None)
+            gender_int = gender_name_to_int(gender)
+            for event in Event.objects.filter(type=Event.INDIVIDUAL).all():
+                top_result = IndividualResult.public_objects.filter(event=event, athlete__gender=gender_int).order_by(
+                    'time').first()
                 if top_result:
                     top_results['genders'][gender].append(top_result)
 
@@ -167,20 +168,24 @@ class EventOverview(TemplateView):
             context['events'][event.pk]['object'] = event
             context['events'][event.pk]['results'] = {}
 
-            results_men = IndividualResult.public_objects.filter(event=event, athlete__gender=1,
+            results_men = IndividualResult.public_objects.filter(event=event, athlete__gender=Athlete.MALE,
                                                                  disqualified=False).order_by(
                 'athlete',
                 'time').distinct(
                 'athlete')
-            results_men = IndividualResult.public_objects.filter(id__in=results_men).order_by('time')[:limit]
+            results_men = IndividualResult.public_objects.filter(id__in=results_men).prefetch_related('competition',
+                                                                                                      'athlete').order_by(
+                'time')[:limit]
             context['events'][event.pk]['results']['men'] = results_men
 
-            results_women = IndividualResult.public_objects.filter(event=event, athlete__gender=2,
+            results_women = IndividualResult.public_objects.filter(event=event, athlete__gender=Athlete.FEMALE,
                                                                    disqualified=False).order_by(
                 'athlete',
                 'time').distinct(
                 'athlete')
-            results_women = IndividualResult.public_objects.filter(id__in=results_women).order_by('time')[:limit]
+            results_women = IndividualResult.public_objects.filter(id__in=results_women).prefetch_related('athlete',
+                                                                                                          'competition').order_by(
+                'time')[:limit]
             context['events'][event.pk]['results']['women'] = results_women
         return context
 
@@ -375,6 +380,9 @@ class IndividualResultDelete(DeleteView):
         if not obj.extra_analysis_time_by == self.request.user:
             raise Http404
         return obj
+
+    def get_success_url(self):
+        return self.request.GET.get('success_url', self.success_url)
 
 
 def request_competition(request):

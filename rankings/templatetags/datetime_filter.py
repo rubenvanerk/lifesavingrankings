@@ -11,7 +11,7 @@ register = template.Library()
 
 
 @register.filter(name='format_time')
-def format_datetime(value):
+def format_time(value):
     prefix = ''
     if value < timedelta(0):
         prefix = '- '
