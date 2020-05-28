@@ -1,0 +1,21 @@
+{% extends "lifesaving_rankings/base.html" %}
+
+{% block head_title %}Medals prototype{% endblock %}
+
+
+{% block content %}
+    <h1>Medals</h1>
+
+    <h2>Available competitions</h2>
+    <a href="{% url 'medals-competition' 'world-championships-national-teams-open-2016' %}">Rescue 2016</a>
+    <br>
+    <br>
+    <a href="{% url 'medals-competition' 'world-championships-national-teams-open-2018' %}">Rescue 2018</a>
+
+
+    <h2>Available Events</h2>
+    <a href="{% url 'medals-event' '100m-manikin-carry-with-fins' %}">100m man carry fins</a>
+    <br>
+    <br>
+    <a href="{% url 'medals-event' '200m-obstacle-swim' %}">200m obs</a>
+{% endblock %}

@@ -11,5 +11,6 @@ admin.site.register(Athlete)
 admin.site.register(EventRecord)
 admin.site.register(Nationality)
 admin.site.register(IndividualResultSplit)
+admin.site.register(Medal)
 
 

@@ -31,6 +31,12 @@ urlpatterns = [
     path('competition/<slug:competition_slug>/<slug:event_slug>/<gender:gender>/', views.CompetitionEvent.as_view(),
          name='competition-event'),
 
+    # medals
+    path('medals/', views.medals, name='medals'),
+    path('medals/competition/<slug:slug>', views.medals_competition, name='medals-competition'),
+    path('medals/event/<slug:slug>', views.medals_event, name='medals-event'),
+    path('medals/athlete/<slug:slug>', views.medals_athlete, name='medals-athlete'),
+
     # utilities
     path('empty-athletes/', views.EmptyAthletes.as_view()),
     path('delete-empty-athletes/', views.delete_empty_athletes, name='delete-empty-athletes'),

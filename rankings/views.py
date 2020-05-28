@@ -419,6 +419,49 @@ def request_competition(request):
         return render(request, 'rankings/request_competition.html', {'form': form})
 
 
+def medals(request):
+    return render(request, 'rankings/medals.html')
+
+
+def medals_competition(request, slug):
+    events = Event.objects.filter(pk__in=(1, 3))
+    competition = Competition.objects.filter(slug=slug).first()
+    event_medals = []
+    for event in events:
+        event_medals.append({
+            'event': event,
+            'medals': Medal.objects.filter(competition=competition, event=event).order_by('rank').all()
+        })
+
+    return render(request, 'rankings/medals_competition.html', {'event_medals': event_medals, 'competition': competition})
+
+
+def medals_event(request, slug):
+    event = Event.objects.filter(slug=slug).first()
+    competitions = Competition.objects.filter(pk__in=(132, 166))
+    competition_medals = []
+    for competition in competitions:
+        competition_medals.append({
+            'competition': competition,
+            'medals': Medal.objects.filter(competition=competition, event=event).order_by('rank').all()
+        })
+
+    return render(request, 'rankings/medals_event.html', {'competition_medals': competition_medals, 'event': event})
+
+
+def medals_athlete(request, slug):
+    athlete = Athlete.objects.filter(slug=slug).first()
+    competitions = Competition.objects.filter(pk__in=(132, 166))
+    competition_medals = []
+    for competition in competitions:
+        competition_medals.append({
+            'competition': competition,
+            'medals': Medal.objects.filter(competition=competition, athlete=athlete).order_by('rank').all()
+        })
+
+    return render(request, 'rankings/medals_athlete.html', {'competition_medals': competition_medals, 'athlete': athlete})
+
+
 class BestByEvent(ListView):
     model = IndividualResult
     event = None

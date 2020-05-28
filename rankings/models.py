@@ -330,3 +330,20 @@ class RelayOrder(models.Model):
 
 class MergeRequest(models.Model):
     athletes = models.ManyToManyField(Athlete)
+
+
+class Medal(models.Model):
+    GOLD = 1
+    SILVER = 2
+    BRONZE = 3
+    MEDALS = (
+        (GOLD, 'Gold'),
+        (SILVER, 'Silver'),
+        (BRONZE, 'Bronze')
+    )
+
+    competition = ForeignKey(Competition, on_delete=models.CASCADE)
+    event = ForeignKey(Event, on_delete=models.CASCADE)
+    athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
+    rank = models.IntegerField(default=0, choices=MEDALS)
+    time = models.DurationField()

@@ -1,0 +1,34 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load datetime_filter %}
+
+
+
+{% block head_title %}Medals prototype{% endblock %}
+{% block content %}
+    <a href="{% url 'medals' %}">< Back</a>
+    <h1>{{ event.name }}</h1>
+    <h2>{{ competition_medal.competition.name }}</h2>
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>Competition</th>
+            <th>Gold</th>
+            <th>Silver</th>
+            <th>Bronze</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for competition_medal in competition_medals %}
+            <tr>
+                <td>{{ competition_medal.competition.name }}</td>
+                {% for medal in competition_medal.medals %}
+{#                    <td>{{ medal.get_rank_display }}</td>#}
+                    <td><a href="{% url 'athlete-overview' medal.athlete.slug %}">{{ medal.athlete.name }}</a><sup>{{ medal.time|format_time }}</sup></td>
+{#                    <td>{{ medal.time|format_time }}</td>#}
+                {% endfor %}
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
