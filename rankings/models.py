@@ -211,6 +211,7 @@ class Competition(models.Model):
     status = models.IntegerField(default=IMPORTED, choices=STATUS_OPTIONS)
     file_name = models.CharField(max_length=100, null=True, blank=True)
     credit = models.CharField(max_length=512, null=True, blank=True)
+    participants = models.ManyToManyField(Athlete, through='Participation')
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -272,6 +273,9 @@ class IndividualResult(models.Model):
     disqualified = models.BooleanField(default=False)
     did_not_start = models.BooleanField(default=False)
     withdrawn = models.BooleanField(default=False)
+    lane = models.PositiveSmallIntegerField(null=True, blank=True, default=None)
+    heat = models.PositiveSmallIntegerField(null=True, blank=True, default=None)
+    reaction_time = models.DurationField(blank=True, null=True, default=None)
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None, blank=True)
 
@@ -347,3 +351,19 @@ class MergeRequest(models.Model):
     athletes = models.ManyToManyField(Athlete)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField()
+
+    prepopulated_fields = {'slug': ('name',)}
+
+    def __str__(self):
+        return self.name
+
+
+class Participation(models.Model):
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)

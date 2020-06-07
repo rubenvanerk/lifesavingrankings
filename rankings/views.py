@@ -728,6 +728,9 @@ class MergeRequestDetailView(DetailView):
             for alias in athlete.aliases.all():
                 alias.alias_of = main_athlete
 
+            for participation in athlete.participation_set.all():
+                participation.athlete = main_athlete
+
             if not main_athlete.year_of_birth and athlete.year_of_birth:
                 main_athlete.year_of_birth = athlete.year_of_birth
 
