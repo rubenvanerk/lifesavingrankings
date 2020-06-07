@@ -251,7 +251,7 @@ class IndividualResult(models.Model):
     competition = ForeignKey(Competition, on_delete=models.CASCADE,
                              related_name='individual_results',
                              related_query_name='individual_results')
-    time = models.DurationField()
+    time = models.DurationField(blank=True, null=True)
     points = models.FloatField(default=0)
     original_line = models.CharField(max_length=200, null=True, default=None)
     round = models.IntegerField(default=0)
