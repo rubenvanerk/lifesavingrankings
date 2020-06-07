@@ -1,25 +1,21 @@
 import datetime
 import json
 import random
-
-from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.core import serializers
 from django.core.mail import send_mail
 from django.db.models import Count
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView, DeleteView, DetailView
-from django_tables2.views import SingleTableMixin
+from django_tables2.views import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
-
 from rankings.functions import mk_int, try_parse_int
 from .filters import CompetitionFilter
 from .models import *
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from .forms import *
-from .tables import CompetitionTable
+from .tables import CompetitionTable, TeamTable
 
 
 class FrontPageRecords(TemplateView):
@@ -110,6 +106,7 @@ class CompetitionOverview(TemplateView):
             return redirect(competition)
         if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
             IndividualResult.objects.filter(competition=competition).delete()
+            Participation.objects.filter(competition=competition).delete()
             competition.status = competition.SCHEDULED
             competition.save()
             return redirect('competition-list')
@@ -741,3 +738,23 @@ class MergeRequestDetailView(DetailView):
         merge_request.delete()
 
         return HttpResponseRedirect(reverse('merge-request-list'))
+
+
+class TeamListView(SingleTableView):
+    model = Team
+    table_class = TeamTable
+
+
+class TeamDetailView(DetailView):
+    model = Team
+
+
+class TeamCompetitionView(TemplateView):
+    template_name = 'rankings/team_competition.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamCompetitionView, self).get_context_data(**kwargs)
+        context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
+        context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
+        context['participations'] = Participation.objects.filter(team=team, competition=competition)
+        return context

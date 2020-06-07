@@ -361,11 +361,22 @@ class Team(models.Model):
 
     prepopulated_fields = {'slug': ('name',)}
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
+
+    def get_competitions(self):
+        competitions = self.participation_set.values_list('competition', flat=True)
+        print(competitions)
+        return Competition.objects.filter(pk__in=competitions).all()
 
 
 class Participation(models.Model):
     competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
+
+    def get_results(self):
+        return IndividualResult.public_objects.filter(competition=self.competition, athlete=self.athlete)
