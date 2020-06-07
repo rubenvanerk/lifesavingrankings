@@ -356,6 +356,8 @@ class MergeRequest(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     prepopulated_fields = {'slug': ('name',)}
 
