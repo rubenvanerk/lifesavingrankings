@@ -48,6 +48,9 @@ class Athlete(models.Model):
     nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None, blank=True)
     alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None, related_name='aliases')
 
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
     objects = PublicAthleteResultsManager()
     objects_with_aliases = models.Manager()
 
@@ -209,6 +212,9 @@ class Competition(models.Model):
     file_name = models.CharField(max_length=100, null=True, blank=True)
     credit = models.CharField(max_length=512, null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+
     prepopulated_fields = {"slug": ("name",)}
 
     def __str__(self):
@@ -339,3 +345,5 @@ class RelayOrder(models.Model):
 
 class MergeRequest(models.Model):
     athletes = models.ManyToManyField(Athlete)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
