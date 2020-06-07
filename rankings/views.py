@@ -107,8 +107,6 @@ class CompetitionOverview(TemplateView):
             competition.status = competition.IMPORTED
             competition.published_on = datetime.datetime.now()
             competition.save()
-            for result in competition.individual_results.filter(points=0).all():
-                result.calculate_points()
             return redirect(competition)
         if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
             IndividualResult.objects.filter(competition=competition).delete()
