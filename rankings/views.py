@@ -725,6 +725,9 @@ class MergeRequestDetailView(DetailView):
             for nationality in athlete.nationalities.all():
                 main_athlete.nationalities.add(nationality)
 
+            for alias in athlete.aliases.all():
+                alias.alias_of = main_athlete
+
             if not main_athlete.year_of_birth and athlete.year_of_birth:
                 main_athlete.year_of_birth = athlete.year_of_birth
 
