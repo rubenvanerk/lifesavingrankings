@@ -24,6 +24,11 @@ class Nationality(models.Model):
         return nationality_pks
 
 
+class PublicAthleteResultsManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(alias_of=None)
+
+
 class Athlete(models.Model):
     UNKNOWN = 0
     MALE = 1
@@ -38,10 +43,13 @@ class Athlete(models.Model):
     last_name = models.CharField(max_length=30, null=True, default=None, blank=True)
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
-
     year_of_birth = models.IntegerField(null=True, blank=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
     nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None, blank=True)
+    alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None, related_name='aliases')
+
+    objects = PublicAthleteResultsManager()
+    objects_with_aliases = models.Manager()
 
     def __str__(self):
         return self.name
