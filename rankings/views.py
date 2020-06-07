@@ -193,12 +193,20 @@ class EventOverview(TemplateView):
 class AthleteOverview(TemplateView):
     athlete = None
 
+    def dispatch(self, request, *args, **kwargs):
+        athlete = self.get_athlete()
+        if athlete.slug != self.kwargs.get('athlete_slug'):
+            return HttpResponseRedirect(reverse('athlete-overview', args=(athlete.slug,)))
+        return super().dispatch(request, *args, **kwargs)
+
     def get_athlete(self):
         if self.athlete is not Athlete:
             slug = self.kwargs.get('athlete_slug')
-            self.athlete = Athlete.objects.get(slug=slug)
+            self.athlete = Athlete.objects_with_aliases.get(slug=slug)
             if not self.athlete:
                 raise Http404
+            if self.athlete.alias_of:
+                self.athlete = self.athlete.alias_of
         return self.athlete
 
     def post(self, request, *args, **kwargs):
@@ -724,7 +732,8 @@ class MergeRequestDetailView(DetailView):
                 main_athlete.gender = athlete.gender
 
             main_athlete.save()
-            athlete.delete()
+            athlete.alias_of = main_athlete
+            athlete.save()
         merge_request.delete()
 
         return HttpResponseRedirect(reverse('merge-request-list'))
