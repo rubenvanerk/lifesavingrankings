@@ -265,6 +265,7 @@ class IndividualResult(models.Model):
     round = models.IntegerField(default=0)
     disqualified = models.BooleanField(default=False)
     did_not_start = models.BooleanField(default=False)
+    withdrawn = models.BooleanField(default=False)
 
     extra_analysis_time_by = ForeignKey(User, on_delete=models.CASCADE, null=True, default=None, blank=True)
 
@@ -279,7 +280,7 @@ class IndividualResult(models.Model):
 
     def calculate_points(self):
         record = EventRecord.objects.filter(gender=self.athlete.gender, event=self.event).first()
-        if self.disqualified or not record:
+        if self.disqualified or self.did_not_start or self.withdrawn or self.time is None or not record:
             return
         self.points = calculate_points(record.time.total_seconds() * 100, self.time.total_seconds() * 100)
         self.save()
