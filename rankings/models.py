@@ -380,3 +380,22 @@ class Participation(models.Model):
 
     def get_results(self):
         return IndividualResult.public_objects.filter(competition=self.competition, athlete=self.athlete)
+
+
+class SegmentResult(models.Model):
+    segment = models.ForeignKey(RelayOrder, on_delete=models.CASCADE)
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+    time = models.DurationField(blank=True, null=True)
+
+
+class RelayTeam(models.Model):
+    relay_team_name = models.CharField(max_length=100)
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+
+
+class RelayResult(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    time = models.DurationField(blank=True, null=True)
+    segment_results = models.ManyToManyField(SegmentResult)
+    relay_team = models.ForeignKey(RelayTeam, on_delete=models.CASCADE)
