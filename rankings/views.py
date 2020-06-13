@@ -254,14 +254,14 @@ class EventByAthlete(ListView):
     event = None
 
     def get_athlete(self):
-        if self.athlete is not Athlete:
+        if type(self.athlete) is not Athlete:
             self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
             if not self.athlete:
                 raise Http404
         return self.athlete
 
     def get_event(self):
-        if self.event is not Event:
+        if type(self.event) is not Event:
             self.event = Event.objects.get(slug=self.kwargs.get('event_slug'))
             if not self.event:
                 raise Http404
@@ -273,7 +273,9 @@ class EventByAthlete(ListView):
         athlete = self.get_athlete()
         event = self.get_event()
 
-        qs = qs.filter(athlete=athlete, event=event, disqualified=False)
+        qs = qs.filter(athlete=athlete, event=event, disqualified=False, did_not_start=False, withdrawn=False, time__isnull=False)
+        qs = qs.select_related('competition')
+        qs = qs.prefetch_related('individualresultsplit_set')
         if self.request.user.is_authenticated:
             user = self.request.user
             qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
