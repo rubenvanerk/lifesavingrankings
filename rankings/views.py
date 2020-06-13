@@ -36,11 +36,12 @@ class FrontPageRecords(TemplateView):
             '-published_on')[:5]
 
         top_results = {'genders': {'women': [], 'men': []}}
+        events = Event.objects.filter(type=Event.INDIVIDUAL).all();
         for gender in top_results['genders']:
             gender_int = gender_name_to_int(gender)
-            for event in Event.objects.filter(type=Event.INDIVIDUAL).all():
+            for event in events:
                 top_result = IndividualResult.public_objects.filter(event=event, athlete__gender=gender_int).order_by(
-                    'time').first()
+                    'time').select_related('competition', 'athlete', 'event').first()
                 if top_result:
                     top_results['genders'][gender].append(top_result)
 
