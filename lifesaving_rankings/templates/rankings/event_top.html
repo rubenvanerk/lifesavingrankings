@@ -1,0 +1,65 @@
+{% extends "lifesaving_rankings/base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs mathfilters %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Events" "event-overview" %}
+    {% with event_name=event.name|add:" "|add:gender %}
+        {% breadcrumb event_name "best-by-event" event.slug gender %}
+    {% endwith %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>{{ event.name }} {{ gender }} top results</h1>
+
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Athlete</th>
+            <th>Time</th>
+            <th>Competition</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for athlete in page_obj %}
+            <tr>
+                <td>{{ athlete.rank }}</td>
+                <td>{{ athlete.name }}</td>
+                <td>{{ athlete.personal_best|format_time }}</td>
+                <td>{{ athlete.individualresult_set.first.competition.name }}</td>
+                <td>{{ athlete.individualresult_set.first.competition.date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5">
+                    <div class="ui right floated pagination menu">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1" class="item">&laquo; first</a>
+                            <a href="?page={{ page_obj.previous_page_number }}" class="item">previous</a>
+                        {% endif %}
+
+                        <a class="active item">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </a>
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="item">next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}" class="item">last &raquo;</a>
+                        {% endif %}
+                    </div>
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+
+{% endblock %}

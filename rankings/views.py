@@ -2,11 +2,11 @@ import datetime
 import json
 import random
 
-from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test, login_required
-from django.core import serializers
 from django.core.mail import send_mail
-from django.db.models import Count
+from django.core.paginator import Paginator
+from django.db.models import Count, OuterRef, Exists, F, Window
+from django.db.models.functions import Rank
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -517,6 +517,66 @@ class BestByEvent(ListView):
         return context
 
     template_name = 'rankings/best_by_event.html'
+
+
+class EventTop(TemplateView):
+    template_name = 'rankings/event_top.html'
+
+    event = None
+
+    def get_event(self):
+        if self.event is not Event:
+            slug = self.kwargs.get('event_slug')
+            self.event = Event.objects.get(slug=slug)
+            if not self.event:
+                raise Http404
+        return self.event
+
+    def get_context_data(self, **kwargs):
+        context = super(EventTop, self).get_context_data()
+        event = self.get_event()
+        gender = gender_name_to_int(self.kwargs.get('gender'))
+
+        athlete_results = IndividualResult.public_objects.filter(
+            athlete=OuterRef('pk'),
+            event=event,
+            time__isnull=False,
+            disqualified=False,
+            did_not_start=False
+        )
+
+        athletes = Athlete.objects.filter(gender=gender)
+        athletes = athletes.filter(Exists(athlete_results))
+
+        athletes = athletes.annotate(personal_best=
+            IndividualResult.public_objects.filter(event=event, athlete=OuterRef('pk')).values('time')[:1]
+        )
+
+        athletes = athletes.order_by('personal_best')
+
+        athletes = athletes.annotate(
+            rank=Window(
+                expression=Rank(),
+                order_by=F('personal_best').asc()
+            ),
+        )
+
+        athletes = athletes.prefetch_related(Prefetch('individualresult_set', queryset=IndividualResult.public_objects.filter(
+            event=event,
+            time__isnull=False,
+            disqualified=False,
+            did_not_start=False
+        )))
+        athletes = athletes.prefetch_related('individualresult_set__competition')
+
+        per_page = 25
+        paginator = Paginator(athletes, per_page)
+        page_number = int(self.request.GET.get('page'))
+        page_obj = paginator.get_page(page_number)
+        context['page_obj'] = page_obj
+        context['gender'] = self.kwargs.get('gender')
+        context['event'] = event
+        return context
 
 
 class Search(ListView):
