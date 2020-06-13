@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey, Q, Max, Prefetch, Min
+from django.db.models import ForeignKey, Q, Max, Prefetch, Min, OuterRef, F, Subquery
 from django.urls import reverse
 from rankings.functions import calculate_points
 
@@ -79,7 +79,21 @@ class Athlete(models.Model):
         return personal_bests
 
     def get_competitions(self, year=None):
+        previous_best = IndividualResult.public_objects.filter(athlete=OuterRef('athlete'),
+                                                               event=OuterRef('event'),
+                                                               competition__date__lt=OuterRef('competition__date'),
+                                                               disqualified=False,
+                                                               did_not_start=False,
+                                                               withdrawn=False,
+                                                               time__isnull=False)
+
         individual_results = IndividualResult.public_objects.filter(athlete=self)
+        individual_results = individual_results.select_related('event', 'athlete')
+        individual_results = individual_results.prefetch_related('individualresultsplit_set')
+
+        individual_results = individual_results.annotate(previous_best=Subquery(previous_best.values('time')[:1]))
+        individual_results = individual_results.annotate(change=F('time') - F('previous_best'))
+
         if year is not None:
             individual_results = individual_results.filter(competition__date__year=year)
         competitions = individual_results.values('competition_id')
@@ -298,16 +312,6 @@ class IndividualResult(models.Model):
         if analysis_group.simulation_date_from:
             qs = qs.filter(competition__date__gte=analysis_group.simulation_date_from)
         return qs.first()
-
-    def difference_with_previous_best(self):
-        previous_best = IndividualResult.public_objects.filter(athlete=self.athlete,
-                                                               competition__date__lt=self.competition.date,
-                                                               disqualified=False,
-                                                               did_not_start=False,
-                                                               event=self.event).aggregate(Min('time'))
-        if previous_best['time__min'] is not None:
-            return self.time - previous_best['time__min']
-        return None
 
 
 class IndividualResultSplit(models.Model):

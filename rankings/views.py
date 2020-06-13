@@ -317,7 +317,7 @@ class AthleteTimeline(TemplateView):
     template_name = 'rankings/athlete_timeline.html'
 
     def get_athlete(self):
-        if self.athlete is not Athlete:
+        if type(self.athlete) is not Athlete:
             self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
             if not self.athlete:
                 raise Http404
