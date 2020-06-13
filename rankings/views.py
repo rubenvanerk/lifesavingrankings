@@ -198,10 +198,10 @@ class AthleteOverview(TemplateView):
         athlete = self.get_athlete()
         if athlete.slug != self.kwargs.get('athlete_slug'):
             return HttpResponseRedirect(reverse('athlete-overview', args=(athlete.slug,)))
-        return super().dispatch(request, *args, **kwargs)
+        return super(AthleteOverview, self).dispatch(request, *args, **kwargs)
 
     def get_athlete(self):
-        if self.athlete is not Athlete:
+        if type(self.athlete) is not Athlete:
             slug = self.kwargs.get('athlete_slug')
             self.athlete = Athlete.objects_with_aliases.get(slug=slug)
             if not self.athlete:
@@ -223,7 +223,7 @@ class AthleteOverview(TemplateView):
         return super(TemplateView, self).render_to_response(context)
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super(AthleteOverview, self).get_context_data(**kwargs)
 
         athlete = self.get_athlete()
 
@@ -232,16 +232,17 @@ class AthleteOverview(TemplateView):
         qs = IndividualResult.public_objects.filter(athlete=athlete) \
             .filter(event__type=Event.INDIVIDUAL, disqualified=False) \
             .order_by('event', 'time').distinct('event')
-        context['personal_bests']['individual'] = IndividualResult.public_objects.filter(id__in=qs).order_by('time')
+        context['personal_bests']['individual'] = IndividualResult.public_objects.filter(id__in=qs).select_related('competition', 'event')
 
         qs = IndividualResult.public_objects.filter(athlete=athlete) \
             .filter(event__type=Event.RELAY_SEGMENT, disqualified=False) \
             .order_by('event', 'time').distinct('event')
-        context['personal_bests']['relay'] = IndividualResult.public_objects.filter(id__in=qs).order_by('time')
+        context['personal_bests']['relay'] = IndividualResult.public_objects.filter(id__in=qs).select_related('competition', 'event')
 
-        context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
         context['athlete'] = athlete
-        context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
+        if self.request.user.is_staff:
+            context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
+            context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
         return context
 
     template_name = 'rankings/personal_best.html'

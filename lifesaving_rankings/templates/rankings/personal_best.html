@@ -61,9 +61,7 @@
                             Edit
                         </button>
                     </a>
-                {% endif %}
 
-                {% if request.user.is_superuser %}
                     <form action="" method="post" class="ui form">{% csrf_token %}
                         <div class="two fields">
                             <div class="field">
