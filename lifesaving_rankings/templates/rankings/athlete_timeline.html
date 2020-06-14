@@ -31,7 +31,7 @@
 
     {% if next_year %}
         <a href="{% url 'athlete-timeline' athlete.slug %}?year={{ current_year|add:1 }}" class="back button">
-            <button class="ui left labeled icon button back">
+            <button class="ui left labeled primary icon back button">
                 <i class="left arrow icon"></i>
                 {{ current_year|add:1 }}
             </button>
@@ -41,7 +41,7 @@
     {% if previous_year %}
         <a href="{% url 'athlete-timeline' athlete.slug %}?year={{ current_year|sub:1 }}"
            class="right floated back button">
-            <button class="ui right labeled icon button back">
+            <button class="ui right labeled icon primary back button">
                 {{ current_year|sub:1 }}
                 <i class="right arrow icon"></i>
             </button>
@@ -70,26 +70,18 @@
                                     <tr>
                                         <td>{{ result.event.name }}</td>
                                         <td>
-                                            {% if result.disqualified %}
-                                                DQ
-                                            {% elif result.did_not_start %}
-                                                DNS
-                                            {% else %}
-                                                {{ result.time|format_time }}
-                                            {% endif %}
+                                            {% include 'rankings/partials/time.html' with individual_result=result %}
                                         </td>
-                                        {% with result.difference_with_previous_best as change %}
-                                            <td {% if change is not None %}class="{% if change.total_seconds < 0 %}positive{% else %}negative{% endif %}"{% endif %}>
+                                            <td {% if result.change is not None %}class="{% if result.change.total_seconds < 0 %}positive{% else %}negative{% endif %}"{% endif %}>
                                                 {% if result.disqualified or result.did_not_start %}
                                                     -
-                                                {% elif change is not None %}
-                                                    {% if change.total_seconds >= 0 %}
-                                                        + {% endif %}{{ change|format_time }}
+                                                {% elif result.change is not None %}
+                                                    {% if result.change.total_seconds >= 0 %}
+                                                        + {% endif %}{{ result.change|format_time }}
                                                 {% else %}
                                                     New time
                                                 {% endif %}
                                             </td>
-                                        {% endwith %}
                                     </tr>
                                 {% endfor %}
                                 </tbody>
@@ -108,7 +100,7 @@
 
     {% if next_year %}
         <a href="{% url 'athlete-timeline' athlete.slug %}?year={{ current_year|add:1 }}" class="back button">
-            <button class="ui left labeled icon button back">
+            <button class="ui left labeled icon primary back button">
                 <i class="left arrow icon"></i>
                 {{ current_year|add:1 }}
             </button>
@@ -118,7 +110,7 @@
     {% if previous_year %}
         <a href="{% url 'athlete-timeline' athlete.slug %}?year={{ current_year|sub:1 }}"
            class="right floated back button">
-            <button class="ui right labeled icon button back">
+            <button class="ui right labeled icon primary back button">
                 {{ current_year|sub:1 }}
                 <i class="right arrow icon"></i>
             </button>

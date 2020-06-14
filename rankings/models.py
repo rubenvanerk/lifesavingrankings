@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import ForeignKey, Q, Max, Prefetch, Min
+from django.db.models import ForeignKey, Q, Max, Prefetch, Min, OuterRef, F, Subquery
 from django.urls import reverse
 from rankings.functions import calculate_points
 
@@ -22,6 +22,26 @@ class Nationality(models.Model):
         for child in self.children.all():
             nationality_pks += child.get_children_pks()
         return nationality_pks
+
+    # adapted from:
+    # https://medium.com/@tnesztler/recursive-queries-as-querysets-for-parent-child-relationships-self-manytomany-in-django-671696dfe47
+    def get_all_children(self, include_self=True):
+        table_name = Nationality.objects.model._meta.db_table
+        query = (
+            "WITH RECURSIVE children (id) AS ("
+            f"  SELECT {table_name}.id FROM {table_name} WHERE id = {self.pk}"
+            "  UNION ALL"
+            f"  SELECT {table_name}.id FROM children, {table_name}"
+            f"  WHERE {table_name}.parent_id = children.id"
+            ")"
+            f" SELECT {table_name}.id"
+            f" FROM {table_name}, children WHERE children.id = {table_name}.id"
+        )
+        if not include_self:
+            query += f" AND {table_name}.id != {self.pk}"
+        return Nationality.objects.filter(
+            pk__in=[nationality.id for nationality in Nationality.objects.raw(query)]
+        )
 
 
 class PublicAthleteResultsManager(models.Manager):
@@ -46,7 +66,8 @@ class Athlete(models.Model):
     year_of_birth = models.IntegerField(null=True, blank=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
     nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None, blank=True)
-    alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None, related_name='aliases')
+    alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None,
+                                 related_name='aliases')
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -79,7 +100,21 @@ class Athlete(models.Model):
         return personal_bests
 
     def get_competitions(self, year=None):
+        previous_best = IndividualResult.public_objects.filter(athlete=OuterRef('athlete'),
+                                                               event=OuterRef('event'),
+                                                               competition__date__lt=OuterRef('competition__date'),
+                                                               disqualified=False,
+                                                               did_not_start=False,
+                                                               withdrawn=False,
+                                                               time__isnull=False)
+
         individual_results = IndividualResult.public_objects.filter(athlete=self)
+        individual_results = individual_results.select_related('event', 'athlete')
+        individual_results = individual_results.prefetch_related('individualresultsplit_set')
+
+        individual_results = individual_results.annotate(previous_best=Subquery(previous_best.values('time')[:1]))
+        individual_results = individual_results.annotate(change=F('time') - F('previous_best'))
+
         if year is not None:
             individual_results = individual_results.filter(competition__date__year=year)
         competitions = individual_results.values('competition_id')
@@ -174,6 +209,8 @@ class Event(models.Model):
                     Max('round'))['round__max']
             query_set = query_set.filter(round=max_round)
 
+        query_set = query_set.select_related('athlete')
+        query_set = query_set.prefetch_related('athlete__nationalities', 'individualresultsplit_set')
         return query_set.order_by('time')[:limit]
 
 
@@ -258,6 +295,11 @@ class PublicIndividualResultsManager(models.Manager):
                                              competition__status=Competition.IMPORTED,
                                              extra_analysis_time_by=None)
 
+    def only_valid_results(self):
+        qs = self.get_queryset()
+        qs = qs.filter(disqualified=False, did_not_start=False, withdrawn=False, time__isnull=False)
+        return qs
+
 
 class IndividualResult(models.Model):
     athlete = ForeignKey(Athlete, on_delete=models.CASCADE)
@@ -298,16 +340,6 @@ class IndividualResult(models.Model):
         if analysis_group.simulation_date_from:
             qs = qs.filter(competition__date__gte=analysis_group.simulation_date_from)
         return qs.first()
-
-    def difference_with_previous_best(self):
-        previous_best = IndividualResult.public_objects.filter(athlete=self.athlete,
-                                                               competition__date__lt=self.competition.date,
-                                                               disqualified=False,
-                                                               did_not_start=False,
-                                                               event=self.event).aggregate(Min('time'))
-        if previous_best['time__min'] is not None:
-            return self.time - previous_best['time__min']
-        return None
 
 
 class IndividualResultSplit(models.Model):
