@@ -23,6 +23,26 @@ class Nationality(models.Model):
             nationality_pks += child.get_children_pks()
         return nationality_pks
 
+    # adapted from:
+    # https://medium.com/@tnesztler/recursive-queries-as-querysets-for-parent-child-relationships-self-manytomany-in-django-671696dfe47
+    def get_all_children(self, include_self=True):
+        table_name = Nationality.objects.model._meta.db_table
+        query = (
+            "WITH RECURSIVE children (id) AS ("
+            f"  SELECT {table_name}.id FROM {table_name} WHERE id = {self.pk}"
+            "  UNION ALL"
+            f"  SELECT {table_name}.id FROM children, {table_name}"
+            f"  WHERE {table_name}.parent_id = children.id"
+            ")"
+            f" SELECT {table_name}.id"
+            f" FROM {table_name}, children WHERE children.id = {table_name}.id"
+        )
+        if not include_self:
+            query += f" AND {table_name}.id != {self.pk}"
+        return Nationality.objects.filter(
+            pk__in=[nationality.id for nationality in Nationality.objects.raw(query)]
+        )
+
 
 class PublicAthleteResultsManager(models.Manager):
     def get_queryset(self):
@@ -46,7 +66,8 @@ class Athlete(models.Model):
     year_of_birth = models.IntegerField(null=True, blank=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
     nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None, blank=True)
-    alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None, related_name='aliases')
+    alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None,
+                                 related_name='aliases')
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -271,6 +292,11 @@ class PublicIndividualResultsManager(models.Manager):
         return super().get_queryset().filter(competition__is_concept=False,
                                              competition__status=Competition.IMPORTED,
                                              extra_analysis_time_by=None)
+
+    def only_valid_results(self):
+        qs = self.get_queryset()
+        qs = qs.filter(disqualified=False, did_not_start=False, withdrawn=False, time__isnull=False)
+        return qs
 
 
 class IndividualResult(models.Model):

@@ -22,8 +22,7 @@ urlpatterns = [
 
     # event routes
     path('events/', views.EventOverview.as_view(), name='event-overview'),
-    path('top-new/<slug:event_slug>/<gender:gender>/', views.EventTop.as_view(), name='event-top'),
-    path('top/<slug:event_slug>/<gender:gender>/', views.BestByEvent.as_view(), name='best-by-event'),
+    path('top/<slug:event_slug>/<gender:gender>/', views.EventTop.as_view(), name='best-by-event'),
 
     # competitions
     path('competitions/', views.CompetitionListView.as_view(), name='competition-list'),
