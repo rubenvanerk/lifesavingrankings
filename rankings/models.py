@@ -209,6 +209,8 @@ class Event(models.Model):
                     Max('round'))['round__max']
             query_set = query_set.filter(round=max_round)
 
+        query_set = query_set.select_related('athlete')
+        query_set = query_set.prefetch_related('athlete__nationalities', 'individualresultsplit_set')
         return query_set.order_by('time')[:limit]
 
 

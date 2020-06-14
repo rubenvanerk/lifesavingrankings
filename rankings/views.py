@@ -137,6 +137,8 @@ class CompetitionEvent(TemplateView):
 
         results = IndividualResult.objects.filter(competition=competition, event=event,
                                                   athlete__gender=gender).order_by('-round', 'time')
+        results = results.select_related('athlete')
+        results = results.prefetch_related('athlete__nationalities', 'individualresultsplit_set')
         context['results'] = results
 
         context['competition'] = competition
