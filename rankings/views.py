@@ -527,7 +527,7 @@ class EventTop(TemplateView):
         athletes = athletes.prefetch_related(Prefetch('individualresult_set', queryset=results_qs))
         athletes = athletes.prefetch_related('individualresult_set__competition', 'nationalities')
 
-        per_page = 50
+        per_page = 25
         paginator = Paginator(athletes, per_page)
         page_number = self.request.GET.get('page', 1)
         context['page_obj'] = paginator.get_page(page_number)

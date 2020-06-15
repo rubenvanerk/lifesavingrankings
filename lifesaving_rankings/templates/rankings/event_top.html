@@ -1,5 +1,7 @@
 {% extends "lifesaving_rankings/base.html" %}
 {% load datetime_filter django_bootstrap_breadcrumbs mathfilters django_tables2 %}
+{% block head_title %}{{ event.name }}{% endblock %}
+{% block meta_description %}Find out who has the fastest time for {{ event.name }} on Lifesaving Rankings{% endblock %}
 
 {% block breadcrumbs %}
 
@@ -155,7 +157,6 @@
         <tfoot>
         <tr>
             <th colspan="5">
-                Total: {{ paginator.count }}
                 {% if paginator.num_pages > 1 %}
                     <div class="ui right floated pagination menu">
                         {% if page_obj.has_previous %}
@@ -184,6 +185,9 @@
                                 <i class="right chevron icon"></i>
                             </a>
                         {% endif %}
+                    </div><br><br><br>
+                    <div class="ui right floated">
+                        Showing {{ page_obj.number|sub:1|mul:paginator.per_page|add:1 }} - {{ page_obj.number|mul:paginator.per_page }} of {{ paginator.count }} results
                     </div>
                 {% endif %}
             </th>
