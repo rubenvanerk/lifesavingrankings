@@ -127,6 +127,7 @@ USE_TZ = True
 DATE_INPUT_FORMATS = '%d-%m-%Y'
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/semantic.html"
+DJANGO_TABLES2_PAGE_RANGE = 5
 
 DATE_INPUT_FORMAT = '%B %d, %Y'
 
