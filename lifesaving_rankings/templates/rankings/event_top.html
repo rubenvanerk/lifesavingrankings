@@ -112,8 +112,8 @@
                     </div>
 
                     <div class="three wide right floated column">
-                        <button class="ui labeled icon right floated primary button" type="submit"><i
-                                class="filter icon"></i>Filter
+                        <button class="ui labeled icon right floated primary button" type="submit">
+                            <i class="filter icon"></i>Filter
                         </button>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
                 {% if paginator.num_pages > 1 %}
                     <div class="ui right floated pagination menu">
                         {% if page_obj.has_previous %}
-                            <a href="?page={{ page_obj.previous_page_number }}"
+                            <a href="{% querystring "page"=page_obj.previous_page_number %}"
                                class="icon item">
                                 <i class="left chevron icon"></i>
                             </a>
@@ -170,7 +170,7 @@
                                 {% if p == '...' %}
                                     <a href="#" class="item">{{ p }}</a>
                                 {% else %}
-                                    <a href="?page={{ p }}"
+                                    <a href="{% querystring "page"=p %}"
                                        class="item {% if p == page_obj.number %}active{% endif %}">
                                         {{ p }}
                                     </a>
@@ -179,7 +179,7 @@
                         {% endif %}
 
                         {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}"
+                            <a href="{% querystring "page"=page_obj.next_page_number %}"
                                class="icon item">
                                 <i class="right chevron icon"></i>
                             </a>
