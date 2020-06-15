@@ -12,6 +12,4 @@ class CompetitionFilter(django_filters.FilterSet):
         fields = ['q']
 
     def search_name_and_location(self, queryset, name, value):
-        return Competition.objects.filter(
-            Q(name__icontains=value) | Q(location__icontains=value)
-        )
+        return Competition.search(value)

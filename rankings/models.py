@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
+from django.contrib.postgres.search import SearchVector, SearchQuery, TrigramSimilarity, SearchRank
 from django.db import models
 from django.db.models import ForeignKey, Q, Max, Prefetch, Min, OuterRef, F, Subquery
 from django.urls import reverse
@@ -152,15 +153,10 @@ class Athlete(models.Model):
     @classmethod
     def search(cls, query):
         athletes = Athlete.objects
-        parts = query.split(' ')
 
-        if query and len(parts) > 1:
-            for part in parts:
-                athletes = athletes.filter(name__unaccent__icontains=part)
-        else:
-            athletes = athletes.filter(name__unaccent__icontains=query)
-
-        athletes.order_by('name')
+        athletes = athletes.annotate(
+            similarity=TrigramSimilarity('name', query)
+        ).filter(similarity__gt=0.25).order_by('-similarity')
 
         return athletes
 
@@ -287,6 +283,18 @@ class Competition(models.Model):
     def count_unlabeled_athletes(self):
         athlete_ids = IndividualResult.public_objects.filter(competition=self).values('athlete').distinct()
         return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).count()
+
+    @classmethod
+    def search(cls, query):
+        competitions = Competition.objects
+        vector = SearchVector('name') + SearchVector('location')
+        query = SearchQuery(query)
+
+        competitions = competitions.annotate(search=vector).filter(search=query)
+        competitions = competitions.annotate(rank=SearchRank(vector, query)).order_by('-rank')
+        competitions = competitions.filter(~Q(status=Competition.EXTRA_TIME))
+
+        return competitions
 
 
 class PublicIndividualResultsManager(models.Manager):
