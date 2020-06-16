@@ -452,7 +452,8 @@ class EventTop(TemplateView):
     def get_filter(self):
         result_filter = {
             'yob_start': int('0' + self.request.GET.get('yob_start', '0')),
-            'yob_end': int('0' + self.request.GET.get('yob_end', '0'))
+            'yob_end': int('0' + self.request.GET.get('yob_end', '0')),
+            'alltimes': self.request.GET.get('alltimes', '0')
         }
         if self.request.GET.get('nationality') or 0 > 0:
             result_filter['nationality'] = Nationality.objects.filter(
@@ -472,7 +473,7 @@ class EventTop(TemplateView):
 
         result_filter['enabled'] = self.request.GET.get('yob_end') or self.request.GET.get(
             'yob_start') or self.request.GET.get('rangestart') or self.request.GET.get(
-            'rangeend') or self.request.GET.get('nationality')
+            'rangeend') or self.request.GET.get('nationality') or self.request.GET.get('alltimes')
 
         return result_filter
 
@@ -480,55 +481,68 @@ class EventTop(TemplateView):
         context = super(EventTop, self).get_context_data()
         event = self.get_event()
         gender = gender_name_to_int(self.kwargs.get('gender'))
-
-        athletes = Athlete.objects.filter(gender=gender)
         result_filter = self.get_filter()
 
-        athlete_results = IndividualResult.public_objects.only_valid_results().filter(
-            athlete=OuterRef('pk'),
-            event=event
-        )
+        if 'alltimes' in result_filter and result_filter['alltimes'] == 'on':
+            results = IndividualResult.public_objects.only_valid_results().filter(event=event, athlete__gender=gender)
+            results = results.annotate(
+                rank=Window(
+                    expression=Rank(),
+                    order_by=F('time').asc()
+                ),
+            )
+            results = results.select_related('athlete', 'competition')
+            results = results.prefetch_related('athlete__nationalities')
+        else:
+            athletes = Athlete.objects.filter(gender=gender)
 
-        if 'date_range_start' in result_filter:
-            athlete_results = athlete_results.filter(competition__date__gte=result_filter['date_range_start'])
-        if 'date_range_end' in result_filter:
-            athlete_results = athlete_results.filter(competition__date__lte=result_filter['date_range_end'])
+            athlete_results = IndividualResult.public_objects.only_valid_results().filter(
+                athlete=OuterRef('pk'),
+                event=event
+            )
 
-        athletes = athletes.filter(Exists(athlete_results))
+            if 'date_range_start' in result_filter:
+                athlete_results = athlete_results.filter(competition__date__gte=result_filter['date_range_start'])
+            if 'date_range_end' in result_filter:
+                athlete_results = athlete_results.filter(competition__date__lte=result_filter['date_range_end'])
 
-        if 'nationality' in result_filter and type(result_filter['nationality']) is Nationality:
-            athletes = athletes.filter(nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
+            athletes = athletes.filter(Exists(athlete_results))
 
-        if 'yob_start' in result_filter and result_filter['yob_start'] > 0:
-            athletes = athletes.filter(year_of_birth__gte=result_filter['yob_start'])
+            if 'nationality' in result_filter and type(result_filter['nationality']) is Nationality:
+                athletes = athletes.filter(nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
 
-        if 'yob_end' in result_filter and result_filter['yob_end'] > 0:
-            athletes = athletes.filter(year_of_birth__lte=result_filter['yob_end'])
+            if 'yob_start' in result_filter and result_filter['yob_start'] > 0:
+                athletes = athletes.filter(year_of_birth__gte=result_filter['yob_start'])
 
-        athletes = athletes.annotate(personal_best=
-                                     IndividualResult.public_objects.only_valid_results().filter(event=event, athlete=OuterRef('pk')).values(
-                                         'time')[:1]
-                                     )
+            if 'yob_end' in result_filter and result_filter['yob_end'] > 0:
+                athletes = athletes.filter(year_of_birth__lte=result_filter['yob_end'])
 
-        athletes = athletes.order_by('personal_best')
+            athletes = athletes.annotate(personal_best=
+                                         IndividualResult.public_objects.only_valid_results().filter(event=event, athlete=OuterRef('pk')).values(
+                                             'time')[:1]
+                                         )
 
-        athletes = athletes.annotate(
-            rank=Window(
-                expression=Rank(),
-                order_by=F('personal_best').asc()
-            ),
-        )
+            athletes = athletes.order_by('personal_best')
 
-        results_qs = IndividualResult.public_objects.only_valid_results().filter(event=event)
-        if 'date_range_start' in result_filter:
-            results_qs = results_qs.filter(competition__date__gte=result_filter['date_range_start'])
-        if 'date_range_end' in result_filter:
-            results_qs = results_qs.filter(competition__date__lte=result_filter['date_range_end'])
-        athletes = athletes.prefetch_related(Prefetch('individualresult_set', queryset=results_qs))
-        athletes = athletes.prefetch_related('individualresult_set__competition', 'nationalities')
+            athletes = athletes.annotate(
+                rank=Window(
+                    expression=Rank(),
+                    order_by=F('personal_best').asc()
+                ),
+            )
+
+            results_qs = IndividualResult.public_objects.only_valid_results().filter(event=event)
+            if 'date_range_start' in result_filter:
+                results_qs = results_qs.filter(competition__date__gte=result_filter['date_range_start'])
+            if 'date_range_end' in result_filter:
+                results_qs = results_qs.filter(competition__date__lte=result_filter['date_range_end'])
+            athletes = athletes.prefetch_related(Prefetch('individualresult_set', queryset=results_qs))
+            athletes = athletes.prefetch_related('individualresult_set__competition', 'nationalities')
+
+            results = athletes
 
         per_page = 25
-        paginator = Paginator(athletes, per_page)
+        paginator = Paginator(results, per_page)
         page_number = self.request.GET.get('page', 1)
         context['page_obj'] = paginator.get_page(page_number)
         context['paginator'] = paginator

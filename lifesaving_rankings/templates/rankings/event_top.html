@@ -42,7 +42,6 @@
                             </div>
                             <div class="menu">
                                 {% for nationality in filter.nationalities %}
-
                                     <div class="item" data-value="{{ nationality.pk }}">
                                         <i class="{{ nationality.flag_code }} flag"></i> {{ nationality.name }}
                                     </div>
@@ -113,6 +112,11 @@
 
                     </div>
 
+                    <div class="ui toggle checkbox">
+                        <input type="checkbox" name="alltimes" {% if filter.alltimes == 'on' %}checked{% endif %}>
+                        <label>Show all times per athlete (instead of just PRs)</label>
+                    </div>
+
                     <div class="three wide right floated column">
                         <button class="ui labeled icon right floated primary button" type="submit">
                             <i class="filter icon"></i>Filter
@@ -134,25 +138,47 @@
         </tr>
         </thead>
         <tbody>
-        {% for athlete in page_obj %}
-            <tr>
-                <td>{{ athlete.rank }}</td>
-                <td>
-                    <a href="{% url 'athlete-overview' athlete.slug %}">
-                        {% for nationality in athlete.nationalities.all %}
-                            <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
-                        {% endfor %}
-                        {{ athlete.name }}
-                    </a>
-                    {% if athlete.year_of_birth %}('{{ athlete.year_of_birth|slugify|slice:"2:" }}){% endif %}
-                </td>
-                <td>{{ athlete.personal_best|format_time }}</td>
-                {% with competition=athlete.individualresult_set.first.competition %}
-                    <td><a href="{% url 'competition-overview' competition.slug %}">{{ competition.name }}</a></td>
-                    <td>{{ competition.date }}</td>
-                {% endwith %}
-            </tr>
-        {% endfor %}
+        {% if filter.alltimes == 'on' %}
+            {% for result in page_obj %}
+                <tr>
+                    <td>{{ result.rank }}</td>
+                    <td>
+                        <a href="{% url 'athlete-overview' result.athlete.slug %}">
+                            {% for nationality in result.athlete.nationalities.all %}
+                                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                            {% endfor %}
+                            {{ result.athlete.name }}
+                        </a>
+                        {% if result.athlete.year_of_birth %}('{{ result.athlete.year_of_birth|slugify|slice:"2:" }}){% endif %}
+                    </td>
+                    <td>{{ result.time|format_time }}</td>
+                    {% with competition=result.competition %}
+                        <td><a href="{% url 'competition-overview' competition.slug %}">{{ competition.name }}</a></td>
+                        <td>{{ competition.date }}</td>
+                    {% endwith %}
+                </tr>
+            {% endfor %}
+        {% else %}
+            {% for athlete in page_obj %}
+                <tr>
+                    <td>{{ athlete.rank }}</td>
+                    <td>
+                        <a href="{% url 'athlete-overview' athlete.slug %}">
+                            {% for nationality in athlete.nationalities.all %}
+                                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                            {% endfor %}
+                            {{ athlete.name }}
+                        </a>
+                        {% if athlete.year_of_birth %}('{{ athlete.year_of_birth|slugify|slice:"2:" }}){% endif %}
+                    </td>
+                    <td>{{ athlete.personal_best|format_time }}</td>
+                    {% with competition=athlete.individualresult_set.first.competition %}
+                        <td><a href="{% url 'competition-overview' competition.slug %}">{{ competition.name }}</a></td>
+                        <td>{{ competition.date }}</td>
+                    {% endwith %}
+                </tr>
+            {% endfor %}
+        {% endif %}
         </tbody>
         <tfoot>
         <tr>
@@ -187,7 +213,8 @@
                         {% endif %}
                     </div><br><br><br>
                     <div class="ui right floated">
-                        Showing {{ page_obj.number|sub:1|mul:paginator.per_page|add:1 }} - {{ page_obj.number|mul:paginator.per_page }} of {{ paginator.count }} results
+                        Showing {{ page_obj.number|sub:1|mul:paginator.per_page|add:1 }}
+                        - {{ page_obj.number|mul:paginator.per_page }} of {{ paginator.count }} results
                     </div>
                 {% endif %}
             </th>
