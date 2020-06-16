@@ -344,3 +344,9 @@ tfoot tr th {
 .version.divider {
   padding-top: 3rem;
 }
+
+  @media screen and (max-width: $break-small) {
+    #content .dataTables_wrapper .sixteen.wide.column {
+      padding: 1rem 0;
+    }
+  }
