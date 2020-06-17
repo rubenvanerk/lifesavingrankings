@@ -10,7 +10,7 @@ from .views import Account
 urlpatterns = [
     path('', rankings_views.FrontPageRecords.as_view(), name='home'),
 
-    path('about/', views.about),
+    path('about/', views.about, name='about'),
     path('changelog/', views.changelog, name='changelog'),
     path('ultimate-lifesaver/', views.ultimate_lifesaver),
 

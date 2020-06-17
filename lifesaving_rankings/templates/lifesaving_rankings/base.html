@@ -74,11 +74,7 @@
             <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
             <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
             <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
-            <a href="{% url 'changelog' %}" class="{% active 'changelog' %} item">Changelog</a>
-            <a href="http://shop.lifesavingrankings.com" target="_blank" class="item">
-                Shop
-                <sup><i class="external alternate icon"></i></sup>
-            </a>
+            <a href="{% url 'about' %}" class="{% active 'about' %} item">About</a>
 
             {% if request.user.is_staff %}
                 <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
@@ -159,10 +155,7 @@
         <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
         <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
         <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
-        <a href="{% url 'changelog' %}" class="item">Changelog</a>
-        <a href="http://shop.lifesavingrankings.com" target="_blank" class="item">
-            Shop <sup><i class="external alternate icon"></i></sup>
-        </a>
+        <a href="{% url 'about' %}" class="{% active 'about' %} item">About</a>
 
         {% if request.user.is_staff %}
             <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
@@ -239,14 +232,16 @@
         </div>
 
         <footer id="footer" class="ui inverted center aligned grid">
-            <span class="item facebook">
-                <a href="https://www.facebook.com/LifesavingRankings/" target="_blank"><i
-                        class="big facebook link icon"></i></a>
-            </span>
-            <span class="item">
-                Created by <a href="https://www.rubenvanerk.nl" target="_blank">Ruben van Erk</a><br>
-                Email: <a href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
-            </span>
+            <div class="ui horizontal inverted divider">
+                LifesavingRankings.com is created by <br>Ruben van Erk
+            </div>
+
+            <div class="ui horizontal inverted divided link list">
+                <a class="item" href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
+                <a class="item" href="https://www.facebook.com/LifesavingRankings/" target="_blank">Facebook</a>
+                <a class="item" href="https://shop.lifesavingrankings.com/">Shop</a>
+                <a class="item" href="{% url 'changelog' %}">Changelog</a>
+            </div>
         </footer>
 
     </div>
