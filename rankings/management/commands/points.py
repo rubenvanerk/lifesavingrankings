@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         events = EventRecord.objects.distinct('event').values_list('event__pk', flat=True)
-        results = IndividualResult.public_objects.filter(event__in=events).select_related('athlete')
+        results = IndividualResult.public_objects.only_valid_results().filter(event__in=events).select_related('athlete')
         event_records = EventRecord.objects.all()
         record_mappings = {Athlete.MALE: {}, Athlete.FEMALE: {}}
         for event_record in event_records:
@@ -19,8 +19,6 @@ class Command(BaseCommand):
         total = results.count()
         for result in results:
             count += 1
-            if result.time is None or result.disqualified or result.did_not_start or result.withdrawn:
-                continue
             event_record = record_mappings[result.athlete.gender][result.event.pk]
             result.points = calculate_fina_points(event_record.time.total_seconds() * 100, result.time.total_seconds() * 100)
             result.save()
