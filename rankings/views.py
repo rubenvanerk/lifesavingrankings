@@ -491,6 +491,18 @@ class EventTop(TemplateView):
                     order_by=F('time').asc()
                 ),
             )
+            if 'date_range_start' in result_filter:
+                results = results.filter(competition__date__gte=result_filter['date_range_start'])
+            if 'date_range_end' in result_filter:
+                results = results.filter(competition__date__lte=result_filter['date_range_end'])
+            if 'nationality' in result_filter and type(result_filter['nationality']) is Nationality:
+                results = results.filter(
+                    athlete__nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
+            if 'yob_start' in result_filter and result_filter['yob_start'] > 0:
+                results = results.filter(athlete__year_of_birth__gte=result_filter['yob_start'])
+
+            if 'yob_end' in result_filter and result_filter['yob_end'] > 0:
+                results = results.filter(athlete__year_of_birth__lte=result_filter['yob_end'])
             results = results.select_related('athlete', 'competition')
             results = results.prefetch_related('athlete__nationalities')
         else:
