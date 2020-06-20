@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from rankings.functions import calculate_fina_points
+from rankings.functions import calculate_points
 from rankings.models import IndividualResult, EventRecord, Athlete
 
 
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         for result in results:
             count += 1
             event_record = record_mappings[result.athlete.gender][result.event.pk]
-            result.points = calculate_fina_points(event_record.time.total_seconds() * 100, result.time.total_seconds() * 100)
+            result.points = calculate_points(event_record.time.total_seconds() * 100, result.time.total_seconds() * 100)
             result.save()
             if count % 100 == 0:
                 self.stdout.write(f"Calculated {count}/{total} results")
