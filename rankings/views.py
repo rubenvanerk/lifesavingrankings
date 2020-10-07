@@ -529,10 +529,13 @@ class EventTop(TemplateView):
             if 'yob_end' in result_filter and result_filter['yob_end'] > 0:
                 athletes = athletes.filter(year_of_birth__lte=result_filter['yob_end'])
 
-            athletes = athletes.annotate(personal_best=
-                                         IndividualResult.public_objects.only_valid_results().filter(event=event, athlete=OuterRef('pk')).values(
-                                             'time')[:1]
-                                         )
+            personal_best_query = IndividualResult.public_objects.only_valid_results().filter(event=event, athlete=OuterRef('pk')).values('time')
+            if 'date_range_start' in result_filter:
+                personal_best_query = personal_best_query.filter(competition__date__gte=result_filter['date_range_start'])
+            if 'date_range_end' in result_filter:
+                personal_best_query = personal_best_query.filter(competition__date__lte=result_filter['date_range_end'])
+
+            athletes = athletes.annotate(personal_best=personal_best_query[:1])
 
             athletes = athletes.order_by('personal_best')
 
