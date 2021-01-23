@@ -5,23 +5,6 @@
 <html lang="en">
 
 <head>
-    {% if not request.user.is_staff %}
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-145909425-1"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-
-            gtag('js', new Date());
-
-            gtag('config', 'UA-145909425-1');
-        </script>
-    {% endif %}
-
-
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>{% block head_title %}{% endblock %} | Lifesaving Rankings</title>
@@ -56,7 +39,7 @@
               href="https://cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css"/>
 
         <!-- This file stores project-specific CSS -->
-        <link href="{% static 'dist/css/main.css' %}" rel="stylesheet">
+        <link href="{% static 'dist/css/main.css' %}?v=20200617" rel="stylesheet">
 
     {% endblock %}
 </head>
@@ -74,11 +57,7 @@
             <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
             <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
             <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
-            <a href="{% url 'changelog' %}" class="{% active 'changelog' %} item">Changelog</a>
-            <a href="http://shop.lifesavingrankings.com" target="_blank" class="item">
-                Shop
-                <sup><i class="external alternate icon"></i></sup>
-            </a>
+            <a href="{% url 'about' %}" class="{% active 'about' %} item">About</a>
 
             {% if request.user.is_staff %}
                 <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
@@ -159,10 +138,7 @@
         <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
         <a href="{% url 'event-overview' %}" class="item {% active 'event-overview' %}">Events</a>
         <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
-        <a href="{% url 'changelog' %}" class="item">Changelog</a>
-        <a href="http://shop.lifesavingrankings.com" target="_blank" class="item">
-            Shop <sup><i class="external alternate icon"></i></sup>
-        </a>
+        <a href="{% url 'about' %}" class="{% active 'about' %} item">About</a>
 
         {% if request.user.is_staff %}
             <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
@@ -239,14 +215,16 @@
         </div>
 
         <footer id="footer" class="ui inverted center aligned grid">
-            <span class="item facebook">
-                <a href="https://www.facebook.com/LifesavingRankings/" target="_blank"><i
-                        class="big facebook link icon"></i></a>
-            </span>
-            <span class="item">
-                Created by <a href="https://www.rubenvanerk.nl" target="_blank">Ruben van Erk</a><br>
-                Email: <a href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
-            </span>
+            <div class="ui horizontal inverted divider">
+                LifesavingRankings.com is created by <br>Ruben van Erk
+            </div>
+
+            <div class="ui horizontal inverted divided link list">
+                <a class="item" href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
+                <a class="item" href="https://www.facebook.com/LifesavingRankings/" target="_blank">Facebook</a>
+                <a class="item" href="https://shop.lifesavingrankings.com/">Shop</a>
+                <a class="item" href="{% url 'changelog' %}">Changelog</a>
+            </div>
         </footer>
 
     </div>
@@ -275,6 +253,9 @@
 
     {% block javascript_after %}{% endblock %}
 {% endblock %}
+
+<noscript><img src="https://shynet.reapp.tech/ingress/854d2778-4dc9-48f5-a3bb-ba2a4c2ceb41/pixel.gif"></noscript>
+<script src="https://shynet.reapp.tech/ingress/854d2778-4dc9-48f5-a3bb-ba2a4c2ceb41/script.js"></script>
 </body>
 </html>
 

@@ -27,7 +27,7 @@ def changelog(request):
 
 
 def about(request):
-    return render(request, 'lifesaving_rankings/about.html')
+    return render(request, 'lifesaving_rankings/about.html', {'static': True})
 
 
 def rankings_redirect(request, path):

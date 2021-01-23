@@ -61,9 +61,7 @@
                             Edit
                         </button>
                     </a>
-                {% endif %}
 
-                {% if request.user.is_superuser %}
                     <form action="" method="post" class="ui form">{% csrf_token %}
                         <div class="two fields">
                             <div class="field">
@@ -105,7 +103,7 @@
                     </tr>
 
                     <tr>
-                        <td>Total points</td>
+                        <td>Total points <sup><a href="{% url 'about' %}#points"><i class="question outline circle icon"></i></a></sup></td>
                         <td>{{ athlete.get_total_points }}</td>
                     </tr>
                     </tbody>

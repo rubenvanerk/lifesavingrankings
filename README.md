@@ -1,7 +1,9 @@
 # lifesavingrankings
+![Django CI](https://github.com/rubenvanerk/lifesavingrankings/workflows/Django%20CI/badge.svg)
+
 Lifesaving Rankings tracks results for lifesaving pool competitions
 
-Relies on [competition-parser](https://github.com/rubenvanerk/competition-parser) to get the data.
+Relies on [competition-parser-lumen](https://github.com/rubenvanerk/competition-parser-lumen) to get the data.
 
 Lifesaving Rankings has two main parts: rankings and analysis
 

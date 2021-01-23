@@ -4,6 +4,10 @@
     DNS
 {% elif individual_result.disqualified %}
     DQ
+{% elif individual_result.withdrawn %}
+    WDR
+{% elif individual_result.time is None %}
+    NONE
 {% elif individual_result.individualresultsplit_set.all %}
 
     <span hidden>{{ individual_result.time|format_time }}</span>

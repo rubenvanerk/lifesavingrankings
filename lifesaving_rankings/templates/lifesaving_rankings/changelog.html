@@ -1,28 +1,93 @@
 {% extends "lifesaving_rankings/base.html" %}
 
+{% load django_bootstrap_breadcrumbs %}
+
 {% block head_title %}
     Changelog
 {% endblock %}
 
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Changelog" "changelog" %}
+
+    {% render_breadcrumbs "lifesaving_rankings/breadcrumb_template.html" %}
+
+{% endblock %}
+
 {% block content %}
-    <h1>Changelog</h1>
-    <h2 id="unreleased">Unreleased</h2>
-    <h3></h3>
+    <h1 class="ui header">Changelog</h1>
+
+    <div class="ui warning message">
+        <div class="header">LifesavingRankings.com is under active development!</div>
+        Do you have ideas, tips or questions about the project? Please send me an email:
+        <a href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
+    </div>
+
+    <p>Note: Changes from before May 7th 2020 are not recorded on this page</p>
+    <div id="2020.10.07" class="ui horizontal version divider">v2020.10.07</div>
+    <h3 class="ui header">Fixed</h3>
+    <ul>
+        <li>
+            Fixed a problem where an athlete's all-time best was displayed in event overview when using date filters
+        </li>
+    </ul>
+    <div id="2020.06.20" class="ui horizontal version divider">v2020.06.20</div>
+    <h3 class="ui header">Fixed</h3>
+    <ul>
+        <li>
+            Fix filters when using option to show all times
+        </li>
+    </ul>
+    <div id="2020.06.17" class="ui horizontal version divider">v2020.06.17</div>
+    <h3 class="ui header">Changed</h3>
+    <ul>
+        <li>
+            Replaced points formula with FINA points formula, see
+            <a href="{% url 'about' %}#points">this about section</a>.
+        </li>
+    </ul>
+    <div id="2020.06.16" class="ui horizontal version divider">v2020.06.16</div>
+    <h3 class="ui header">Added</h3>
+    <ul>
+        <li>Event top pages now have an option to show all times per athlete instead of just their PRs</li>
+        <li>New about page</li>
+    </ul>
+    <div id="2020.06.15" class="ui horizontal version divider">v2020.06.15</div>
+    <h3 class="ui header">Fixed</h3>
+    <ul>
+        <li>Filters on event top pages are now remembered when you change page</li>
+    </ul>
+    <h3 class="ui header">Changed</h3>
+    <ul>
+        <li>Improved look of this changelog</li>
+        <li>Improved search for athletes and competitions</li>
+    </ul>
+    <div id="2020.06.14" class="ui horizontal version divider">v2020.06.14</div>
+    <h3 class="ui header">Fixed</h3>
+    <ul>
+        <li>Applied many site-wide performance improvements</li>
+    </ul>
+    <div id="2020.06.10" class="ui horizontal version divider">v2020.06.10</div>
+    <h3 class="ui header">Added</h3>
     <ul>
         <li>Added withdrawn status to results</li>
         <li>Added created_at and updated_at to relevant models</li>
+        <li>Added Shynet as a privacy focused replacement for Google Analytics</li>
     </ul>
-    <h3>Changed</h3>
+    <h3 class="ui header">Changed</h3>
     <ul>
         <li>
             When athletes are merged, athletes are kept as an alias of the main athlete instead of being deleted.
             These aliases will prevent duplicate athletes in the future.
         </li>
     </ul>
-    <h2 id="2020.05.23">2020.05.23</h2>
-    <h3>Added</h3>
+    <div id="2020.05.23" class="ui horizontal version divider">v2020.05.23</div>
+    <h3 class="ui header">Added</h3>
     <ul>
-        <li>New section: My Account, where you can change your password and manage your extra times and analysis groups</li>
+        <li>New section: My Account, where you can change your password and manage your extra times and analysis
+            groups
+        </li>
         <li>Relay analysis now has a progress bar to indicate how much of the simulation is done</li>
         <li>Clean up of relay analysis. When a potential team has unused athletes, they are removed.</li>
         <li>Comparison times in Individual Analysis are now free input fields</li>
@@ -31,58 +96,63 @@
         <li>Analysis groups can now be deleted</li>
         <li>Added an explanation for Individual and Relay analysis</li>
     </ul>
-    <h3>Changed</h3>
+    <h3 class="ui header">Changed</h3>
     <ul>
         <li>Style adjustments and code reorganization</li>
         <li>Improved usability</li>
     </ul>
-    <h3>Fixed</h3>
+    <h3 class="ui header">Fixed</h3>
     <ul>
         <li>Extra added times were sometimes visible in places they shouldn't, this is now fixed</li>
     </ul>
-    <h2 id="2020.05.17">2020.05.17</h2>
-    <h3>Changed</h3>
+    <div id="2020.05.17" class="ui horizontal version divider">v2020.05.17</div>
+    <h3 class="ui header">Changed</h3>
     <ul>
         <li>Menu now includes this changelog</li>
         <li>External link in menu has icon to mark link as external</li>
     </ul>
-    <h3>Added</h3>
+    <h3 class="ui header">Added</h3>
     <ul>
-        <li>Competition overview now has a sub-navigation so it's easier to navigate between events, especially useful on mobile</li>
+        <li>Competition overview now has a sub-navigation so it's easier to navigate between events, especially useful
+            on mobile
+        </li>
     </ul>
-    <h2 id="2020.05.15">2020.05.15</h2>
-    <h3>Changed</h3>
+
+    <div id="2020.05.15" class="ui horizontal version divider">v2020.05.15</div>
+    <h3 class="ui header">Changed</h3>
     <ul>
         <li>Made scale on progression graph dynamic so it's easier readable</li>
         <li>Improved performance for creating and updating analysis groups</li>
     </ul>
-    <h3>Fixed</h3>
+    <h3 class="ui header">Fixed</h3>
     <ul>
         <li>Hide progression graph when there's only 1 point available</li>
     </ul>
-    <h2 id="2020.05.08">2020.05.08</h2>
-    <h3>Fixed</h3>
+
+    <div id="2020.05.08" class="ui horizontal version divider">v2020.05.08</div>
+    <h3 class="ui header">Fixed</h3>
     <ul>
         <li>Add time page is reachable again</li>
         <li>Anchors in URLs now scroll to the right section for static pages</li>
     </ul>
-    <h3>Removed</h3>
+    <h3 class="ui header">Removed</h3>
     <ul>
         <li>Removed complete relays from add result form,
             only individual event results should be available to add to an athlete
         </li>
     </ul>
-    <h2 id="2020.05.07">2020.05.07</h2>
-    <h3>Added</h3>
+
+    <div id="2020.05.07" class="ui horizontal version divider">v2020.05.07</div>
+    <h3 class="ui header">Added</h3>
     <ul>
         <li>New changelog to communicate changes to users</li>
         <li>Pipelines to streamline development process</li>
     </ul>
-    <h3>Changed</h3>
+    <h3 class="ui header">Changed</h3>
     <ul>
         <li>Improved lot of code to make it easier to understand and develop</li>
     </ul>
-    <h3>Removed</h3>
+    <h3 class="ui header">Removed</h3>
     <ul>
         <li>Need for <code>|to_url</code> filter</li>
     </ul>
