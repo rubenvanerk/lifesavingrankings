@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rankings', '0056_trigram_similarity_install'),
+        ('rankings', '0057_auto_20200611_2030'),
     ]
 
     operations = [

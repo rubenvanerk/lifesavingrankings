@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rankings', '0056_auto_20200607_1828'),
+        ('rankings', '0056_trigram_similarity_install'),
     ]
 
     operations = [
