@@ -8,7 +8,7 @@ from django.urls import reverse
 from rankings.functions import calculate_points
 
 
-class Nationality(models.Model):
+class Country(models.Model):
     name = models.CharField(max_length=100, unique=True, null=True)
     flag_code = models.CharField(max_length=10, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.SET_NULL)
@@ -19,15 +19,15 @@ class Nationality(models.Model):
         return self.name
 
     def get_children_pks(self):
-        nationality_pks = [self.pk]
+        country_pks = [self.pk]
         for child in self.children.all():
-            nationality_pks += child.get_children_pks()
-        return nationality_pks
+            country_pks += child.get_children_pks()
+        return country_pks
 
     # adapted from:
     # https://medium.com/@tnesztler/recursive-queries-as-querysets-for-parent-child-relationships-self-manytomany-in-django-671696dfe47
     def get_all_children(self, include_self=True):
-        table_name = Nationality.objects.model._meta.db_table
+        table_name = Country.objects.model._meta.db_table
         query = (
             "WITH RECURSIVE children (id) AS ("
             f"  SELECT {table_name}.id FROM {table_name} WHERE id = {self.pk}"
@@ -40,8 +40,8 @@ class Nationality(models.Model):
         )
         if not include_self:
             query += f" AND {table_name}.id != {self.pk}"
-        return Nationality.objects.filter(
-            pk__in=[nationality.id for nationality in Nationality.objects.raw(query)]
+        return Country.objects.filter(
+            pk__in=[country.id for country in Country.objects.raw(query)]
         )
 
 
@@ -66,7 +66,7 @@ class Athlete(models.Model):
     slug = models.SlugField(unique=True, null=True)
     year_of_birth = models.IntegerField(null=True, blank=True)
     gender = models.IntegerField(default=UNKNOWN, choices=GENDER_CHOICES)
-    nationalities = models.ManyToManyField(Nationality, related_name='nationalities', default=None, blank=True)
+    nationalities = models.ManyToManyField(Country, related_name='nationalities', default=None, blank=True)
     alias_of = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, default=None,
                                  related_name='aliases')
 
@@ -211,6 +211,13 @@ class Event(models.Model):
 
 
 class Competition(models.Model):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.country:
+            self.location = self.city + ', ' + self.country.name
+        else:
+            self.location = self.city
+
     class Meta:
         ordering = ['-published_on']
 
@@ -237,7 +244,9 @@ class Competition(models.Model):
     name = models.CharField(max_length=100, unique=True, null=True)
     slug = models.SlugField(null=True)
     date = models.DateField()
-    location = models.CharField(max_length=100)
+    end_date = models.DateField(null=True, blank=True)
+    city = models.CharField(max_length=100)
+    country = ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True)
     type_of_timekeeping = models.IntegerField(default=ELECTRONIC, choices=TYPES)
     is_concept = models.BooleanField(default=False)
     published_on = models.DateTimeField(null=True, blank=True)
