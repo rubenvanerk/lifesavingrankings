@@ -132,3 +132,4 @@ DJANGO_TABLES2_PAGE_RANGE = 5
 DATE_INPUT_FORMAT = '%B %d, %Y'
 
 LOGIN_REDIRECT_URL = 'account'
+ACCOUNT_ADAPTER = 'lifesaving_rankings.adapter.NoNewUsersAccountAdapter'
