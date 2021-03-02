@@ -60,7 +60,7 @@ class AnalysisGroup(models.Model):
     def relay_analysis_available(self):
         if self.relay_analysis_is_available is None:
             group_teams = list(self.groupteam_set.all().order_by('analysis_group__groupteam'))
-            if len(group_teams) is 0:
+            if len(group_teams) == 0:
                 self.relay_analysis_is_available = False
                 return self.relay_analysis_is_available
             last_group_team = group_teams[-1]

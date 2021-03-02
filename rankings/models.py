@@ -191,7 +191,7 @@ class Event(models.Model):
 
     def get_top_by_competition_and_gender(self, competition, gender, limit):
         if type(gender) is not int:
-            if gender is 'men':
+            if gender == 'men':
                 gender = 1
             else:
                 gender = 2

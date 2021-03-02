@@ -585,10 +585,10 @@ class Search(ListView):
         reported = try_parse_int(self.request.GET.get('reported'))
         message = ''
         success = False
-        if reported is 0:
+        if reported == 0:
             success = False
             message = 'Select at least 2 athletes to report'
-        elif reported is 1:
+        elif reported == 1:
             message = 'Duplicate athletes reported. Thanks!'
             success = True
         context['message'] = message
