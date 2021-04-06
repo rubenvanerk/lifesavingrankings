@@ -11,15 +11,14 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, TemplateView, DeleteView, DetailView
-from django_tables2.views import SingleTableMixin
+from django_tables2.views import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
-
 from rankings.functions import mk_int, try_parse_int
 from .filters import CompetitionFilter
 from .models import *
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from .forms import *
-from .tables import CompetitionTable
+from .tables import CompetitionTable, TeamTable
 
 
 class FrontPageRecords(TemplateView):
@@ -60,7 +59,7 @@ class CompetitionOverview(TemplateView):
             raise Http404
         competition_slug = self.kwargs.get('competition_slug')
         competition = Competition.objects.get(slug=competition_slug)
-        nationality = Nationality.objects.get(pk=request.POST['country'])
+        nationality = Country.objects.get(pk=request.POST['country'])
 
         for athlete in competition.get_unlabeled_athletes():
             athlete.nationalities.add(nationality)
@@ -95,7 +94,7 @@ class CompetitionOverview(TemplateView):
                 gender=Athlete.FEMALE,
                 limit=limit)
         context['competition'] = competition
-        context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
+        context['nationalities'] = Country.objects.filter(is_parent_country=False)
         context['unlabeled_athletes'] = competition.get_unlabeled_athletes()
         return context
 
@@ -108,11 +107,10 @@ class CompetitionOverview(TemplateView):
             competition.status = competition.IMPORTED
             competition.published_on = datetime.datetime.now()
             competition.save()
-            for result in competition.individual_results.filter(points=0).all():
-                result.calculate_points()
             return redirect(competition)
         if 'delete' in self.request.GET and self.request.GET['delete'] == 'true' and self.request.user.is_superuser:
             IndividualResult.objects.filter(competition=competition).delete()
+            Participation.objects.filter(competition=competition).delete()
             competition.status = competition.SCHEDULED
             competition.save()
             return redirect('competition-list')
@@ -214,7 +212,7 @@ class AthleteOverview(TemplateView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        nationality = Nationality.objects.get(pk=request.POST['country'])
+        nationality = Country.objects.get(pk=request.POST['country'])
         athlete = self.get_athlete()
         if athlete.nationalities.filter(pk=nationality.pk).exists():
             athlete.nationalities.remove(nationality)
@@ -245,7 +243,7 @@ class AthleteOverview(TemplateView):
 
         context['athlete'] = athlete
         if self.request.user.is_staff:
-            context['nationalities'] = Nationality.objects.filter(is_parent_country=False)
+            context['nationalities'] = Country.objects.filter(is_parent_country=False)
             context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
         return context
 
@@ -456,7 +454,7 @@ class EventTop(TemplateView):
             'alltimes': self.request.GET.get('alltimes', '0')
         }
         if self.request.GET.get('nationality') or 0 > 0:
-            result_filter['nationality'] = Nationality.objects.filter(
+            result_filter['nationality'] = Country.objects.filter(
                 pk=self.request.GET.get('nationality').strip()).first()
 
         if self.request.GET.get('rangestart'):
@@ -469,7 +467,7 @@ class EventTop(TemplateView):
         lowest_year_of_birth = Athlete.objects.aggregate(Min('year_of_birth'))['year_of_birth__min']
         highest_year_of_birth = Athlete.objects.aggregate(Max('year_of_birth'))['year_of_birth__max']
         result_filter['year_of_birth_range'] = range(lowest_year_of_birth, highest_year_of_birth)
-        result_filter['nationalities'] = Nationality.objects.all()
+        result_filter['nationalities'] = Country.objects.all()
 
         result_filter['enabled'] = self.request.GET.get('yob_end') or self.request.GET.get(
             'yob_start') or self.request.GET.get('rangestart') or self.request.GET.get(
@@ -495,7 +493,7 @@ class EventTop(TemplateView):
                 results = results.filter(competition__date__gte=result_filter['date_range_start'])
             if 'date_range_end' in result_filter:
                 results = results.filter(competition__date__lte=result_filter['date_range_end'])
-            if 'nationality' in result_filter and type(result_filter['nationality']) is Nationality:
+            if 'nationality' in result_filter and type(result_filter['nationality']) is Country:
                 results = results.filter(
                     athlete__nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
             if 'yob_start' in result_filter and result_filter['yob_start'] > 0:
@@ -520,7 +518,7 @@ class EventTop(TemplateView):
 
             athletes = athletes.filter(Exists(athlete_results))
 
-            if 'nationality' in result_filter and type(result_filter['nationality']) is Nationality:
+            if 'nationality' in result_filter and type(result_filter['nationality']) is Country:
                 athletes = athletes.filter(nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
 
             if 'yob_start' in result_filter and result_filter['yob_start'] > 0:
@@ -653,7 +651,7 @@ def label_nationality(request, pk):
         return HttpResponseRedirect(reverse('label-athlete', kwargs={'pk': next_athlete.pk}))
 
     if request.method == 'POST':
-        nationality = Nationality.objects.get(pk=request.POST['country'])
+        nationality = Country.objects.get(pk=request.POST['country'])
         athlete.nationalities.add(nationality)
         athlete.save()
         return HttpResponseRedirect(reverse('label-athlete', kwargs={'pk': next_athlete.pk}))
@@ -663,7 +661,7 @@ def label_nationality(request, pk):
     progress = labeled_athletes / athlete_count * 100
 
     return render(request, 'rankings/label_nationality.html',
-                  {'athlete': athlete, 'nationalities': Nationality.objects.filter(is_parent_country=False),
+                  {'athlete': athlete, 'nationalities': Country.objects.filter(is_parent_country=False),
                    'athlete_count': athlete_count,
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
                    'queue': queue,
@@ -776,6 +774,9 @@ class MergeRequestDetailView(DetailView):
             for alias in athlete.aliases.all():
                 alias.alias_of = main_athlete
 
+            for participation in athlete.participation_set.all():
+                participation.athlete = main_athlete
+
             if not main_athlete.year_of_birth and athlete.year_of_birth:
                 main_athlete.year_of_birth = athlete.year_of_birth
 
@@ -788,3 +789,23 @@ class MergeRequestDetailView(DetailView):
         merge_request.delete()
 
         return HttpResponseRedirect(reverse('merge-request-list'))
+
+
+class TeamListView(SingleTableView):
+    model = Team
+    table_class = TeamTable
+
+
+class TeamDetailView(DetailView):
+    model = Team
+
+
+class TeamCompetitionView(TemplateView):
+    template_name = 'rankings/team_competition.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamCompetitionView, self).get_context_data(**kwargs)
+        context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
+        context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
+        context['participations'] = Participation.objects.filter(team=team, competition=competition)
+        return context

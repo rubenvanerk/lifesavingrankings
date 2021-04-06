@@ -40,7 +40,7 @@
     {% endif %}
 
     {% if request.user.is_superuser %}
-        {% if not competition.is_imported %}
+        {% if competition.is_concept %}
             <a href="{% url 'competition-overview' competition.slug %}?publish=true" class="button back">
                 <button class="ui left labeled icon button">
                     <i class="left eye icon"></i>

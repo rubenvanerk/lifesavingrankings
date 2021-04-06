@@ -31,6 +31,11 @@ urlpatterns = [
     path('competition/<slug:competition_slug>/<slug:event_slug>/<gender:gender>/', views.CompetitionEvent.as_view(),
          name='competition-event'),
 
+    # team routes
+    path('teams/', views.TeamListView.as_view(), name='team-list'),
+    path('teams/<slug:slug>/', views.TeamDetailView.as_view(), name='team-detail'),
+    path('teams/<slug:team_slug>/<slug:competition_slug>/', views.TeamCompetitionView.as_view(), name='team-competition'),
+
     # utilities
     path('empty-athletes/', views.EmptyAthletes.as_view()),
     path('delete-empty-athletes/', views.delete_empty_athletes, name='delete-empty-athletes'),

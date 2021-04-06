@@ -9,7 +9,7 @@ admin.site.register(Event)
 admin.site.register(RelayOrder)
 admin.site.register(Athlete)
 admin.site.register(EventRecord)
-admin.site.register(Nationality)
+admin.site.register(Country)
 admin.site.register(IndividualResultSplit)
 
 

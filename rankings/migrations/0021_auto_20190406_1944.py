@@ -3,7 +3,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 
-from rankings.models import Nationality
+from rankings.models import Country as Nationality
 
 class Migration(migrations.Migration):
     dependencies = [
