@@ -133,3 +133,5 @@ DATE_INPUT_FORMAT = '%B %d, %Y'
 
 LOGIN_REDIRECT_URL = 'account'
 ACCOUNT_ADAPTER = 'lifesaving_rankings.adapter.NoNewUsersAccountAdapter'
+
+COMPETITIONS_BUCKET_URL = env('COMPETITIONS_BUCKET_URL')

@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVector, SearchQuery, TrigramSimilarity, SearchRank
 from django.db import models
@@ -283,6 +284,9 @@ class Competition(models.Model):
     def count_unlabeled_athletes(self):
         athlete_ids = IndividualResult.public_objects.filter(competition=self).values('athlete').distinct()
         return Athlete.objects.filter(pk__in=athlete_ids, nationalities=None).count()
+
+    def get_file_url(self):
+        return settings.COMPETITIONS_BUCKET_URL + self.file_name
 
     @classmethod
     def search(cls, query):
