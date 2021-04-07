@@ -1,5 +1,4 @@
 # lifesavingrankings
-![Django CI](https://github.com/rubenvanerk/lifesavingrankings/workflows/Django%20CI/badge.svg)
 
 Lifesaving Rankings tracks results for lifesaving pool competitions
 
