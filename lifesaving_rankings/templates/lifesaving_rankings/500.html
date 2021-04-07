@@ -1,0 +1,12 @@
+{% extends "lifesaving_rankings/base.html" %}
+
+{% block head_title %}
+    Server error
+{% endblock %}
+
+{% block content %}
+    <h1>500 - Server error</h1>
+    <p>Oops, something went wrong.</p>
+    <p>Try to refresh this page or feel free to contact me if the problem persist.</p>
+    <a href="{% url 'home' %}" class="ui primary button">Go to Home</a>
+{% endblock %}

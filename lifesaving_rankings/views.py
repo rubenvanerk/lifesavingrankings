@@ -10,12 +10,12 @@ class Account(LoginRequiredMixin, TemplateView):
 
 def error_404_view(request, exception):
     data = {"message": "Error 404: Page not found"}
-    return render(request, 'lifesaving_rankings/error.html', data)
+    return render(request, 'lifesaving_rankings/404.html', data)
 
 
 def error_500_view(request):
     data = {"message": "Error 500: Server error"}
-    return render(request, 'lifesaving_rankings/error.html', data)
+    return render(request, 'lifesaving_rankings/500.html', data)
 
 
 def ultimate_lifesaver(request):
