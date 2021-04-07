@@ -30,7 +30,7 @@
             {% for result in participation.get_results %}
                 <tr>
                     <td>{{ result.event.name }}</td>
-                    <td>{{ result.time|format_time }}</td>
+                    <td>{% include 'rankings/partials/time.html' with individual_result=result %}</td>
                 <tr></tr>
             {% endfor %}
             </tbody>
