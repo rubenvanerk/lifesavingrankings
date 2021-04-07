@@ -807,5 +807,5 @@ class TeamCompetitionView(TemplateView):
         context = super(TeamCompetitionView, self).get_context_data(**kwargs)
         context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
         context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
-        context['participations'] = Participation.objects.filter(team=team, competition=competition)
+        context['participations'] = Participation.objects.filter(team=team, competition=competition).select_related('athlete')
         return context
