@@ -70,7 +70,7 @@ class CompetitionOverview(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         competition_slug = self.kwargs.get('competition_slug')
-        competition = Competition.objects.get(slug=competition_slug)
+        competition = Competition.objects.filter(slug=competition_slug).first()
 
         if competition is None:
             raise Http404
