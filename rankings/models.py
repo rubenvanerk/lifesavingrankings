@@ -243,7 +243,7 @@ class Competition(models.Model):
         (EXTRA_TIME, 'Extra time competition')
     )
     name = models.CharField(max_length=100, unique=True, null=True)
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(null=True, max_length=80)
     date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     city = models.CharField(max_length=100)
