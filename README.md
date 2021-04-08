@@ -2,7 +2,7 @@
 
 Lifesaving Rankings tracks results for lifesaving pool competitions
 
-Relies on [competition-parser-lumen](https://github.com/rubenvanerk/competition-parser-lumen) to get the data.
+Relies on [lifesavingrankings-parser](https://github.com/rubenvanerk/lifesavingrankings-parser) to get the data.
 
 Lifesaving Rankings has two main parts: rankings and analysis
 
