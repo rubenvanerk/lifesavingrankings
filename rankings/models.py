@@ -439,16 +439,22 @@ class SegmentResult(models.Model):
     segment = models.ForeignKey(RelayOrder, on_delete=models.CASCADE)
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
     time = models.DurationField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 class RelayTeam(models.Model):
     relay_team_name = models.CharField(max_length=100)
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
 class RelayResult(models.Model):
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    time = models.DurationField(blank=True, null=True)
-    segment_results = models.ManyToManyField(SegmentResult)
     relay_team = models.ForeignKey(RelayTeam, on_delete=models.CASCADE)
+    segment_results = models.ManyToManyField(SegmentResult)
+    time = models.DurationField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
