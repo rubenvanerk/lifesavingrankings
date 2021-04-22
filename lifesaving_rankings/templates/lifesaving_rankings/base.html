@@ -81,9 +81,9 @@
                 </div>
 
                 {% if user.is_authenticated %}
-{#                    <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">#}
-{#                        Logout#}
-{#                    </a>#}
+                    {#                    <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">#}
+                    {#                        Logout#}
+                    {#                    </a>#}
 
                     <div class="ui right default inverted dropdown item">
                         Logged in as {{ request.user.username }}
@@ -237,10 +237,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     {% block javascript %}
-        <!-- Required by Bootstrap 3 -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"
-                integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"
-                crossorigin="anonymous"></script>
+        <!-- Required by Fomantic UI -->
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
 
         <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript"
