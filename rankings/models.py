@@ -157,7 +157,7 @@ class Athlete(models.Model):
 
         athletes = athletes.annotate(
             similarity=TrigramSimilarity('name', query)
-        ).filter(similarity__gt=0.25).order_by('-similarity')
+        ).filter(similarity__gt=0.35).order_by('-similarity')
 
         return athletes
 
