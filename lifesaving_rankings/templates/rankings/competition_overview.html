@@ -67,6 +67,12 @@
         <div class="column">
             <table class="ui definition compact table">
                 <tbody>
+                {% if competition.original_name %}
+                    <tr>
+                        <td>Original name</td>
+                        <td>{{ competition.original_name }}</td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td>Location</td>
                     <td>{{ competition.location }}</td>
@@ -107,6 +113,12 @@
                     <tr>
                         <td>Thanks to</td>
                         <td>{{ competition.credit|safe }}</td>
+                    </tr>
+                {% endif %}
+                {% if competition.comment %}
+                    <tr>
+                        <td>Comment</td>
+                        <td>{{ competition.comment|safe }}</td>
                     </tr>
                 {% endif %}
                 </tbody>

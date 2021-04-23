@@ -243,6 +243,7 @@ class Competition(models.Model):
         (EXTRA_TIME, 'Extra time competition')
     )
     name = models.CharField(max_length=100, unique=True, null=True)
+    original_name = models.CharField(max_length=256, null=True, blank=True)
     slug = models.SlugField(null=True, max_length=80)
     date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
@@ -254,6 +255,7 @@ class Competition(models.Model):
     status = models.IntegerField(default=IMPORTED, choices=STATUS_OPTIONS)
     file_name = models.CharField(max_length=100, null=True, blank=True)
     credit = models.CharField(max_length=512, null=True, blank=True)
+    comment = models.CharField(max_length=512, null=True, blank=True)
     participants = models.ManyToManyField(Athlete, through='Participation')
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
