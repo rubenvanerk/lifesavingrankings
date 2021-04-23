@@ -303,7 +303,7 @@ class Competition(models.Model):
     @classmethod
     def search(cls, query):
         competitions = Competition.objects
-        vector = SearchVector('name') + SearchVector('location')
+        vector = SearchVector('name') + SearchVector('original_name') + SearchVector('country') + SearchVector('city')
         query = SearchQuery(query)
 
         competitions = competitions.annotate(search=vector).filter(search=query)
