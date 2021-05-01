@@ -34,6 +34,8 @@ This project uses Pipenv, make sure [you have it installed](https://pipenv.pypa.
 - Run `python manage.py loaddata rankings`
 - Run `python manage.py runserver`
 
+To create a new superuser for `/admin` run: `python manage.py createsuperuser`
+
 ## Production
 - `zappa update production`
 - `zappa manage production "collectstatic --noinput"`
