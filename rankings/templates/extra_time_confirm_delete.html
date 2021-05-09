@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+
+{% block content %}
+    <form method="post">{% csrf_token %}
+        <p>Are you sure you want to delete this time?</p>
+
+        <p>
+            Athlete: {{ object.athlete.name }}<br>
+            Event: {{ object.event.name }}<br>
+            Time: {{ object.time|format_time }}
+        </p>
+
+        <input type="submit" value="Delete" class="ui button red">
+    </form>
+{% endblock %}

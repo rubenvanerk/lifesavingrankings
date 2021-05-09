@@ -26,7 +26,7 @@ class CompetitionTable(tables.Table):
     athlete_count = tables.Column(empty_values=())
 
     def render_name(self, record):
-        return format_html('<a href="%s">%s</a>' % (reverse('competition-overview', args={record.slug}), record.name))
+        return format_html('<a href="%s">%s</a>' % (reverse('competition-detail', args={record.slug}), record.name))
 
     def render_athlete_count(self, record):
         return record.get_athlete_count() or record.get_status_display()

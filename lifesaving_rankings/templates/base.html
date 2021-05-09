@@ -1,0 +1,257 @@
+{% load static i18n account active_menu_filter %}
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block head_title %}{% endblock %} | Lifesaving Rankings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Ruben van Erk">
+    <meta name="google-site-verification" content="i0Ovx5SUDs2FSShQ_SxvstFlmVtappJirHsk_p6rF9Y"/>
+
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'images/favicon/apple-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'images/favicon/apple-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'images/favicon/apple-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'images/favicon/apple-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'images/favicon/apple-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/favicon/apple-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'images/favicon/apple-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/favicon/apple-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-icon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon/android-icon-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/faviconn-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'images/favicon/faviconn-96x96.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/faviconn-16x16.png' %}">
+    <link rel="manifest" href="{% static 'images/favicon/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{% static 'images/favicon/ms-icon-144x144.png' %}">
+    <meta name="theme-color" content="#ffffff">
+
+    {% block css %}
+
+        <!-- Your stuff: Third-party CSS libraries go here -->
+        <link rel="stylesheet" type="text/css"
+              href="https://cdn.datatables.net/1.10.16/css/dataTables.semanticui.min.css"/>
+
+        <!-- This file stores project-specific CSS -->
+        <link href="{% static 'dist/css/main.css' %}?v=20200617" rel="stylesheet">
+
+    {% endblock %}
+</head>
+<body {% if not static %}class="loading"{% endif %}>
+{% block body %}
+
+    {# menu bar #}
+    <div class="ui inverted top fixed menu grid">
+        {# content menu bar mobile #}
+        <div class="computer only row">
+            <a class="item" href="/">
+                <img src="{% static 'images/logoonly.png' %}" class="logo">
+                Lifesaving<br>Rankings
+            </a>
+            <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
+            <a href="{% url 'event-list' %}" class="item {% active 'event-overview' %}">Events</a>
+            <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
+            <a href="{% url 'about' %}" class="{% active 'about' %} item">About</a>
+
+            {% if request.user.is_staff %}
+                <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
+                <a href="{% url 'label-athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
+            {% endif %}
+
+            <div class="right menu">
+
+                <div class="item">
+                    <form action="{% url 'search' %}" role="search">
+                        <div class="ui inverted transparent icon input">
+                            <input type="text"
+                                   placeholder="Search athletes"
+                                   name="athlete"
+                                   {% if query %}value="{{ query }}"{% endif %}
+                                   required>
+                            <button class="ghost-button" type="submit"><i class="inverted search link icon"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if user.is_authenticated %}
+                    {#                    <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">#}
+                    {#                        Logout#}
+                    {#                    </a>#}
+
+                    <div class="ui right default inverted dropdown item">
+                        Logged in as {{ request.user.username }}
+                        <i class="dropdown icon"></i>
+                        <div class="menu">
+                            <a href="{% url 'account' %}" class="item">My Account</a>
+                            <a href="{% url 'account_logout' %}" class="item">Logout</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="item {% active 'account_login' %}" href="{% url 'account_login' %}">
+                        Login
+                    </a>
+                {% endif %}
+
+            </div>
+        </div>
+
+        {# content menu bar mobile #}
+        <div class="tablet mobile only row">
+            <div class="ui inverted massive top fixed menu">
+
+                <a href="/" class="item">
+                    <img src="{% static 'images/logoonly.png' %}" class="logo">
+                    Lifesaving Rankings
+                </a>
+
+                <div class="right menu">
+                    <a id="mobile_item" class="item"><i class="bars icon"></i></a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    {# side bar #}
+    <div class="ui right fixed sidebar vertical inverted menu" id="sidebar">
+        <div class="item">
+            <form action="{% url 'search' %}" role="search">
+                <div class="ui inverted transparent icon input">
+                    <input type="text"
+                           placeholder="Search athletes"
+                           name="athlete"
+                           {% if query %}value="{{ query }}"{% endif %}
+                           required>
+                    <button class="ghost-button" type="submit"><i class="inverted search link icon"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <a href="{% url 'competition-list' %}" class="item {% active 'competition-list' %}">Competitions</a>
+        <a href="{% url 'event-list' %}" class="item {% active 'event-overview' %}">Events</a>
+        <a href="{% url 'public-group-list' %}" class="item {% active 'analysis' %}">Analysis</a>
+        <a href="{% url 'about' %}" class="{% active 'about' %} item">About</a>
+
+        {% if request.user.is_staff %}
+            <a href="{% url 'merge-request-list' %}" class="item {% active 'merge-request-list' %}">Merge</a>
+            <a href="{% url 'label-athlete' 0 %}" class="item {% active 'label_athletes' %}">Labeling</a>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            <a class="{% active 'account' %} item" href="{% url 'account' %}">My Account</a>
+            <a class="item {% active 'account_logout' %}" href="{% url 'account_logout' %}">
+                Logout
+            </a>
+        {% else %}
+            <a class="item {% active 'account_login' %}" href="{% url 'account_login' %}">
+                Login
+            </a>
+        {% endif %}
+
+    </div>
+
+
+
+    <div class="pusher">
+
+        {# hacky margins to align content with menu bar #}
+        <div class="ui grid no-margin">
+            <div class="column computer only main-desktop-margin"></div>
+            <div class="column tablet mobile only main-mobile-margin"></div>
+        </div>
+
+        {% if home %}
+            <div id="home-top" style="background-image: url({% static 'images/poolcompressed.jpg' %})">
+                <div class="ui container">
+                    <div class="name">
+                        <h1><span class="de-emphasis">Lifesaving</span> Rankings</h1>
+                        <br>
+                        <form action="{% url 'search' %}" role="search" class="ui mobile only grid">
+                            <div class="ui action input">
+                                <input type="text"
+                                       placeholder="Search athletes"
+                                       name="athlete"
+                                       {% if query %}value="{{ query }}"{% endif %}
+                                       required>
+                                <button class="ui icon button">
+                                    <i class="search icon"></i>
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+
+        {% block breadcrumbs %}{% endblock %}
+
+        <div id="content" class="ui container">
+
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="ui success message">
+                        <i class="close icon"></i>
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+            {% block content %}
+
+            {% endblock %}
+
+        </div>
+
+        <footer id="footer" class="ui inverted center aligned grid">
+            <div class="ui horizontal inverted divider row">
+                LifesavingRankings.com is created by <br>Ruben van Erk
+            </div>
+
+            <div class="ui horizontal inverted divided link list row">
+                <a class="item" href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
+                <a class="item" href="https://www.facebook.com/LifesavingRankings/" target="_blank">Facebook</a>
+                <a class="item" href="https://shop.lifesavingrankings.com/">Shop</a>
+                <a class="item" href="{% url 'changelog' %}">Changelog</a>
+            </div>
+        </footer>
+
+    </div>
+
+{% endblock %}
+
+
+{% block footer %}
+    <!-- Javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    {% block javascript %}
+        <!-- Required by Fomantic UI -->
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+        <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript"
+                src="https://cdn.datatables.net/1.10.16/js/dataTables.semanticui.min.js "></script>
+
+        <!-- place project specific Javascript in this file -->
+        <script src="{% static 'dist/js/main.js' %}"></script>
+
+    {% endblock %}
+
+    {% block javascript_after %}{% endblock %}
+{% endblock %}
+
+</body>
+</html>
+

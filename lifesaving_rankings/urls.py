@@ -5,10 +5,10 @@ from django.contrib import admin
 from analysis.views import ExtraTimesListView, AnalysisGroupListView
 from . import views
 from rankings import views as rankings_views
-from .views import Account
+from .views import Account, Home
 
 urlpatterns = [
-    path('', rankings_views.FrontPageRecords.as_view(), name='home'),
+    path('', Home.as_view(), name='home'),
 
     path('about/', views.about, name='about'),
     path('changelog/', views.changelog, name='changelog'),

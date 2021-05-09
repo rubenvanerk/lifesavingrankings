@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+{% load static %}
+{% block meta_description %}Find world wide lifesaving pool results, rankings, records and athlete profiles with personal best times.{% endblock %}
+
+{% block head_title %}
+    Home
+{% endblock %}
+
+{% block content %}
+
+    <div class="ui stackable grid">
+
+        {% for gender, results in top_results.genders.items %}
+            <div class="row">
+                <div class="sixteen wide column">
+                    <h2 class="ui header">{{ gender|capfirst }}</h2>
+                    <table class="ui celled table">
+                        <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Athlete</th>
+                            <th>Time</th>
+                            <th>Date</th>
+                            <th>Competition</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for top_result in results %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'best-by-event' top_result.event.slug gender %}">
+                                        {{ top_result.event.name }}</a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'athlete-detail' top_result.athlete.slug %}">
+                                        {% for nationality in top_result.athlete.nationalities.all %}
+                                            <i class="{{ nationality.flag_code }} flag"
+                                               title="{{ nationality.name }}"></i>
+                                        {% endfor %}
+                                        {{ top_result.athlete.name }}
+                                    </a>
+                                </td>
+                                <td>{{ top_result.time|format_time }}</td>
+                                <td>
+                                    {{ top_result.competition.date }}
+                                </td>
+                                <td>
+                                    <a href="{% url 'competition-detail' top_result.competition.slug %}">
+                                        {{ top_result.competition.name }}
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="statistics row">
+            <div class="sixteen wide column">
+                <div class="ui three stackable statistics">
+                    <div class="statistic">
+                        <div class="value">
+                            {{ competition_count }}
+                        </div>
+                        <div class="label">
+                            Competitions
+                        </div>
+                    </div>
+                    <div class="statistic">
+                        <div class="value">
+                            {{ athlete_count }}
+                        </div>
+                        <div class="label">
+                            Athletes
+                        </div>
+                    </div>
+                    <div class="statistic">
+                        <div class="value">
+                            {{ result_count }}
+                        </div>
+                        <div class="label">
+                            Results
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="sixteen wide column">
+                <h4 class="ui header">Last imported competitions</h4>
+                <div class="ui relaxed divided list">
+                    {% for competition in last_published_competitions %}
+                        <div class="item">
+                            <div class="content">
+                                <a href="{% url 'competition-detail' competition.slug %}"
+                                   class="header">{{ competition.name }}</a>
+                                <div class="description">
+                                    <strong>{{ competition.get_athlete_count }}</strong> participants, imported
+                                    <strong>{{ competition.published_on|timesince }} ago</strong>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="item">
+                        <div class="content">
+                            <a href="{% url 'competition-list' %}" class="header">All competitions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

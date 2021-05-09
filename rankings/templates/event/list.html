@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs %}
+
+{% block head_title %}Events{% endblock %}
+{% block meta_description %}All events available on Lifesaving Rankings{% endblock %}
+
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Events" "event-overview" %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Events</h1>
+
+    {% for pk, event in events.items %}
+        <h2 class="ui header">{{ event.object.name }}</h2>
+        <div class="ui stackable two column grid">
+            {% for gender, results in event.results.items %}
+                <div class="column">
+                    <h3 class="ui header">{{ gender|capfirst }}</h3>
+                    <table class="ui celled table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Athlete</th>
+                            <th>Competition</th>
+                            <th>Time</th>
+                            <th>Points</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for result in results %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    <a href="{% url 'athlete-detail' result.athlete.slug %}">
+                                        {% for nationality in result.athlete.nationalities.all %}
+                                            <i class="{{ nationality.flag_code }} flag"
+                                               title="{{ nationality.name }}"></i>
+                                        {% endfor %}
+                                        {{ result.athlete.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{% url 'competition-detail' result.competition.slug %}">{{ result.competition.name }}</a>
+                                </td>
+                                <td>{{ result.time|format_time }}</td>
+                                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{% url 'best-by-event' event.object.slug gender %}">More results</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}

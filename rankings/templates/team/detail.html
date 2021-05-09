@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block head_title %}Teams{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Teams" "team-list" %}
+    {% breadcrumb object.name "team-detail" object.slug %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+{% block content %}
+    <p>
+        {{ object.name }} competed in the following competitions:
+    </p>
+
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>Competition</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        {% for competition in object.get_competitions %}
+            <tr>
+                <td>
+                    <a href="{% url 'team-competition' object.slug competition.slug %}">
+                        {{ competition.name }}
+                    </a>
+                </td>
+                <td>{{ competition.date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}

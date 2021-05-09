@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static datetime_filter django_tables2 %}
+
+{% load django_bootstrap_breadcrumbs %}
+
+{% block head_title %}Competitions{% endblock %}
+{% block meta_description %}All competitions available on Lifesaving Rankings{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Competitions" "competition-list" %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Competitions</h1>
+
+    <div class="ui stackable grid">
+
+        <div class="five wide column">
+            <form action="" method="get" class="ui narrow form column">
+                <div class="fields">
+                    <div class="field">{{ filter.form.as_p }}</div>
+                    <div class="field"><input type="submit" class="ui primary button" value="Search"/></div>
+                </div>
+            </form>
+        </div>
+
+        <div class="four wide column">
+            <a href="{% url 'request-competition' %}">
+                <button class="ui left labeled icon button request-a-competition">
+                    <i class="plus icon"></i>
+                    Request a competition
+                </button>
+            </a>
+        </div>
+
+
+
+    </div>
+
+    {% render_table table %}
+
+{% endblock %}

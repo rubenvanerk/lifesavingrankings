@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load datetime_filter %}
+
+{% block head_title %}Merge request #{{ object.pk }}{% endblock %}
+
+{% block content %}
+    <h1 class="ui header">Merging #{{ object.pk }}</h1>
+
+    <p>Select the main athlete</p>
+
+    <div class="ui link merge cards">
+        {% for athlete in object.athletes.all %}
+            <div class="card" onclick="selectAsMain(this);" data-athlete-pk="{{ athlete.pk }}">
+                <div class="content">
+                    <div class="header">{{ athlete.name }}</div>
+                    <div class="meta">
+                        {% if athlete.gender %}
+                            {% if athlete.gender == 1 %}
+                                <i class="mars icon"></i>
+                            {% elif athlete.gender == 2 %}
+                                <i class="venus icon"></i>
+                            {% endif %}
+                            {% if athlete.year_of_birth %} | {% endif %}
+                        {% endif %}
+                        {% if athlete.year_of_birth %}
+                            {{ athlete.year_of_birth }}
+                            {% if athlete.nationalities.all %} | {% endif %}
+                        {% endif %}
+                        {% for nationality in athlete.nationalities.all %}
+                            <i class="{{ nationality.flag_code }} flag"
+                               title="{{ result.athlete.nationality.name }}"></i>
+                        {% endfor %}
+                    </div>
+                    <div class="description">
+                        <ul>
+                            {% for personal_best in athlete.get_personal_bests %}
+                                <li>
+                                    {{ personal_best.event.name }}:
+                                    <strong>{{ personal_best.time|format_time }}</strong>
+                                </li>
+                            {% endfor %}
+                            Competitions:<br>
+                            {% for competition in athlete.get_competitions %}
+                                {{ competition.name }}<br>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="extra content">
+                    <span>
+                        Competitions: {{ athlete.count_competitions }}
+                    </span>
+                    <span class="right floated">
+                        Results: {{ athlete.count_results }}
+                    </span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <br>
+
+    <form method="post">{% csrf_token %}
+        <input type="hidden" name="main-athlete" id="main-athlete-input">
+        <button class="ui big green button">Merge</button>
+    </form>
+{% endblock %}

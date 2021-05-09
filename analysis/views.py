@@ -1,4 +1,3 @@
-import datetime
 import functools
 import itertools
 from datetime import timedelta
@@ -44,7 +43,7 @@ def get_top_results_by_athlete(gender=None, athletes=None, date=None, user=None)
 
 class AnalysisGroupListView(LoginRequiredMixin, SingleTableView):
     model = AnalysisGroup
-    template_name = 'analysis/analysisgroup_list_private.html'
+    template_name = 'analysisgroup_list_private.html'
     table_class = AnalysisGroupTable
     ordering = ['pk']
     table_pagination = {
@@ -63,7 +62,7 @@ class PublicAnalysisGroupListView(SingleTableView):
     model = AnalysisGroup
     table_class = AnalysisGroupTable
     ordering = ['pk']
-    template_name = 'analysis/analysisgroup_list.html'
+    template_name = 'analysisgroup_list.html'
 
     def get_queryset(self):
         qs = super(PublicAnalysisGroupListView, self).get_queryset().order_by('pk')
@@ -80,6 +79,7 @@ class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
     success_url = reverse_lazy('private-group-list')
+    template_name = 'analysisgroup_form.html'
 
     def get_object(self, queryset=None):
         obj = super(AnalysisGroupUpdate, self).get_object()
@@ -92,6 +92,7 @@ class AnalysisGroupUpdate(LoginRequiredMixin, UpdateView):
 class AnalysisGroupDelete(LoginRequiredMixin, DeleteView):
     model = AnalysisGroup
     success_url = reverse_lazy('private-group-list')
+    template_name = 'analysisgroup_confirm_delete.html'
 
     def get_object(self, queryset=None):
         obj = super(AnalysisGroupDelete, self).get_object()
@@ -105,6 +106,7 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
     model = AnalysisGroup
     form_class = AnalysisGroupForm
     success_url = reverse_lazy('private-group-list')
+    template_name = 'analysisgroup_form.html'
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
@@ -117,7 +119,7 @@ class AnalysisGroupCreate(LoginRequiredMixin, CreateView):
 
 
 class IndividualAnalysis(TemplateView):
-    template_name = 'analysis/individual_analysis.html'
+    template_name = 'individual_analysis.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndividualAnalysis, self).get_context_data(**kwargs)
@@ -151,7 +153,7 @@ def get_world_records(gender):
 
 
 class RelayAnalysis(TemplateView):
-    template_name = "analysis/relay_analysis.html"
+    template_name = "relay_analysis.html"
 
     def post(self, *args, **kwargs):
         analysis_group = AnalysisGroup.objects.get(pk=self.kwargs.get('pk'))
@@ -332,7 +334,7 @@ class ExtraTimesListView(LoginRequiredMixin, SingleTableView):
     model = IndividualResult
     table_class = ExtraTimesTable
     ordering = ['athlete__name']
-    template_name = 'analysis/extra_times_list.html'
+    template_name = 'extra_times_list.html'
     table_pagination = {
         "per_page": 10
     }

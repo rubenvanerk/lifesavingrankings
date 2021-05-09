@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs %}
+{% load id_to_athlete_name %}
+{% load id_to_slug %}
+{% load widget_tweaks %}
+{% block head_title %}Individual analysis{% endblock %}
+
+{% block breadcrumbs %}
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Analysis" "public-group-list" %}
+    {% with page_name=analysis_group.name|add:" "|add:"individual analysis" %}
+        {% breadcrumb page_name "individual-analysis" analysis_group.id %}
+    {% endwith %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+{% endblock %}
+
+{% block content %}
+    <div class="ui stackable grid">
+        <div class="ui twelve wide column">
+            <h1 class="ui header">Individual Analysis: {{ analysis_group.name }}</h1>
+        </div>
+        <div class="ui four wide column">
+            {% if request.user == analysis_group.creator %}
+                <a href="{% url 'group-edit' analysis_group.id %}">
+                    <button class="ui labeled icon button right floated">
+                        <i class="edit icon"></i>Edit this group
+                    </button>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <br>
+
+    <div class="ui styled fluid accordion">
+        <div class="title"><i class="dropdown icon"></i>Explanation</div>
+        <div class="content">
+            Individual Analysis tries to answer the following question: which athlete in a group has the best potential to swim a given time?<br>
+            In the grid below, all athletes in the group are displayed with their best time per event. You can choose to ignore older results by using the filter option.<br>
+            In the top row there are multiple input fields for times with which you want to compare your athletes. You can also preset these fields with one of the sets using the dropdown on the left of these input fields.<br>
+            If you change these fields you'll see that the colors of the athlete's times change. This is based on how close they are compared to the time you specified:
+            <ul>
+                <li>Green: within 100%, so faster then the given time</li>
+                <li>Orange: between 100% and 105% of the given time</li>
+                <li>Red: slower then 105% of the given time</li>
+            </ul>
+        </div>
+    </div>
+
+    <br>
+
+    <form action="" method="get" class="ui form input filter">{% csrf_token %}
+        <div class="fields">
+            <div class="field">
+                <label>{{ form.from_date.label }}</label>
+                <div class="ui date calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        {{ form.from_date }}
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <button class="ui submit primary button" type="submit">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="ui celled table" id="analysis-table">
+
+        <thead>
+        <tr>
+            <th>Name</th>
+            {% for event in events %}
+                <th>
+                    {{ event.name }}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td>
+                <select class="ui default dropdown" id="special-result-set">
+                    <option value="">Comparison sets</option>
+                    {% for special_result_group in special_result_groups %}
+                        <option value="{% for special_result in special_result_group.specialresult_set.all %}'{{ special_result.event.pk }}': '{{ special_result.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                            {{ special_result_group.name }}
+                        </option>
+                    {% endfor %}
+                    <option value="{% for world_record in world_records_women %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        World Records women
+                    </option>
+                    <option value="{% for world_record in world_records_men %}'{{ world_record.event.pk }}': '{{ world_record.time|format_time }}'{% if not forloop.last %},{% endif %}{% endfor %}">
+                        World Records men
+                    </option>
+                </select>
+            </td>
+            {% for event in events %}
+                <td class="special-result" data-event-id="{{ event.id }}">
+                    <div class="ui time input">
+                        <input type="text" placeholder="0:00.00">
+                    </div>
+                </td>
+            {% endfor %}
+        </tr>
+
+        {% for athlete_id, qs in results.items %}
+            <tr>
+                <td>
+                    <a href="{% url 'athlete-detail' athlete_id|id_to_slug %}">
+                        {{ athlete_id|id_to_athlete_name }}
+                    </a>
+                </td>
+                {% for result in qs %}
+                    {% if result %}
+                        <td class="analysis-time" data-event-id="{{ result.event.pk }}">
+                            {{ result.time|format_time }}<sup class="percentage"></sup>
+                            {% if result.extra_analysis_time_by is not None %}
+                                <span data-content="This time was added by the group's creator">
+                                    <i class="attention grey icon"></i>
+                                </span>
+                            {% endif %}
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+{% endblock %}
+
+{% block javascript_after %}
+    <script>
+        $(document).ready(function () {
+            $('.special-result input').trigger('change');
+        });
+    </script>
+{% endblock %}

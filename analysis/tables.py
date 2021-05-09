@@ -29,7 +29,7 @@ class ExtraTimesTable(tables.Table):
     time = TimeColumn()
     athlete = tables.LinkColumn('athlete-overview', args=[A('athlete__slug')])
     actions = tables.TemplateColumn(verbose_name='Actions',
-                                    template_name='analysis/columns/result_actions.html',
+                                    template_name='columns/result_actions.html',
                                     orderable=False)
 
 
@@ -41,7 +41,7 @@ class AnalysisGroupTable(tables.Table):
 
     pk = tables.Column(verbose_name='ID')
     actions = tables.TemplateColumn(verbose_name='Actions',
-                                    template_name='analysis/columns/analysisgroup_actions.html',
+                                    template_name='columns/analysisgroup_actions.html',
                                     orderable=False)
     athlete_count = tables.Column(empty_values=())
 

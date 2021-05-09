@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block head_title %}
+    About
+{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "About" "about" %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+{% block content %}
+
+    <h1 class="ui header centered">About LifesavingRankings.com</h1>
+
+    <div class="ui centered stackable grid">
+        <div class="ten wide column">
+            <p>
+                LifesavingRankings.com contains the latest rankings based on the times recorded in all major
+                international and national competitions for individual pool lifesaving competitions.<br>
+                LifesavingRankings.com is a project initiated and created by Ruben van Erk,
+                a web-developer and <a href="{% url 'athlete-detail' 'ruben-van-erk' %}">competitive lifesaver</a> from
+                The Netherlands.<br>
+                This website is open-source. Any help is appreciated.
+                Source code is available at <a href="https://github.com/rubenvanerk/lifesavingrankings" target="_blank">Github</a>.
+            </p>
+            <p>
+                LifesavingRankings.com is, and will always be free to use.
+                If you want to support what I'm doing, you can
+                <a href="https://www.buymeacoffee.com/RubenvanErk" target="_blank">buy me a coffee</a>!
+            </p>
+
+            <h2 class="ui header">About importing results</h2>
+            <p>
+                Results are imported from various sources with the use of <a
+                    href="https://github.com/rubenvanerk/lifesavingrankings-parser" target="_blank">a program</a> created by
+                LifesavingRankings.com.
+                Most of these are in PDF format, which makes importing complicated due to the vast amount of different
+                formats.
+                Errors are easily made using this error-prone method.<br>
+                Please report missing competitions or any mistakes you may find to results@lifesavingrankings.com.
+            </p>
+            <p>
+                A common problem when importing results is duplicated athletes.
+                An athlete's name cannot be matched when it's spelled slightly different. When this happens, a new
+                profile is created.
+                You can easily report these duplicated profiles by searching for an athlete,
+                selecting the duplicates and hit the button at the top of the results: '<em>Report selected athletes as
+                duplicates</em>'.
+            </p>
+
+            <h2 class="ui header" id="points">About points</h2>
+            <p>
+                Points allows for comparison between different events and genders.
+                The formula used to calculate points is created by FINA. For more background info see the
+                <a href="https://wiki.swimrankings.net/index.php/swimrankings:FINA_Points" target="_blank">swimrankings.net wiki</a>.<br>
+                The base times are defined every year, based on the latest World Record as recorded by LifesavingRankings.com.
+                The cut off date is December 31st.
+            </p>
+            <p>
+                A total score is displayed on every athlete profile.
+                This score is the sum of points of the athlete's best performances on the main six events.
+            </p>
+
+            <h2 class="ui header">Disclaimer</h2>
+            <p>
+                If you require any more information or have any questions about our site's disclaimer,
+                please feel free to contact me by email at ruben@lifesavingrankings.com
+            </p>
+            <p>
+                All the information on this website - wwww.lifesavingrankings.com - is published in good faith and for
+                general information purpose only. LifesavingRankings.com does not make any warranties about the
+                completeness, reliability and accuracy of this information. Any action you take upon the information you
+                find on this website (LifesavingRankings.com), is strictly at your own risk. LifesavingRankings.com will
+                not be liable for any losses and/or damages in connection with the use of our website.
+            </p>
+        </div>
+    </div>
+{% endblock %}

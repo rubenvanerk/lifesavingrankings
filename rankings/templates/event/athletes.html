@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs mathfilters django_tables2 %}
+{% block head_title %}{{ event.name }}{% endblock %}
+{% block meta_description %}Find out who has the fastest time for {{ event.name }} on Lifesaving Rankings{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Events" "event-overview" %}
+    {% with event_name=event.name|add:" "|add:gender %}
+        {% breadcrumb event_name "best-by-event" event.slug gender %}
+    {% endwith %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>{{ event.name }} {{ gender }} top results</h1>
+
+    <form action="" method="get" name="filter" autocomplete="off" class="ui filter form">
+        <div class="ui styled accordion">
+            <div class="title">
+                <i class="dropdown icon"></i>
+                Filters
+            </div>
+            <div class="{% if filter.enabled %}active{% endif %} content">
+                <div class="ui stackable grid">
+                    <div class="three wide column">
+                        <p><label>Nationality</label></p>
+                        <div class="ui fluid search clearable selection dropdown nationalities">
+                            <input type="hidden" name="nationality"
+                                   {% if filter.nationality %}value="{{ filter.nationality.pk }}" {% endif %}>
+                            <i class="dropdown icon"></i>
+                            <div class="{% if not filter.nationality %}default{% endif %} text">
+                                {% if filter.nationality %}<i class="{{ filter.nationality.flag_code }} flag"></i>
+                                    {{ filter.nationality.name }}
+                                {% else %}Select Country
+                                {% endif %}
+                            </div>
+                            <div class="menu">
+                                {% for nationality in filter.nationalities %}
+                                    <div class="item" data-value="{{ nationality.pk }}">
+                                        <i class="{{ nationality.flag_code }} flag"></i> {{ nationality.name }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="six wide column">
+                        <p><label>Year of birth</label></p>
+
+                        <div class="two fields">
+                            <div class="field">
+                                <select class="ui search clearable selection dropdown year-of-birth" name="yob_start"
+                                        data-value="{{ filter.yob_start }}">
+                                    {% if not filter.yob_start %}
+                                        <option value="">
+                                            YoB start
+                                        </option>
+                                    {% endif %}
+
+                                    {% for year in filter.year_of_birth_range reversed %}
+                                        <option value="{{ year }}"
+                                                {% if year == filter.yob_start %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="field">
+                                <select class="ui search clearable selection dropdown year-of-birth" name="yob_end"
+                                        data-value="{{ filter.yob_end }}">
+                                    {% if not filter.yob_end %}
+                                        <option value="">
+                                            YoB end
+                                        </option>
+                                    {% endif %}
+                                    {% for year in filter.year_of_birth_range reversed %}
+                                        <option value="{{ year }}"
+                                                {% if year == filter.yob_end %}selected{% endif %}>{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="seven wide column">
+                        <p><label>Competition date</label></p>
+
+                        <div class="two fields">
+                            <div class="field">
+                                <div class="ui calendar" id="rangestart">
+                                    <div class="ui input left icon">
+                                        <i class="calendar icon"></i>
+                                        <input type="text" placeholder="Start" name="rangestart"
+                                               {% if filter.date_range_start %}value="{{ filter.date_range_start }}" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui calendar" id="rangeend">
+                                    <div class="ui input left icon">
+                                        <i class="calendar icon"></i>
+                                        <input type="text" placeholder="End" name="rangeend"
+                                               {% if filter.date_range_end %}value="{{ filter.date_range_end }}" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="ui toggle checkbox">
+                        <input type="checkbox" name="alltimes" {% if filter.alltimes == 'on' %}checked{% endif %}>
+                        <label>Show all times per athlete (instead of just PRs)</label>
+                    </div>
+
+                    <div class="three wide right floated column">
+                        <button class="ui labeled icon right floated primary button" type="submit">
+                            <i class="filter icon"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Athlete</th>
+            <th>Time</th>
+            <th>Competition</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if filter.alltimes == 'on' %}
+            {% for result in page_obj %}
+                <tr>
+                    <td>{{ result.rank }}</td>
+                    <td>
+                        <a href="{% url 'athlete-detail' result.athlete.slug %}">
+                            {% for nationality in result.athlete.nationalities.all %}
+                                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                            {% endfor %}
+                            {{ result.athlete.name }}
+                        </a>
+                        {% if result.athlete.year_of_birth %}('{{ result.athlete.year_of_birth|slugify|slice:"2:" }}){% endif %}
+                    </td>
+                    <td>{{ result.time|format_time }}</td>
+                    {% with competition=result.competition %}
+                        <td><a href="{% url 'competition-detail' competition.slug %}">{{ competition.name }}</a></td>
+                        <td>{{ competition.date }}</td>
+                    {% endwith %}
+                </tr>
+            {% endfor %}
+        {% else %}
+            {% for athlete in page_obj %}
+                <tr>
+                    <td>{{ athlete.rank }}</td>
+                    <td>
+                        <a href="{% url 'athlete-detail' athlete.slug %}">
+                            {% for nationality in athlete.nationalities.all %}
+                                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                            {% endfor %}
+                            {{ athlete.name }}
+                        </a>
+                        {% if athlete.year_of_birth %}('{{ athlete.year_of_birth|slugify|slice:"2:" }}){% endif %}
+                    </td>
+                    <td>{{ athlete.personal_best|format_time }}</td>
+                    {% with competition=athlete.individualresult_set.first.competition %}
+                        <td><a href="{% url 'competition-detail' competition.slug %}">{{ competition.name }}</a></td>
+                        <td>{{ competition.date }}</td>
+                    {% endwith %}
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th colspan="5">
+                {% if paginator.num_pages > 1 %}
+                    <div class="ui right floated pagination menu">
+                        {% if page_obj.has_previous %}
+                            <a href="{% querystring "page"=page_obj.previous_page_number %}"
+                               class="icon item">
+                                <i class="left chevron icon"></i>
+                            </a>
+                        {% endif %}
+
+                        {% if page_obj.has_previous or page_obj.has_next %}
+                            {% for p in page_obj|table_page_range:paginator %}
+                                {% if p == '...' %}
+                                    <a href="#" class="item">{{ p }}</a>
+                                {% else %}
+                                    <a href="{% querystring "page"=p %}"
+                                       class="item {% if p == page_obj.number %}active{% endif %}">
+                                        {{ p }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if page_obj.has_next %}
+                            <a href="{% querystring "page"=page_obj.next_page_number %}"
+                               class="icon item">
+                                <i class="right chevron icon"></i>
+                            </a>
+                        {% endif %}
+                    </div><br><br><br>
+                    <div class="ui right floated">
+                        Showing {{ page_obj.number|sub:1|mul:paginator.per_page|add:1 }}
+                        - {{ page_obj.number|mul:paginator.per_page }} of {{ paginator.count }} results
+                    </div>
+                {% endif %}
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+
+{% endblock %}

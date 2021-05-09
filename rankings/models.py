@@ -81,7 +81,7 @@ class Athlete(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('athlete-overview', args=[self.slug])
+        return reverse('athlete-detail', args=[self.slug])
 
     def get_total_points(self):
         events = Event.objects.filter(use_points_in_athlete_total=True)
@@ -275,7 +275,7 @@ class Competition(models.Model):
         return IndividualResult.public_objects.filter(competition=self).count()
 
     def get_absolute_url(self):
-        return reverse('competition-overview', args=[self.slug])
+        return reverse('competition-detail', args=[self.slug])
 
     def get_athletes(self):
         return Athlete.objects.filter(

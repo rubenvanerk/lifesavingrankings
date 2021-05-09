@@ -21,38 +21,17 @@ from .forms import *
 from .tables import CompetitionTable, TeamTable
 
 
-class FrontPageRecords(TemplateView):
+class CompetitionListView(SingleTableMixin, FilterView):
+    table_class = CompetitionTable
+    template_name = "competition/list.html"
+    ordering = ['-date']
+    queryset = Competition.objects.filter(slug__isnull=False).all()
+    model = Competition
+    filterset_class = CompetitionFilter
+    
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['athlete_count'] = Athlete.objects.all().count()
-        context['result_count'] = IndividualResult.public_objects.all().count()
-        context['competition_count'] = Competition.objects.filter(status=Competition.IMPORTED).count()
-        context['home'] = True
-        context['last_published_competitions'] = Competition.objects.filter(slug__isnull=False,
-                                                                            status=2,
-                                                                            published_on__isnull=False).order_by(
-            '-published_on')[:5]
-
-        top_results = {'genders': {'women': [], 'men': []}}
-        events = Event.objects.filter(type=Event.INDIVIDUAL).all();
-        for gender in top_results['genders']:
-            gender_int = gender_name_to_int(gender)
-            for event in events:
-                top_result = IndividualResult.public_objects.filter(event=event, athlete__gender=gender_int).order_by(
-                    'time').select_related('competition', 'athlete', 'event').first()
-                if top_result:
-                    top_results['genders'][gender].append(top_result)
-
-        context['top_results'] = top_results
-
-        return context
-
-    template_name = 'rankings/front_page_records.html'
-
-
-class CompetitionOverview(TemplateView):
-    template_name = 'rankings/competition_overview.html'
+class CompetitionDetail(TemplateView):
+    template_name = 'competition/detail.html'
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_superuser:
@@ -65,7 +44,7 @@ class CompetitionOverview(TemplateView):
             athlete.nationalities.add(nationality)
             athlete.save()
 
-        return HttpResponseRedirect(reverse('competition-overview', args=[competition.slug]))
+        return HttpResponseRedirect(reverse('competition-detail', args=[competition.slug]))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -119,7 +98,7 @@ class CompetitionOverview(TemplateView):
 
 
 class CompetitionEvent(TemplateView):
-    template_name = 'rankings/competition_event.html'
+    template_name = 'competition/event.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -147,17 +126,8 @@ class CompetitionEvent(TemplateView):
         return context
 
 
-class CompetitionListView(SingleTableMixin, FilterView):
-    table_class = CompetitionTable
-    template_name = "rankings/competition_list.html"
-    ordering = ['-date']
-    queryset = Competition.objects.filter(slug__isnull=False).all()
-    model = Competition
-    filterset_class = CompetitionFilter
-
-
-class EventOverview(TemplateView):
-    template_name = 'rankings/event_overview.html'
+class EventList(TemplateView):
+    template_name = 'event/list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -191,251 +161,8 @@ class EventOverview(TemplateView):
         return context
 
 
-class AthleteOverview(TemplateView):
-    athlete = None
-
-    def dispatch(self, request, *args, **kwargs):
-        athlete = self.get_athlete()
-        if athlete.slug != self.kwargs.get('athlete_slug'):
-            return HttpResponseRedirect(reverse('athlete-overview', args=(athlete.slug,)))
-        return super(AthleteOverview, self).dispatch(request, *args, **kwargs)
-
-    def get_athlete(self):
-        if type(self.athlete) is not Athlete:
-            slug = self.kwargs.get('athlete_slug')
-            self.athlete = Athlete.objects_with_aliases.get(slug=slug)
-            if not self.athlete:
-                raise Http404
-            if self.athlete.alias_of:
-                self.athlete = self.athlete.alias_of
-        return self.athlete
-
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        nationality = Country.objects.get(pk=request.POST['country'])
-        athlete = self.get_athlete()
-        if athlete.nationalities.filter(pk=nationality.pk).exists():
-            athlete.nationalities.remove(nationality)
-        else:
-            athlete.nationalities.add(nationality)
-        athlete.save()
-        context['athlete'] = athlete
-        return super(TemplateView, self).render_to_response(context)
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(AthleteOverview, self).get_context_data(**kwargs)
-
-        athlete = self.get_athlete()
-
-        context['personal_bests'] = {}
-
-        qs = IndividualResult.public_objects.filter(athlete=athlete) \
-            .filter(event__type=Event.INDIVIDUAL, disqualified=False) \
-            .order_by('event', 'time').distinct('event')
-        context['personal_bests']['individual'] = IndividualResult.public_objects.filter(id__in=qs).select_related(
-            'competition', 'event')
-
-        qs = IndividualResult.public_objects.filter(athlete=athlete) \
-            .filter(event__type=Event.RELAY_SEGMENT, disqualified=False) \
-            .order_by('event', 'time').distinct('event')
-        context['personal_bests']['relay'] = IndividualResult.public_objects.filter(id__in=qs).select_related(
-            'competition', 'event')
-
-        context['athlete'] = athlete
-        if self.request.user.is_staff:
-            context['nationalities'] = Country.objects.filter(is_parent_country=False)
-            context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
-        return context
-
-    template_name = 'rankings/personal_best.html'
-
-
-class EventByAthlete(ListView):
-    model = IndividualResult
-    athlete = None
-    event = None
-
-    def get_athlete(self):
-        if type(self.athlete) is not Athlete:
-            self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
-            if not self.athlete:
-                raise Http404
-        return self.athlete
-
-    def get_event(self):
-        if type(self.event) is not Event:
-            self.event = Event.objects.get(slug=self.kwargs.get('event_slug'))
-            if not self.event:
-                raise Http404
-        return self.event
-
-    def get_queryset(self):
-        qs = super(EventByAthlete, self).get_queryset()
-
-        athlete = self.get_athlete()
-        event = self.get_event()
-
-        qs = qs.filter(athlete=athlete, event=event, disqualified=False, did_not_start=False, withdrawn=False,
-                       time__isnull=False)
-        qs = qs.select_related('competition')
-        qs = qs.prefetch_related('individualresultsplit_set')
-        if self.request.user.is_authenticated:
-            user = self.request.user
-            qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
-        else:
-            qs = qs.filter(extra_analysis_time_by=None)
-        qs = qs.order_by('time')
-        return qs
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['athlete'] = athlete = self.get_athlete()
-        context['event'] = event = self.get_event()
-        results_ordered_by_date = self.get_queryset().order_by('competition__date')
-
-        # if 2 results on 1 day, only show fastest
-        previous_result = None
-        for i, result in enumerate(results_ordered_by_date):
-            if previous_result is not None and result.competition.date == previous_result.competition.date:
-                if previous_result.time > result.time:
-                    results_ordered_by_date = results_ordered_by_date.exclude(pk=previous_result.pk)
-                    previous_result = result
-                else:
-                    results_ordered_by_date = results_ordered_by_date.exclude(pk=result.pk)
-            else:
-                previous_result = result
-
-        context['results_ordered_by_date'] = results_ordered_by_date
-        context['fastest_time'] = IndividualResult.public_objects.filter(athlete=athlete, event=event,
-                                                                         did_not_start=False,
-                                                                         disqualified=False).aggregate(Min('time'))
-        context['slowest_time'] = IndividualResult.public_objects.filter(athlete=athlete, event=event,
-                                                                         did_not_start=False,
-                                                                         disqualified=False).aggregate(Max('time'))
-        return context
-
-    template_name = 'rankings/event_by_athlete.html'
-
-
-class AthleteTimeline(TemplateView):
-    athlete = None
-    template_name = 'rankings/athlete_timeline.html'
-
-    def get_athlete(self):
-        if type(self.athlete) is not Athlete:
-            self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
-            if not self.athlete:
-                raise Http404
-        return self.athlete
-
-    def get_year(self):
-        year = mk_int(self.request.GET.get('year'))
-        if not year:
-            year = self.get_athlete().get_last_competition_date().year
-        return year
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        context['athlete'] = athlete = self.get_athlete()
-        context['current_year'] = year = self.get_year()
-        context['competitions'] = athlete.get_competitions(year)
-        context['previous_year'] = athlete.get_previous_competition_year(year)
-        context['next_year'] = athlete.get_next_competition_year(year)
-        return context
-
-
-@login_required
-def add_result(request, athlete_slug):
-    athlete = Athlete.objects.get(slug=athlete_slug)
-    if athlete is None:
-        raise Http404
-
-    if request.method == 'POST':
-        form = AddResultForm(request.POST)
-
-        if form.is_valid():
-            time = form.cleaned_data['time']
-            date = form.cleaned_data['date']
-            event = form.cleaned_data['event']
-
-            competition = Competition()
-            competition.date = date
-            competition.is_concept = False
-            competition.slug = None
-            competition.location = 'Database'
-            competition.type_of_timekeeping = 0
-            competition.status = Competition.EXTRA_TIME
-            competition.save()
-
-            result = IndividualResult()
-            result.time = time
-            result.athlete = athlete
-            result.competition = competition
-            result.event = event
-            result.extra_analysis_time_by = request.user
-            result.save()
-            result.calculate_points()
-
-            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event.slug)))
-        else:
-            return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
-    else:
-        form = AddResultForm
-
-        return render(request, 'rankings/add_result.html', {'form': form, 'athlete': athlete})
-
-
-class IndividualResultDelete(DeleteView):
-    model = IndividualResult
-    success_url = reverse_lazy('home')
-
-    def get_object(self, queryset=None):
-        obj = super(IndividualResultDelete, self).get_object()
-        self.success_url = reverse_lazy('athlete-overview', args=[obj.athlete.pk])
-        if not obj.extra_analysis_time_by == self.request.user:
-            raise Http404
-        return obj
-
-    def get_success_url(self):
-        return self.request.GET.get('success_url', self.success_url)
-
-
-def request_competition(request):
-    if request.method == 'POST':
-        form = RequestCompetitionForm(request.POST)
-
-        if form.is_valid():
-            competition_name = form['competition_name'].value()
-            competition_date = form['competition_date'].value()
-            your_email = form['your_email'].value()
-            link_to_results = form['link_to_results'].value()
-            location = form['location'].value()
-
-            body = "Competition name: " + competition_name + "\n" \
-                                                             "Competition date: " + competition_date + "\n" \
-                                                                                                       "Link to results: " + link_to_results + "\n" \
-                                                                                                                                               "Location: " + location + "\n" \
-                                                                                                                                                                         "Request email: " + your_email
-
-            send_mail(
-                'Lifesaving Rankings competition request',
-                body,
-                'noreply@lifesavingrankings.com',
-                ['ruben@lifesavingrankings.com'],
-                fail_silently=False,
-            )
-
-            return render(request, 'rankings/request_competition.html', {'form': form, 'form_sent': True})
-        else:
-            return render(request, 'rankings/request_competition.html', {'form': form})
-    else:
-        form = RequestCompetitionForm
-
-        return render(request, 'rankings/request_competition.html', {'form': form})
-
-
-class EventTop(TemplateView):
-    template_name = 'rankings/event_top.html'
+class EventAthletes(TemplateView):
+    template_name = 'event/athletes.html'
 
     event = None
 
@@ -476,7 +203,7 @@ class EventTop(TemplateView):
         return result_filter
 
     def get_context_data(self, **kwargs):
-        context = super(EventTop, self).get_context_data()
+        context = super(EventAthletes, self).get_context_data()
         event = self.get_event()
         gender = gender_name_to_int(self.kwargs.get('gender'))
         result_filter = self.get_filter()
@@ -611,7 +338,327 @@ class Search(ListView):
             return HttpResponseRedirect(
                 reverse('search') + '?athlete=' + self.request.GET.get('athlete').strip() + '&reported=1')
 
-    template_name = 'rankings/search.html'
+    template_name = 'athlete/search.html'
+
+
+class AthleteDetail(TemplateView):
+    athlete = None
+
+    def dispatch(self, request, *args, **kwargs):
+        athlete = self.get_athlete()
+        if athlete.slug != self.kwargs.get('athlete_slug'):
+            return HttpResponseRedirect(reverse('athlete-detail', args=(athlete.slug,)))
+        return super(AthleteDetail, self).dispatch(request, *args, **kwargs)
+
+    def get_athlete(self):
+        if type(self.athlete) is not Athlete:
+            slug = self.kwargs.get('athlete_slug')
+            self.athlete = Athlete.objects_with_aliases.get(slug=slug)
+            if not self.athlete:
+                raise Http404
+            if self.athlete.alias_of:
+                self.athlete = self.athlete.alias_of
+        return self.athlete
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        nationality = Country.objects.get(pk=request.POST['country'])
+        athlete = self.get_athlete()
+        if athlete.nationalities.filter(pk=nationality.pk).exists():
+            athlete.nationalities.remove(nationality)
+        else:
+            athlete.nationalities.add(nationality)
+        athlete.save()
+        context['athlete'] = athlete
+        return super(TemplateView, self).render_to_response(context)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(AthleteDetail, self).get_context_data(**kwargs)
+
+        athlete = self.get_athlete()
+
+        context['personal_bests'] = {}
+
+        qs = IndividualResult.public_objects.filter(athlete=athlete) \
+            .filter(event__type=Event.INDIVIDUAL, disqualified=False) \
+            .order_by('event', 'time').distinct('event')
+        context['personal_bests']['individual'] = IndividualResult.public_objects.filter(id__in=qs).select_related(
+            'competition', 'event')
+
+        qs = IndividualResult.public_objects.filter(athlete=athlete) \
+            .filter(event__type=Event.RELAY_SEGMENT, disqualified=False) \
+            .order_by('event', 'time').distinct('event')
+        context['personal_bests']['relay'] = IndividualResult.public_objects.filter(id__in=qs).select_related(
+            'competition', 'event')
+
+        context['athlete'] = athlete
+        if self.request.user.is_staff:
+            context['nationalities'] = Country.objects.filter(is_parent_country=False)
+            context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
+        return context
+
+    template_name = 'athlete/detail.html'
+
+
+class AthleteEvent(ListView):
+    model = IndividualResult
+    athlete = None
+    event = None
+
+    def get_athlete(self):
+        if type(self.athlete) is not Athlete:
+            self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
+            if not self.athlete:
+                raise Http404
+        return self.athlete
+
+    def get_event(self):
+        if type(self.event) is not Event:
+            self.event = Event.objects.get(slug=self.kwargs.get('event_slug'))
+            if not self.event:
+                raise Http404
+        return self.event
+
+    def get_queryset(self):
+        qs = super(AthleteEvent, self).get_queryset()
+
+        athlete = self.get_athlete()
+        event = self.get_event()
+
+        qs = qs.filter(athlete=athlete, event=event, disqualified=False, did_not_start=False, withdrawn=False,
+                       time__isnull=False)
+        qs = qs.select_related('competition')
+        qs = qs.prefetch_related('individualresultsplit_set')
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            qs = qs.filter(Q(extra_analysis_time_by=user) | Q(extra_analysis_time_by=None))
+        else:
+            qs = qs.filter(extra_analysis_time_by=None)
+        qs = qs.order_by('time')
+        return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['athlete'] = athlete = self.get_athlete()
+        context['event'] = event = self.get_event()
+        results_ordered_by_date = self.get_queryset().order_by('competition__date')
+
+        # if 2 results on 1 day, only show fastest
+        previous_result = None
+        for i, result in enumerate(results_ordered_by_date):
+            if previous_result is not None and result.competition.date == previous_result.competition.date:
+                if previous_result.time > result.time:
+                    results_ordered_by_date = results_ordered_by_date.exclude(pk=previous_result.pk)
+                    previous_result = result
+                else:
+                    results_ordered_by_date = results_ordered_by_date.exclude(pk=result.pk)
+            else:
+                previous_result = result
+
+        context['results_ordered_by_date'] = results_ordered_by_date
+        context['fastest_time'] = IndividualResult.public_objects.filter(athlete=athlete, event=event,
+                                                                         did_not_start=False,
+                                                                         disqualified=False).aggregate(Min('time'))
+        context['slowest_time'] = IndividualResult.public_objects.filter(athlete=athlete, event=event,
+                                                                         did_not_start=False,
+                                                                         disqualified=False).aggregate(Max('time'))
+        return context
+
+    template_name = 'athlete/event.html'
+
+
+class AthleteTimeline(TemplateView):
+    athlete = None
+    template_name = 'athlete/timeline.html'
+
+    def get_athlete(self):
+        if type(self.athlete) is not Athlete:
+            self.athlete = Athlete.objects.get(slug=self.kwargs.get('athlete_slug'))
+            if not self.athlete:
+                raise Http404
+        return self.athlete
+
+    def get_year(self):
+        year = mk_int(self.request.GET.get('year'))
+        if not year:
+            year = self.get_athlete().get_last_competition_date().year
+        return year
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['athlete'] = athlete = self.get_athlete()
+        context['current_year'] = year = self.get_year()
+        context['competitions'] = athlete.get_competitions(year)
+        context['previous_year'] = athlete.get_previous_competition_year(year)
+        context['next_year'] = athlete.get_next_competition_year(year)
+        return context
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class MergeRequestListView(ListView):
+    model = MergeRequest
+    template_name = 'mergerequests/list.html'
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class MergeRequestDeleteView(DeleteView):
+    model = MergeRequest
+    template_name = 'mergerequests/confirm_delete.html'
+    success_url = reverse_lazy('merge-request-list')
+
+
+@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
+class MergeRequestDetailView(DetailView):
+    model = MergeRequest
+    template_name = 'mergerequests/detail.html'
+
+    def post(self, request, *args, **kwargs):
+        merge_request = super().get_object()
+        if not request.POST['main-athlete']:
+            return HttpResponseRedirect(reverse('merge-request-detail', kwargs={'pk': merge_request.pk}))
+        main_athlete = Athlete.objects.get(pk=request.POST['main-athlete'])
+        for athlete in merge_request.athletes.all():
+            if athlete == main_athlete:
+                continue
+
+            for result in athlete.individualresult_set.all():
+                result.athlete = main_athlete
+                result.save()
+
+            for nationality in athlete.nationalities.all():
+                main_athlete.nationalities.add(nationality)
+
+            for alias in athlete.aliases.all():
+                alias.alias_of = main_athlete
+
+            for participation in athlete.participation_set.all():
+                participation.athlete = main_athlete
+
+            if not main_athlete.year_of_birth and athlete.year_of_birth:
+                main_athlete.year_of_birth = athlete.year_of_birth
+
+            if not main_athlete.gender and athlete.gender:
+                main_athlete.gender = athlete.gender
+
+            main_athlete.save()
+            athlete.alias_of = main_athlete
+            athlete.save()
+        merge_request.delete()
+
+        return HttpResponseRedirect(reverse('merge-request-list'))
+
+
+class TeamListView(SingleTableView):
+    model = Team
+    table_class = TeamTable
+    template_name = 'team/list.html'
+
+
+class TeamDetailView(DetailView):
+    model = Team
+    template_name = 'team/detail.html'
+
+
+class TeamCompetitionView(TemplateView):
+    template_name = 'team/competition.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TeamCompetitionView, self).get_context_data(**kwargs)
+        context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
+        context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
+        context['participations'] = Participation.objects.filter(team=team, competition=competition).select_related('athlete')
+        return context
+
+
+@login_required
+def add_result(request, athlete_slug):
+    athlete = Athlete.objects.get(slug=athlete_slug)
+    if athlete is None:
+        raise Http404
+
+    if request.method == 'POST':
+        form = AddResultForm(request.POST)
+
+        if form.is_valid():
+            time = form.cleaned_data['time']
+            date = form.cleaned_data['date']
+            event = form.cleaned_data['event']
+
+            competition = Competition()
+            competition.date = date
+            competition.is_concept = False
+            competition.slug = None
+            competition.location = 'Database'
+            competition.type_of_timekeeping = 0
+            competition.status = Competition.EXTRA_TIME
+            competition.save()
+
+            result = IndividualResult()
+            result.time = time
+            result.athlete = athlete
+            result.competition = competition
+            result.event = event
+            result.extra_analysis_time_by = request.user
+            result.save()
+            result.calculate_points()
+
+            return HttpResponseRedirect(reverse('athlete-event', args=(athlete_slug, event.slug)))
+        else:
+            return render(request, 'add_result.html', {'form': form, 'athlete': athlete})
+    else:
+        form = AddResultForm
+
+        return render(request, 'add_result.html', {'form': form, 'athlete': athlete})
+
+
+class IndividualResultDelete(DeleteView):
+    model = IndividualResult
+    success_url = reverse_lazy('home')
+    template_name = 'extra_time_confirm_delete.html'
+
+    def get_object(self, queryset=None):
+        obj = super(IndividualResultDelete, self).get_object()
+        self.success_url = reverse_lazy('athlete-detail', args=[obj.athlete.pk])
+        if not obj.extra_analysis_time_by == self.request.user:
+            raise Http404
+        return obj
+
+    def get_success_url(self):
+        return self.request.GET.get('success_url', self.success_url)
+
+
+def request_competition(request):
+    if request.method == 'POST':
+        form = RequestCompetitionForm(request.POST)
+
+        if form.is_valid():
+            competition_name = form['competition_name'].value()
+            competition_date = form['competition_date'].value()
+            your_email = form['your_email'].value()
+            link_to_results = form['link_to_results'].value()
+            location = form['location'].value()
+
+            body = "Competition name: " + competition_name + "\n" \
+                                                             "Competition date: " + competition_date + "\n" \
+                                                                                                       "Link to results: " + link_to_results + "\n" \
+                                                                                                                                               "Location: " + location + "\n" \
+                                                                                                                                                                         "Request email: " + your_email
+
+            send_mail(
+                'Lifesaving Rankings competition request',
+                body,
+                'noreply@lifesavingrankings.com',
+                ['ruben@lifesavingrankings.com'],
+                fail_silently=False,
+            )
+
+            return render(request, 'request_competition.html', {'form': form, 'form_sent': True})
+        else:
+            return render(request, 'request_competition.html', {'form': form})
+    else:
+        form = RequestCompetitionForm
+
+        return render(request, 'request_competition.html', {'form': form})
 
 
 def api_search_athletes(request, query):
@@ -625,7 +672,7 @@ def api_search_athletes(request, query):
 
 class EmptyAthletes(ListView):
     model = Athlete
-    template_name = 'rankings/list_empty_athletes.html'
+    template_name = 'list_empty_athletes.html'
 
     def get_context_data(self, **kwargs):
         context = super(EmptyAthletes, self).get_context_data(**kwargs)
@@ -660,7 +707,7 @@ def label_nationality(request, pk):
     labeled_athletes = Athlete.objects.filter(~Q(nationalities=None)).count()
     progress = labeled_athletes / athlete_count * 100
 
-    return render(request, 'rankings/label_nationality.html',
+    return render(request, 'label_nationality.html',
                   {'athlete': athlete, 'nationalities': Country.objects.filter(is_parent_country=False),
                    'athlete_count': athlete_count,
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
@@ -738,74 +785,3 @@ def redirect_event_id_to_slug(request, event_id, gender):
     if event is None:
         raise Http404
     return redirect(reverse('best-by-event', args=[event.slug, gender]), permanent=True)
-
-
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
-class MergeRequestListView(ListView):
-    model = MergeRequest
-
-
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
-class MergeRequestDeleteView(DeleteView):
-    model = MergeRequest
-    success_url = reverse_lazy('merge-request-list')
-
-
-@method_decorator(user_passes_test(lambda u: u.is_staff), name='dispatch')
-class MergeRequestDetailView(DetailView):
-    model = MergeRequest
-
-    def post(self, request, *args, **kwargs):
-        merge_request = super().get_object()
-        if not request.POST['main-athlete']:
-            return HttpResponseRedirect(reverse('merge-request-detail', kwargs={'pk': merge_request.pk}))
-        main_athlete = Athlete.objects.get(pk=request.POST['main-athlete'])
-        for athlete in merge_request.athletes.all():
-            if athlete == main_athlete:
-                continue
-
-            for result in athlete.individualresult_set.all():
-                result.athlete = main_athlete
-                result.save()
-
-            for nationality in athlete.nationalities.all():
-                main_athlete.nationalities.add(nationality)
-
-            for alias in athlete.aliases.all():
-                alias.alias_of = main_athlete
-
-            for participation in athlete.participation_set.all():
-                participation.athlete = main_athlete
-
-            if not main_athlete.year_of_birth and athlete.year_of_birth:
-                main_athlete.year_of_birth = athlete.year_of_birth
-
-            if not main_athlete.gender and athlete.gender:
-                main_athlete.gender = athlete.gender
-
-            main_athlete.save()
-            athlete.alias_of = main_athlete
-            athlete.save()
-        merge_request.delete()
-
-        return HttpResponseRedirect(reverse('merge-request-list'))
-
-
-class TeamListView(SingleTableView):
-    model = Team
-    table_class = TeamTable
-
-
-class TeamDetailView(DetailView):
-    model = Team
-
-
-class TeamCompetitionView(TemplateView):
-    template_name = 'rankings/team_competition.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TeamCompetitionView, self).get_context_data(**kwargs)
-        context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
-        context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
-        context['participations'] = Participation.objects.filter(team=team, competition=competition).select_related('athlete')
-        return context

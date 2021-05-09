@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs gender_to_text_filter i18n mathfilters helpers %}
+{% block head_title %}{{ competition.name }} {{ event.name }} {{ gender|gender_to_text }}{% endblock %}
+{% block meta_description %}All results for {{ event.name }} {{ gender|gender_to_text }} on
+    {{ competition.name }}{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb "Competitions" "competition-list" %}
+    {% breadcrumb competition.name "competition-overview" competition.slug %}
+    {% with gender_name=gender|gender_to_text %}
+        {% with label=event.name|add:" "|add:gender_name %}
+            {% breadcrumb label "competition-event" competition.slug event.slug gender|gender_to_text %}
+        {% endwith %}
+    {% endwith %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+
+{% block content %}
+    <h1 class="ui header">{{ competition.name }}</h1>
+
+    <a href="{% url 'competition-detail' competition.slug %}" class="back button">
+        <button class="ui left labeled icon button back">
+            <i class="left arrow icon"></i>
+            Back
+        </button>
+    </a>
+
+    <h2 class="ui header">{{ event.name }} {{ gender|gender_to_text }}</h2>
+
+    <table class="ui celled table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Athlete</th>
+            <th>YoB</th>
+            <th>Time</th>
+            <th>Points</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+            <tr>
+                <td>
+                    {% if forloop.counter > separator %}
+                        {{ forloop.counter|sub:separator }}
+                    {% else %}
+                        {% if result.round > 0 and forloop.counter <= 3 %}
+                            {% if forloop.counter == 1 %}
+                                <div class="medal gold">{{ forloop.counter }}</div>
+                            {% elif forloop.counter == 2 %}
+                                <div class="medal silver">{{ forloop.counter }}</div>
+                            {% elif forloop.counter == 3 %}
+                                <div class="medal bronze">{{ forloop.counter }}</div>
+                            {% endif %}
+                        {% else %}
+                            {{ forloop.counter }}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td><a href="{% url 'athlete-detail' result.athlete.slug %}">
+                    {% for nationality in result.athlete.nationalities.all %}
+                        <i class="{{ nationality.flag_code }} flag"
+                           title="{{ nationality.name }}"></i>
+                    {% endfor %}
+                    {{ result.athlete.name }}
+                </a></td>
+                <td>{{ result.athlete.year_of_birth }}</td>
+                <td>
+                    {% include 'partials/time.html' with individual_result=result %}
+                </td>
+                <td>{% if result.points > 0 %}{{ result.points }}{% else %} - {% endif %}</td>
+            </tr>
+            {% with next_result=results|next_element:forloop.counter0 %}
+                {% if next_result.round is not result.round and not forloop.last %}
+                    <tr>
+                        <td colspan="5">{% if next_result.round is 0 %}Series:{% endif %}</td>
+                    </tr>
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load datetime_filter django_bootstrap_breadcrumbs gender_to_text_filter %}
+
+{% block head_title %}{{ athlete.name }}{% endblock %}
+{% block meta_description %}Find out every personal best of {{ athlete.name }} for each Lifesaving pool
+    event.{% endblock %}
+
+{% block breadcrumbs %}
+
+    {% breadcrumb "Home" "/" %}
+    {% breadcrumb athlete.name "athlete-overview" athlete.slug %}
+
+    {% render_breadcrumbs "breadcrumbs.html" %}
+
+{% endblock %}
+
+
+{% block content %}
+    <div class="ui stackable grid">
+
+        <div class="row">
+            <div class="sixteen wide column">
+                <div class="athlete">
+                    <h1 class="ui header name">
+                        {% for nationality in athlete.nationalities.all %}
+                            <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                        {% endfor %}
+                        {{ athlete.name }}
+                    </h1>
+                    <span class="details">
+                    ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth }}{% endif %}
+                        {% if athlete.gender == 1 %}
+                            <i class="mars icon"></i>
+                        {% elif athlete.gender == 2 %}
+                            <i class="venus icon"></i>
+                        {% endif %})
+                </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="ten wide column">
+                <a href="{% url 'athlete-timeline' athlete.slug %}">
+                    <button class="ui left labeled icon primary button">
+                        <i class="history icon"></i>
+                        Timeline
+                    </button>
+                </a>
+                <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
+                    <button class="ui left labeled icon button back">
+                        <i class="left plus icon"></i>
+                        Add extra time
+                    </button>
+                </a>
+                {% if request.user.is_superuser %}
+                    <a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/"
+                       target="_blank">
+                        <button class="ui left labeled icon button">
+                            <i class="left pencil icon"></i>
+                            Edit
+                        </button>
+                    </a>
+
+                    <form action="" method="post" class="ui form">{% csrf_token %}
+                        <div class="two fields">
+                            <div class="field">
+                                <div class="ui search selection dropdown nationalities">
+                                    <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required
+                                           autofocus="autofocus">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">Select Country</div>
+                                    <div class="menu">
+                                        {% for nationality in nationalities %}
+                                            <div class="item" data-value="{{ nationality.pk }}"><i
+                                                    class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <button type="submit" class="ui green button">Add /
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+            <div class="six wide column">
+
+                <table class="ui definition compact table">
+                    <tbody>
+                    <tr>
+                        <td>Total recorded competitions</td>
+                        <td>{{ athlete.count_competitions }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total recorded results</td>
+                        <td>{{ athlete.count_results }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total points <sup><a href="{% url 'about' %}#points"><i class="question outline circle icon"></i></a></sup></td>
+                        <td>{{ athlete.get_total_points }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="sixteen wide column">
+                {% for event_type, times in personal_bests.items %}
+                    {% if times %}
+                        <table class="ui celled table">
+                            <thead>
+                            <tr>
+                                <th>{{ event_type|capfirst }}</th>
+                                <th>PR</th>
+                                <th>Points</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Competition</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for personal_best in times %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'best-by-event' personal_best.event.slug athlete.gender|gender_to_text %}">
+                                            {{ personal_best.event.name }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'athlete-event' athlete_slug=athlete.slug event_slug=personal_best.event.slug %}">
+                                            {{ personal_best.time|format_time }}</a>
+                                    </td>
+                                    <td>{% if personal_best.points > 0 %}{{ personal_best.points }}{% else %}
+                                        - {% endif %}</td>
+                                    <td>
+                                        {{ personal_best.competition.date }}
+                                    </td>
+                                    <td>
+                                        {{ personal_best.competition.location }}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'competition-detail' competition_slug=personal_best.competition.slug %}">
+                                            {{ personal_best.competition.name }}
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="sixteen wide column">
+                {% if request.user.is_staff %}
+                    <p>
+                    <h4>Original import lines:</h4>
+                    {% for result in all_results %}
+                        {% if result.original_line %}
+                            {{ result.original_line }}<br>
+                        {% endif %}
+                    {% endfor %}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
