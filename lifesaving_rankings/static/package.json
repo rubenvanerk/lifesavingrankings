@@ -1,20 +1,20 @@
 {
   "dependencies": {
-    "fomantic-ui": "^2.8.4"
+    "fomantic-ui": "^2.8.7"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "autoprefixer": "^9.7.6",
+    "@babel/core": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
+    "autoprefixer": "^9.8.6",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
-    "gulp-mode": "^1.0.2",
+    "gulp-mode": "^1.1.0",
     "gulp-postcss": "^8.0.0",
     "gulp-sass": "^4.1.0",
     "gulp-uglify": "^3.0.2",
-    "node-sass": "^4.14.0",
+    "node-sass": "^4.14.1",
     "postcss-flexbugs-fixes": "^4.2.1"
   }
 }
