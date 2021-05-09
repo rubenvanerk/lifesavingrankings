@@ -28,7 +28,7 @@ class CompetitionListView(SingleTableMixin, FilterView):
     queryset = Competition.objects.filter(slug__isnull=False).all()
     model = Competition
     filterset_class = CompetitionFilter
-    
+
 
 class CompetitionDetail(TemplateView):
     template_name = 'competition/detail.html'
@@ -131,7 +131,7 @@ class EventList(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        events = Event.objects.filter(type__in=[1, 2]).all().order_by('pk')
+        events = Event.objects.filter(type__in=[Event.INDIVIDUAL, Event.RELAY_SEGMENT]).all().order_by('pk')
         context['events'] = {}
         limit = 3
         for event in events:
@@ -139,13 +139,12 @@ class EventList(TemplateView):
             context['events'][event.pk]['object'] = event
             context['events'][event.pk]['results'] = {}
 
-            results_men = IndividualResult.public_objects.filter(event=event, athlete__gender=Athlete.MALE,
-                                                                 disqualified=False).order_by(
-                'athlete',
-                'time').distinct(
-                'athlete')
+            results_men = IndividualResult.public_objects
+            results_men = results_men.filter(event=event, athlete__gender=Athlete.MALE, disqualified=False) \
+                .order_by('athlete', 'time') \
+                .distinct('athlete')
             results_men = IndividualResult.public_objects.filter(id__in=results_men).prefetch_related('competition',
-                                                                                                      'athlete').order_by(
+                                                                                                      'athlete__nationalities').order_by(
                 'time')[:limit]
             context['events'][event.pk]['results']['men'] = results_men
 
@@ -154,7 +153,7 @@ class EventList(TemplateView):
                 'athlete',
                 'time').distinct(
                 'athlete')
-            results_women = IndividualResult.public_objects.filter(id__in=results_women).prefetch_related('athlete',
+            results_women = IndividualResult.public_objects.filter(id__in=results_women).prefetch_related('athlete__nationalities',
                                                                                                           'competition').order_by(
                 'time')[:limit]
             context['events'][event.pk]['results']['women'] = results_women
@@ -246,7 +245,8 @@ class EventAthletes(TemplateView):
             athletes = athletes.filter(Exists(athlete_results))
 
             if 'nationality' in result_filter and type(result_filter['nationality']) is Country:
-                athletes = athletes.filter(nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
+                athletes = athletes.filter(
+                    nationalities__in=result_filter['nationality'].get_all_children(include_self=True))
 
             if 'yob_start' in result_filter and result_filter['yob_start'] > 0:
                 athletes = athletes.filter(year_of_birth__gte=result_filter['yob_start'])
@@ -254,9 +254,12 @@ class EventAthletes(TemplateView):
             if 'yob_end' in result_filter and result_filter['yob_end'] > 0:
                 athletes = athletes.filter(year_of_birth__lte=result_filter['yob_end'])
 
-            personal_best_query = IndividualResult.public_objects.only_valid_results().filter(event=event, athlete=OuterRef('pk')).values('time')
+            personal_best_query = IndividualResult.public_objects.only_valid_results().filter(event=event,
+                                                                                              athlete=OuterRef(
+                                                                                                  'pk')).values('time')
             if 'date_range_start' in result_filter:
-                personal_best_query = personal_best_query.filter(competition__date__gte=result_filter['date_range_start'])
+                personal_best_query = personal_best_query.filter(
+                    competition__date__gte=result_filter['date_range_start'])
             if 'date_range_end' in result_filter:
                 personal_best_query = personal_best_query.filter(competition__date__lte=result_filter['date_range_end'])
 
@@ -566,7 +569,8 @@ class TeamCompetitionView(TemplateView):
         context = super(TeamCompetitionView, self).get_context_data(**kwargs)
         context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
         context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
-        context['participations'] = Participation.objects.filter(team=team, competition=competition).select_related('athlete')
+        context['participations'] = Participation.objects.filter(team=team, competition=competition).select_related(
+            'athlete')
         return context
 
 
