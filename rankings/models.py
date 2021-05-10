@@ -253,7 +253,7 @@ class Competition(models.Model):
     is_concept = models.BooleanField(default=False)
     published_on = models.DateTimeField(null=True, blank=True)
     status = models.IntegerField(default=IMPORTED, choices=STATUS_OPTIONS)
-    file_name = models.CharField(max_length=100, null=True, blank=True)
+    file_name = models.CharField(max_length=512, null=True, blank=True)
     credit = models.CharField(max_length=512, null=True, blank=True)
     comment = models.CharField(max_length=512, null=True, blank=True)
     participants = models.ManyToManyField(Athlete, through='Participation')
