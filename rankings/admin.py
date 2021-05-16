@@ -1,11 +1,31 @@
 from django.contrib import admin
+from django.db.models import Count
+
 from rankings.models import *
+
+
+class EmptyAthleteFilter(admin.SimpleListFilter):
+    title = 'Athletes without results'
+    parameter_name = 'empty'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('without', 'Without'),
+            ('with', 'With')
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'without':
+            return queryset.annotate(num_results=Count('individualresult')).exclude(num_results__gt=0)
+        if self.value() == 'with':
+            return queryset.filter(individualresult__count__gt=0)
+        return queryset
 
 
 class AthleteAdmin(admin.ModelAdmin):
     fields = ['name', 'slug', 'year_of_birth', 'gender', 'nationalities']
     list_display = ['name', 'year_of_birth', 'gender']
-    list_filter = ['gender']
+    list_filter = ['gender', EmptyAthleteFilter]
 
 
 class CompetitionAdmin(admin.ModelAdmin):

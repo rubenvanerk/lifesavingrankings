@@ -674,21 +674,6 @@ def api_search_athletes(request, query):
     return HttpResponse(json.dumps(response), content_type="text/json")
 
 
-class EmptyAthletes(ListView):
-    model = Athlete
-    template_name = 'list_empty_athletes.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(EmptyAthletes, self).get_context_data(**kwargs)
-
-        athletes = Athlete.objects.annotate(
-            result_count=Count('individualresult')
-        ).filter(result_count=0)
-
-        context['athletes'] = athletes
-        return context
-
-
 @user_passes_test(lambda u: u.is_staff)
 def label_nationality(request, pk):
     athlete = Athlete.objects.filter(pk=pk).first()
@@ -717,19 +702,6 @@ def label_nationality(request, pk):
                    'labeled_athletes': labeled_athletes, 'progress': progress, 'next_athlete': next_athlete,
                    'queue': queue,
                    'all_results': IndividualResult.public_objects.filter(athlete=athlete)})
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def delete_empty_athletes(request):
-    athletes = Athlete.objects.annotate(
-        result_count=Count('individualresult')
-    ).filter(result_count=0)
-
-    deleted_count = str(len(athletes))
-
-    athletes.delete()
-
-    return HttpResponse(deleted_count + ' athletes deleted')
 
 
 @user_passes_test(lambda u: u.is_superuser)

@@ -37,8 +37,6 @@ urlpatterns = [
     path('teams/<slug:team_slug>/<slug:competition_slug>/', views.TeamCompetitionView.as_view(), name='team-competition'),
 
     # utilities
-    path('empty-athletes/', views.EmptyAthletes.as_view()),
-    path('delete-empty-athletes/', views.delete_empty_athletes, name='delete-empty-athletes'),
     path('recalculate-points/', views.recalculate_points),
     path('label-athlete/<int:pk>/', views.label_nationality, name='label-athlete'),
     path('report-duplicate/', views.report_duplicate),
