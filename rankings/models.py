@@ -186,9 +186,6 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        ordering = ['type', 'id']
-
     def are_segments_same(self):
         relay_orders = RelayOrder.objects.filter(event=self).all()
         previous_segment = relay_orders.first().segment
