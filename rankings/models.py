@@ -276,9 +276,6 @@ class Competition(models.Model):
     def get_athlete_count(self):
         return IndividualResult.public_objects.filter(competition=self).values('athlete').distinct().count()
 
-    def get_result_count(self):
-        return IndividualResult.public_objects.filter(competition=self).count()
-
     def get_absolute_url(self):
         return reverse('competition-detail', args=[self.slug])
 

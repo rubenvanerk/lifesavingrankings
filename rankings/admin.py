@@ -24,17 +24,44 @@ class EmptyAthleteFilter(admin.SimpleListFilter):
 
 class AthleteAdmin(admin.ModelAdmin):
     fields = ['name', 'slug', 'year_of_birth', 'gender', 'nationalities']
-    list_display = ['name', 'year_of_birth', 'gender']
+    list_display = ['name', 'year_of_birth', 'gender', 'result_count']
     list_filter = ['gender', EmptyAthleteFilter]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(result_count=Count('individualresult'))
+        return qs
+
+    def result_count(self, athlete_instance):
+        return athlete_instance.result_count
+    result_count.admin_order_field = 'result_count'
 
 
 class CompetitionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'city', 'country', 'date', 'end_date', 'status']
+    list_display = ['name', 'city', 'country', 'date', 'end_date', 'status', 'result_count']
     list_filter = ['status', 'date']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(result_count=Count('individual_results'))
+        return qs
+
+    def result_count(self, country_instance):
+        return country_instance.result_count
+    result_count.admin_order_field = 'result_count'
 
 
 class CountryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'parent', 'lenex_code']
+    list_display = ['name', 'parent', 'lenex_code', 'athlete_count']
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(athlete_count=Count('nationalities'))
+        return qs
+
+    def athlete_count(self, country_instance):
+        return country_instance.athlete_count
+    athlete_count.admin_order_field = 'athlete_count'
 
 
 class EventRecordAdmin(admin.ModelAdmin):
