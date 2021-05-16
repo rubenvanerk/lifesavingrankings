@@ -13,7 +13,7 @@ class Home(TemplateView):
         context['athlete_count'] = Athlete.objects.all().count()
         context['result_count'] = IndividualResult.public_objects.all().count()
 
-        public_competition_count = (Competition.objects
+        public_competition_count = (Competition.public_objects
                                     .filter(status=Competition.IMPORTED)
                                     .exclude(slug__isnull=True)
                                     .exclude(slug='')
@@ -21,7 +21,7 @@ class Home(TemplateView):
         context['competition_count'] = public_competition_count
         context['home'] = True
 
-        last_published_competitions = (Competition.objects
+        last_published_competitions = (Competition.public_objects
                                        .filter(slug__isnull=False, status=2, published_on__isnull=False)
                                        .order_by('-published_on'))
         context['last_published_competitions'] = last_published_competitions[:5]

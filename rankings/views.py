@@ -25,7 +25,7 @@ class CompetitionListView(SingleTableMixin, FilterView):
     table_class = CompetitionTable
     template_name = "competition/list.html"
     ordering = ['-date']
-    queryset = Competition.objects.filter(slug__isnull=False).all()
+    queryset = Competition.public_objects.filter(slug__isnull=False).all()
     model = Competition
     filterset_class = CompetitionFilter
 
@@ -37,7 +37,7 @@ class CompetitionDetail(TemplateView):
         if not request.user.is_superuser:
             raise Http404
         competition_slug = self.kwargs.get('competition_slug')
-        competition = Competition.objects.get(slug=competition_slug)
+        competition = Competition.public_objects.get(slug=competition_slug)
         nationality = Country.objects.get(pk=request.POST['country'])
 
         for athlete in competition.get_unlabeled_athletes():
@@ -49,34 +49,34 @@ class CompetitionDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         competition_slug = self.kwargs.get('competition_slug')
-        competition = (Competition.objects
+        competition = (Competition.public_objects
                        .filter(slug=competition_slug)
                        .annotate(result_count=Count('individual_results'))).first()
+        context['competition'] = competition
 
         if competition is None:
             raise Http404
-        if competition.is_concept and not self.request.user.is_superuser:
-            raise Http404
 
-        event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
-        events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
-        context['events'] = {}
-        limit = 8
-        for event in events:
-            context['events'][event.pk] = {}
-            context['events'][event.pk]['object'] = event
-            context['events'][event.pk]['results'] = {}
-            context['events'][event.pk]['results']['men'] = event.get_top_by_competition_and_gender(
-                competition=competition,
-                gender=Athlete.MALE,
-                limit=limit)
-            context['events'][event.pk]['results']['women'] = event.get_top_by_competition_and_gender(
-                competition=competition,
-                gender=Athlete.FEMALE,
-                limit=limit)
-        context['competition'] = competition
-        context['nationalities'] = Country.objects.filter(is_parent_country=False)
-        context['unlabeled_athletes'] = competition.get_unlabeled_athletes()
+        if competition.is_imported or self.request.user.is_superuser:
+            event_ids = IndividualResult.objects.filter(competition=competition).values('event_id').distinct().all()
+            events = Event.objects.filter(pk__in=event_ids).order_by('pk').all()
+            context['events'] = {}
+            limit = 8
+            for event in events:
+                context['events'][event.pk] = {}
+                context['events'][event.pk]['object'] = event
+                context['events'][event.pk]['results'] = {}
+                context['events'][event.pk]['results']['men'] = event.get_top_by_competition_and_gender(
+                    competition=competition,
+                    gender=Athlete.MALE,
+                    limit=limit)
+                context['events'][event.pk]['results']['women'] = event.get_top_by_competition_and_gender(
+                    competition=competition,
+                    gender=Athlete.FEMALE,
+                    limit=limit)
+            if self.request.user.is_superuser:
+                context['nationalities'] = Country.objects.filter(is_parent_country=False)
+                context['unlabeled_athletes'] = competition.get_unlabeled_athletes()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -105,7 +105,7 @@ class CompetitionEvent(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         competition_slug = self.kwargs.get('competition_slug')
-        competition = Competition.objects.get(slug=competition_slug)
+        competition = Competition.public_objects.get(slug=competition_slug)
 
         event_slug = self.kwargs.get('event_slug')
         event = Event.objects.get(slug=event_slug)
@@ -570,7 +570,7 @@ class TeamCompetitionView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(TeamCompetitionView, self).get_context_data(**kwargs)
         context['team'] = team = Team.objects.get(slug=kwargs.get('team_slug'))
-        context['competition'] = competition = Competition.objects.get(slug=kwargs.get('competition_slug'))
+        context['competition'] = competition = Competition.public_objects.get(slug=kwargs.get('competition_slug'))
         context['participations'] = Participation.objects.filter(team=team, competition=competition).select_related(
             'athlete')
         return context

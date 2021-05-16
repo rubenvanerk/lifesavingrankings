@@ -81,14 +81,21 @@
                     <td>Date</td>
                     <td>{{ competition.date }}</td>
                 </tr>
-                <tr>
-                    <td>Participants</td>
-                    <td>{{ competition.get_athlete_count }}</td>
-                </tr>
-                <tr>
-                    <td>Results</td>
-                    <td>{{ competition.result_count }}</td>
-                </tr>
+                {% if competition.is_imported or user.is_superuser %}
+                    <tr>
+                        <td>Participants</td>
+                        <td>{{ competition.get_athlete_count }}</td>
+                    </tr>
+                    <tr>
+                        <td>Results</td>
+                        <td>{{ competition.result_count }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>Status</td>
+                        <td>{{ competition.get_status_display }}</td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td>Original file</td>
                     <td>

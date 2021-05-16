@@ -125,7 +125,7 @@ class Athlete(models.Model):
         if year is not None:
             individual_results = individual_results.filter(competition__date__year=year)
         competitions = individual_results.values('competition_id')
-        competitions = Competition.objects.order_by('-date').prefetch_related(
+        competitions = Competition.public_objects.order_by('-date').prefetch_related(
             Prefetch('individual_results', queryset=individual_results, to_attr='athlete_results')
         ).filter(pk__in=competitions)
         return competitions
@@ -219,6 +219,11 @@ class Event(models.Model):
         return query_set.order_by('time')[:limit]
 
 
+class CompetitionManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().exclude(status=Competition.EXTRA_TIME)
+
+
 class Competition(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -271,6 +276,9 @@ class Competition(models.Model):
 
     prepopulated_fields = {"slug": ("name",)}
 
+    objects = models.Manager()
+    public_objects = CompetitionManager()
+
     def __str__(self):
         if self.name:
             return self.name
@@ -291,8 +299,9 @@ class Competition(models.Model):
                                       pk__in=IndividualResult.public_objects.filter(competition=self).values(
                                           'athlete').distinct()).count() < 1
 
+    @property
     def is_imported(self):
-        return self.status == self.IMPORTED
+        return self.status == self.IMPORTED and not self.is_concept
 
     def get_unlabeled_athletes(self):
         athlete_ids = IndividualResult.public_objects.filter(competition=self).values('athlete').distinct()
@@ -307,7 +316,7 @@ class Competition(models.Model):
 
     @classmethod
     def search(cls, query):
-        competitions = Competition.objects
+        competitions = Competition.public_objects
         vector = SearchVector('name') + SearchVector('original_name') + SearchVector('country') + SearchVector('city')
         query = SearchQuery(query)
 
@@ -445,7 +454,7 @@ class Team(models.Model):
     def get_competitions(self):
         competitions = self.participation_set.values_list('competition', flat=True)
         print(competitions)
-        return Competition.objects.filter(pk__in=competitions).all()
+        return Competition.public_objects.filter(pk__in=competitions).all()
 
 
 class Participation(models.Model):
