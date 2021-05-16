@@ -22,10 +22,44 @@ class EmptyAthleteFilter(admin.SimpleListFilter):
         return queryset
 
 
+class AthleteCountryFilter(admin.SimpleListFilter):
+    title = 'Country'
+    parameter_name = 'country'
+
+    def lookups(self, request, model_admin):
+        lookups = []
+        countries = Country.objects.annotate(athlete_count=Count('nationalities')).exclude(athlete_count=0).order_by('name')
+        for country in countries:
+            lookups.append((country.id, country.name))
+        return lookups
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(nationalities__in=self.value())
+        return queryset
+
+
+class CompetitionCountryFilter(admin.SimpleListFilter):
+    title = 'Country'
+    parameter_name = 'country'
+
+    def lookups(self, request, model_admin):
+        lookups = []
+        countries = Country.objects.annotate(competition_count=Count('competition')).exclude(competition_count=0).order_by('name')
+        for country in countries:
+            lookups.append((country.id, country.name))
+        return lookups
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(country=self.value())
+        return queryset
+
+
 class AthleteAdmin(admin.ModelAdmin):
     fields = ['name', 'slug', 'year_of_birth', 'gender', 'nationalities']
     list_display = ['name', 'year_of_birth', 'gender', 'result_count']
-    list_filter = ['gender', EmptyAthleteFilter]
+    list_filter = ['gender', EmptyAthleteFilter, AthleteCountryFilter]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -39,7 +73,7 @@ class AthleteAdmin(admin.ModelAdmin):
 
 class CompetitionAdmin(admin.ModelAdmin):
     list_display = ['name', 'city', 'country', 'date', 'end_date', 'status', 'result_count']
-    list_filter = ['status', 'date']
+    list_filter = ['status', 'date', CompetitionCountryFilter]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
