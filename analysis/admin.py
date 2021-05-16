@@ -8,6 +8,8 @@ class AnalysisGroupAdmin(admin.ModelAdmin):
     list_display = ['name', 'creator', 'public', 'athlete_count']
     list_filter = ['public', 'creator']
     search_fields = ['name']
+    filter_horizontal = ['athletes']
+    list_select_related = ['creator']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

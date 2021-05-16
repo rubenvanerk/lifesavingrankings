@@ -62,6 +62,7 @@ class AthleteAdmin(admin.ModelAdmin):
     list_display = ['name', 'year_of_birth', 'gender', 'result_count']
     list_filter = ['gender', EmptyAthleteFilter, AthleteCountryFilter]
     search_fields = ['name', 'year_of_birth']
+    filter_horizontal = ['nationalities']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -78,6 +79,7 @@ class CompetitionAdmin(admin.ModelAdmin):
     list_display = ['name', 'city', 'country', 'date', 'end_date', 'status', 'result_count']
     list_filter = ['status', 'date', CompetitionCountryFilter]
     search_fields = ['name', 'city', 'country__name']
+    autocomplete_fields = ['country']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -92,7 +94,8 @@ class CompetitionAdmin(admin.ModelAdmin):
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name', 'parent', 'lenex_code', 'athlete_count']
-    search_fields = ['name', 'parent', 'lenex_code']
+    search_fields = ['name', 'lenex_code']
+    list_select_related = ['parent']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

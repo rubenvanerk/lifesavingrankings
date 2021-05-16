@@ -186,6 +186,9 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('event-detail', args=[self.slug])
+
     def are_segments_same(self):
         relay_orders = RelayOrder.objects.filter(event=self).all()
         previous_segment = relay_orders.first().segment
@@ -435,6 +438,9 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('team-detail', args=[self.slug])
 
     def get_competitions(self):
         competitions = self.participation_set.values_list('competition', flat=True)
