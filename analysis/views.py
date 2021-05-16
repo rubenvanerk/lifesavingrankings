@@ -53,8 +53,7 @@ class AnalysisGroupListView(LoginRequiredMixin, SingleTableView):
     def get_queryset(self):
         user = self.request.user
         qs = super(AnalysisGroupListView, self).get_queryset()
-        if not self.request.user.is_superuser:
-            qs = qs.filter(creator=user)
+        qs = qs.filter(creator=user)
         return qs
 
 

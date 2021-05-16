@@ -6,6 +6,8 @@ from django.db.models import ForeignKey, Count
 from rankings.models import Event, Athlete
 from django.contrib.auth.models import User
 
+from rankings.templatetags.datetime_filter import format_time
+
 
 class SpecialResultGroup(models.Model):
     name = models.CharField(max_length=60)
@@ -20,7 +22,12 @@ class SpecialResult(models.Model):
     special_result_group = models.ForeignKey(SpecialResultGroup, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.special_result_group.name + ': ' + self.event.name
+        if self.special_result_group:
+            return self.special_result_group.name + ': ' + self.event.name
+        return self.event.name
+
+    def time_formatted(self):
+        return format_time(self.time)
 
 
 class AnalysisGroup(models.Model):
@@ -33,6 +40,9 @@ class AnalysisGroup(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         ordering = ('pk',)
 
@@ -44,7 +54,7 @@ class AnalysisGroup(models.Model):
 
     def count_group_teams_without_full_setup(self):
         num_events = Event.objects.filter(type=Event.RELAY_COMPLETE).count()
-        group_team_count = GroupTeam.objects.annotate(num_setups=Count('setups')).filter(num_setups__lt=num_events)\
+        group_team_count = GroupTeam.objects.annotate(num_setups=Count('setups')).filter(num_setups__lt=num_events) \
             .filter(analysis_group=self).count()
         return group_team_count
 

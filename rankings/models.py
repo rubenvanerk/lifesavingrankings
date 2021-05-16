@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import ForeignKey, Q, Max, Prefetch, Min, OuterRef, F, Subquery
 from django.urls import reverse
 from rankings.functions import calculate_points
+from rankings.templatetags.datetime_filter import format_time
 
 
 class Country(models.Model):
@@ -18,6 +19,10 @@ class Country(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = 'Countries'
+        ordering = ['name']
 
     def get_children_pks(self):
         country_pks = [self.pk]
@@ -180,6 +185,9 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['type', 'id']
 
     def are_segments_same(self):
         relay_orders = RelayOrder.objects.filter(event=self).all()
@@ -351,7 +359,7 @@ class IndividualResult(models.Model):
         ordering = ['time']
 
     def __str__(self):
-        return self.athlete.name + ' ' + self.event.name + ' ' + str(self.time)
+        return self.athlete.name + ' ' + self.event.name + ': ' + str(self.time_formatted())
 
     def calculate_points(self):
         record = EventRecord.objects.filter(gender=self.athlete.gender, event=self.event).first()
@@ -367,6 +375,9 @@ class IndividualResult(models.Model):
         if analysis_group.simulation_date_from:
             qs = qs.filter(competition__date__gte=analysis_group.simulation_date_from)
         return qs.first()
+
+    def time_formatted(self):
+        return format_time(self.time)
 
 
 class IndividualResultSplit(models.Model):
@@ -395,11 +406,20 @@ class EventRecord(models.Model):
     event = ForeignKey(Event, on_delete=models.CASCADE)
     time = models.DurationField()
 
+    def time_formatted(self):
+        return format_time(self.time)
+
 
 class RelayOrder(models.Model):
     event = ForeignKey(Event, on_delete=models.CASCADE, related_name='relay')
     segment = ForeignKey(Event, on_delete=models.CASCADE, related_name='segment')
     index = models.IntegerField()
+
+    def __str__(self):
+        return self.segment.name + ' (' + str(self.index) + ') in ' + self.event.name
+
+    class Meta:
+        ordering = ['event', 'index']
 
 
 class MergeRequest(models.Model):

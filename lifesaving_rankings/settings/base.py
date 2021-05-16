@@ -26,19 +26,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.postgres',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'rankings',
     'lifesaving_rankings',
     'analysis',
     'widget_tweaks',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
     'django_s3_storage',
     'django_bootstrap_breadcrumbs',
     'mathfilters',
     'django_tables2',
-    'django_filters',
-    'debug_toolbar'
+    'django_filters'
 ]
 
 SITE_ID = 1
