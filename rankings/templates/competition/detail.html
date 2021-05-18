@@ -110,6 +110,16 @@
                         {% endif %}
                     </td>
                 </tr>
+                {% if competition.videos.count > 0 %}
+                    <tr>
+                        <td>Videos</td>
+                        <td>
+                            {% for video in competition.videos.all %}
+                                <a href="{{ video.url }}" target="_blank">{{ video.title }}</a>{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endif %}
                 {% if competition.published_on %}
                     <tr>
                         <td>Published on</td>

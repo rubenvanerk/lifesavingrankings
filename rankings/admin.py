@@ -91,6 +91,13 @@ class CompetitionAdmin(admin.ModelAdmin):
     result_count.admin_order_field = 'result_count'
 
 
+@admin.register(CompetitionVideo)
+class CompetitionVideoAdmin(admin.ModelAdmin):
+    list_display = ['title', 'competition']
+    search_fields = ['title', 'competition__name']
+    autocomplete_fields = ['competition']
+
+
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['name', 'parent', 'lenex_code', 'athlete_count']

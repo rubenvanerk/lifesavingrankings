@@ -327,6 +327,18 @@ class Competition(models.Model):
         return competitions
 
 
+class CompetitionVideo(models.Model):
+    competition = ForeignKey(Competition,
+                             on_delete=models.CASCADE,
+                             related_name='videos',
+                             related_query_name='videos')
+    title = models.CharField(max_length=100)
+    url = models.URLField()
+
+    def __str__(self):
+        return self.competition.name + ': ' + self.title
+
+
 class PublicIndividualResultsManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(competition__is_concept=False,
