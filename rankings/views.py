@@ -51,8 +51,7 @@ class CompetitionDetail(TemplateView):
         competition_slug = self.kwargs.get('competition_slug')
         competition = (Competition.public_objects
                        .filter(slug=competition_slug)
-                       .annotate(result_count=Count('individual_results'), participant_count=Count('participants'))
-                       ).first()
+                       .annotate(result_count=Count('individual_results'))).first()
         context['competition'] = competition
 
         if competition is None:
