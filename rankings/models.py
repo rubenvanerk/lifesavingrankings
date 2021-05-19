@@ -199,20 +199,9 @@ class Event(models.Model):
         return True
 
     def get_top_by_competition_and_gender(self, competition, gender, limit):
-        if type(gender) is not int:
-            if gender == 'men':
-                gender = 1
-            else:
-                gender = 2
-        if competition is None:
-            query_set = IndividualResult.public_objects.filter(event=self, athlete__gender=gender, disqualified=False)
-        else:
-            query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition)
-            max_round = \
-                IndividualResult.objects.filter(event=self, athlete__gender=gender,
-                                                competition=competition).aggregate(
-                    Max('round'))['round__max']
-            query_set = query_set.filter(round=max_round)
+        query_set = IndividualResult.objects.filter(event=self, athlete__gender=gender, competition=competition)
+        max_round = query_set.aggregate(Max('round'))['round__max']
+        query_set = query_set.filter(round=max_round)
 
         query_set = query_set.select_related('athlete')
         query_set = query_set.prefetch_related('athlete__nationalities', 'individualresultsplit_set')
