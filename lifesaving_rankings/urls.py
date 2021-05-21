@@ -4,7 +4,6 @@ from django.contrib import admin
 
 from analysis.views import ExtraTimesListView, AnalysisGroupListView
 from . import views
-from rankings import views as rankings_views
 from .views import Account, Home
 
 urlpatterns = [

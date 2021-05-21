@@ -1,7 +1,6 @@
 import os
 import environ
 
-
 env = environ.Env()
 env.read_env(env.str('ENV_PATH', '.env'))
 
@@ -13,7 +12,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
-
 
 # Application definition
 
@@ -37,7 +35,8 @@ INSTALLED_APPS = [
     'django_bootstrap_breadcrumbs',
     'mathfilters',
     'django_tables2',
-    'django_filters'
+    'django_filters',
+    'hcaptcha',
 ]
 
 SITE_ID = 1
@@ -131,6 +130,9 @@ DJANGO_TABLES2_PAGE_RANGE = 5
 DATE_INPUT_FORMAT = '%B %d, %Y'
 
 LOGIN_REDIRECT_URL = 'account'
-ACCOUNT_ADAPTER = 'lifesaving_rankings.adapter.NoNewUsersAccountAdapter'
 
 COMPETITIONS_BUCKET_URL = env('COMPETITIONS_BUCKET_URL')
+
+ACCOUNT_FORMS = {'signup': 'lifesaving_rankings.forms.CaptchaSignupForm'}
+HCAPTCHA_SITEKEY = env('HCAPTCHA_SITE_KEY', default='10000000-ffff-ffff-ffff-000000000001')
+HCAPTCHA_SECRET = env('HCAPTCHA_SITE_KEY', default='0x0000000000000000000000000000000000000000')

@@ -35,6 +35,7 @@ django-mathfilters = "~=0.4"
 django-tables2 = "~=2.3"
 lambda_packages = "~=0.20"
 django-debug-toolbar = "*"
+django-hcaptcha = "*"
 
 [requires]
 python_version = "3.6"
