@@ -1,0 +1,36 @@
+<div id="admin-bar" class="ui blue segment">
+
+    <a href="/admin/rankings/competition/{{ competition.id }}/change/" class="ui left labeled icon button">
+        <i class="left pencil icon"></i>
+        Edit
+    </a>
+
+    {% if competition.is_concept %}
+        <a href="{% url 'competition-detail' competition.slug %}?publish=true" class="ui left labeled icon button">
+            <i class="left eye icon"></i>
+            Publish
+        </a>
+    {% endif %}
+
+    <a href="{% url 'competition-detail' competition.slug %}?delete=true"
+       class="ui left labeled icon red button">
+        <i class="left trash icon"></i>
+        Delete results
+    </a>
+
+    <form action="" method="post" class="ui form">{% csrf_token %}
+        <div class="ui selection dropdown nationalities">
+            <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select Country</div>
+            <div class="menu">
+                {% for nationality in nationalities %}
+                    <div class="item" data-value="{{ nationality.pk }}">
+                        <i class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="ui green button">Save</button>
+    </form>
+</div>

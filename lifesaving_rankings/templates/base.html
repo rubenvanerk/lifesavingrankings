@@ -189,11 +189,11 @@
             </div>
         {% endif %}
 
-
         {% block breadcrumbs %}{% endblock %}
 
         <div id="content" class="ui container">
 
+            {% block admin_bar %}{% endblock %}
 
             {% if messages %}
                 {% for message in messages %}
@@ -204,10 +204,7 @@
                 {% endfor %}
             {% endif %}
 
-
-            {% block content %}
-
-            {% endblock %}
+            {% block content %}{% endblock %}
 
         </div>
 
@@ -219,7 +216,8 @@
             <div class="ui horizontal inverted divided link list row">
                 <a class="item" href="mailto:ruben@lifesavingrankings.com">ruben@lifesavingrankings.com</a>
                 <a class="item" href="https://www.facebook.com/LifesavingRankings/" target="_blank">Facebook</a>
-                <a class="item" href="https://www.youtube.com/channel/UCz4LY-ale7GkueREhPsWv4Q" target="_blank">YouTube</a>
+                <a class="item" href="https://www.youtube.com/channel/UCz4LY-ale7GkueREhPsWv4Q"
+                   target="_blank">YouTube</a>
                 <a class="item" href="https://shop.lifesavingrankings.com/" target="_blank">Shop</a>
                 <a class="item" href="{% url 'changelog' %}">Changelog</a>
             </div>
@@ -242,7 +240,6 @@
         <script type="text/javascript"
                 src="https://cdn.datatables.net/1.10.16/js/dataTables.semanticui.min.js "></script>
 
-        <!-- place project specific Javascript in this file -->
         <script src="{% static 'dist/js/main.js' %}"></script>
 
     {% endblock %}

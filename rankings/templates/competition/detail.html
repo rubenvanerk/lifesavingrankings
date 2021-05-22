@@ -10,58 +10,21 @@
 
     {% breadcrumb "Home" "/" %}
     {% breadcrumb "Competitions" "competition-list" %}
-    {% breadcrumb competition.name "competition-overview" competition.slug %}
+    {% breadcrumb competition.name "competition-detail" competition.slug %}
 
     {% render_breadcrumbs "breadcrumbs.html" %}
 
 {% endblock %}
 
+{% block admin_bar %}
+    {% if request.user.is_superuser %}
+        {% include 'competition/admin-bar.html' %}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 
     <h1 class="ui header">{{ competition.name }} results</h1>
-
-    {% if request.user.is_superuser %}
-        <form action="" method="post" class="ui form">{% csrf_token %}
-            <div class="ui fluid search selection dropdown left floated nationalities" style="width: 200px;">
-                <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required autofocus="autofocus">
-                <i class="dropdown icon"></i>
-                <div class="default text">Select Country</div>
-                <div class="menu">
-                    {% for nationality in nationalities %}
-                        <div class="item" data-value="{{ nationality.pk }}"><i
-                                class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-            <button type="submit" class="ui green button right floated" style="margin-top: -37px;">Save</button>
-        </form>
-        <br>
-    {% endif %}
-
-    {% if request.user.is_superuser %}
-        {% if competition.is_concept %}
-            <a href="{% url 'competition-detail' competition.slug %}?publish=true" class="button back">
-                <button class="ui left labeled icon button">
-                    <i class="left eye icon"></i>
-                    Publish
-                </button>
-            </a>
-        {% endif %}
-        <a href="{% url 'competition-detail' competition.slug %}?delete=true" class="button back">
-            <button class="ui left labeled icon red button">
-                <i class="left trash icon"></i>
-                Delete results
-            </button>
-        </a>
-        <a href="/admin/rankings/competition/{{ competition.id }}/change/" class="button back">
-            <button class="ui left labeled icon button">
-                <i class="left pencil icon"></i>
-                Edit
-            </button>
-        </a>
-    {% endif %}
-
 
     <div class="ui stackable two column grid">
         <div class="column">
@@ -115,7 +78,8 @@
                         <td>Videos</td>
                         <td>
                             {% for video in competition.videos.all %}
-                                <a href="{{ video.url }}" target="_blank">{{ video.title }}</a>{% if not forloop.last %}, {% endif %}
+                                <a href="{{ video.url }}" target="_blank">{{ video.title }}</a>{% if not forloop.last %}
+                                , {% endif %}
                             {% endfor %}
                         </td>
                     </tr>

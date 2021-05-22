@@ -144,10 +144,6 @@ button.back.button {
   padding: 5px;
 }
 
-//.selectize-input {
-//  margin-bottom: 10px;
-//}
-
 form.filter button.ui.button {
   margin-left: 5px;
 }
@@ -345,8 +341,14 @@ tfoot tr th {
   padding-top: 3rem;
 }
 
-  @media screen and (max-width: $break-small) {
-    #content .dataTables_wrapper .sixteen.wide.column {
-      padding: 1rem 0;
-    }
+@media screen and (max-width: $break-small) {
+  #content .dataTables_wrapper .sixteen.wide.column {
+    padding: 1rem 0;
   }
+}
+
+#admin-bar {
+  form {
+    display: inline-block;
+  }
+}

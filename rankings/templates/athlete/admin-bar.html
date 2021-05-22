@@ -1,0 +1,24 @@
+<div id="admin-bar" class="ui blue segment">
+    <a href="/admin/rankings/athlete/{{ athlete.pk }}/change/"
+       class="ui left labeled icon button">
+        <i class="left pencil icon"></i>
+        Edit
+    </a>
+
+    <form action="" method="post" class="ui form">{% csrf_token %}
+        <div class="ui search selection dropdown nationalities">
+            <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required
+                   autofocus="autofocus">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select Country</div>
+            <div class="menu">
+                {% for nationality in nationalities %}
+                    <div class="item" data-value="{{ nationality.pk }}"><i
+                            class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="ui green button">Add / Remove</button>
+    </form>
+</div>

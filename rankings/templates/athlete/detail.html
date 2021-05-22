@@ -8,12 +8,17 @@
 {% block breadcrumbs %}
 
     {% breadcrumb "Home" "/" %}
-    {% breadcrumb athlete.name "athlete-overview" athlete.slug %}
+    {% breadcrumb athlete.name "athlete-detail" athlete.slug %}
 
     {% render_breadcrumbs "breadcrumbs.html" %}
 
 {% endblock %}
 
+{% block admin_bar %}
+    {% if request.user.is_superuser %}
+        {% include 'athlete/admin-bar.html' %}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="ui stackable grid">
@@ -53,43 +58,8 @@
                         Add extra time
                     </button>
                 </a>
-                {% if request.user.is_superuser %}
-                    <a href="https://www.lifesavingrankings.com/admin/rankings/athlete/{{ athlete.pk }}/change/"
-                       target="_blank">
-                        <button class="ui left labeled icon button">
-                            <i class="left pencil icon"></i>
-                            Edit
-                        </button>
-                    </a>
-
-                    <form action="" method="post" class="ui form">{% csrf_token %}
-                        <div class="two fields">
-                            <div class="field">
-                                <div class="ui search selection dropdown nationalities">
-                                    <input type="hidden" name="country" value="{{ athlete.nationality.pk }}" required
-                                           autofocus="autofocus">
-                                    <i class="dropdown icon"></i>
-                                    <div class="default text">Select Country</div>
-                                    <div class="menu">
-                                        {% for nationality in nationalities %}
-                                            <div class="item" data-value="{{ nationality.pk }}"><i
-                                                    class="{{ nationality.flag_code }} flag"></i>{{ nationality.name }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <button type="submit" class="ui green button">Add /
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                {% endif %}
             </div>
             <div class="six wide column">
-
                 <table class="ui definition compact table">
                     <tbody>
                     <tr>
@@ -103,7 +73,12 @@
                     </tr>
 
                     <tr>
-                        <td>Total points <sup><a href="{% url 'about' %}#points"><i class="question outline circle icon"></i></a></sup></td>
+                        <td>
+                            Total points
+                            <sup>
+                                <a href="{% url 'about' %}#points"><i class="question outline circle icon"></i></a>
+                            </sup>
+                        </td>
                         <td>{{ athlete.get_total_points }}</td>
                     </tr>
                     </tbody>
