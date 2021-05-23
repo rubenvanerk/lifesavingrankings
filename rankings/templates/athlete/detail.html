@@ -24,41 +24,37 @@
     <div class="ui stackable grid">
 
         <div class="row">
-            <div class="sixteen wide column">
-                <div class="athlete">
-                    <h1 class="ui header name">
-                        {% for nationality in athlete.nationalities.all %}
-                            <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
-                        {% endfor %}
-                        {{ athlete.name }}
-                    </h1>
-                    <span class="details">
-                    ({% if athlete.year_of_birth is not None %} {{ athlete.year_of_birth }}{% endif %}
-                        {% if athlete.gender == 1 %}
-                            <i class="mars icon"></i>
-                        {% elif athlete.gender == 2 %}
-                            <i class="venus icon"></i>
-                        {% endif %})
-                </span>
-                </div>
+            <div class="eight wide column">
+                <h1 class="ui header">
+                    {{ athlete.name }}
+                    <div class="sub header">
+                        <span class="details">
+                            {% for nationality in athlete.nationalities.all %}
+                                <i class="{{ nationality.flag_code }} flag" title="{{ nationality.name }}"></i>
+                            {% endfor %}
+                            {% if athlete.year_of_birth is not None %}{{ athlete.year_of_birth }}{% endif %}
+                            {% if athlete.gender == 1 %}
+                                <i class="mars icon"></i>
+                            {% elif athlete.gender == 2 %}
+                                <i class="venus icon"></i>
+                            {% endif %}
+                        </span>
+                    </div>
+                </h1>
+            </div>
+
+            <div class="right aligned computer eight wide column">
+                <a href="{% url 'athlete-timeline' athlete.slug %}" class="ui left labeled icon primary button">
+                    <i class="history icon"></i> Timeline
+                </a>
+                <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}"
+                   class="ui left labeled icon button back">
+                    <i class="left plus icon"></i> Add extra time
+                </a>
             </div>
         </div>
 
         <div class="row">
-            <div class="ten wide column">
-                <a href="{% url 'athlete-timeline' athlete.slug %}">
-                    <button class="ui left labeled icon primary button">
-                        <i class="history icon"></i>
-                        Timeline
-                    </button>
-                </a>
-                <a href="{% url 'athlete-add-time' athlete_slug=athlete.slug %}" class="back button">
-                    <button class="ui left labeled icon button back">
-                        <i class="left plus icon"></i>
-                        Add extra time
-                    </button>
-                </a>
-            </div>
             <div class="six wide column">
                 <table class="ui definition compact table">
                     <tbody>
@@ -133,20 +129,14 @@
                 {% endfor %}
             </div>
         </div>
-
-        <div class="row">
-            <div class="sixteen wide column">
-                {% if request.user.is_staff %}
-                    <p>
-                    <h4>Original import lines:</h4>
-                    {% for result in all_results %}
-                        {% if result.original_line %}
-                            {{ result.original_line }}<br>
-                        {% endif %}
-                    {% endfor %}
-                    </p>
-                {% endif %}
-            </div>
-        </div>
     </div>
+
+    {% if request.user.is_staff %}
+        <h4 class="ui header">Original import lines:</h4>
+        <div class="ui list">
+            {% for result in all_results %}
+                <div class="item">{{ result.original_line }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

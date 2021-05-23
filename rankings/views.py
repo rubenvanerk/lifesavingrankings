@@ -399,7 +399,7 @@ class AthleteDetail(TemplateView):
         context['athlete'] = athlete
         if self.request.user.is_staff:
             context['nationalities'] = Country.objects.filter(is_parent_country=False)
-            context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete)
+            context['all_results'] = IndividualResult.public_objects.filter(athlete=athlete).exclude(original_line__isnull=True)
         return context
 
     template_name = 'athlete/detail.html'
